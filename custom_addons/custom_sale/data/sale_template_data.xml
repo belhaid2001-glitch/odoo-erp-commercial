@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Séquence pour les prévisions -->
+    <data noupdate="1">
+        <record id="seq_sale_forecast" model="ir.sequence">
+            <field name="name">Prévision de vente</field>
+            <field name="code">sale.forecast</field>
+            <field name="prefix">PREV/%(year)s/</field>
+            <field name="padding">4</field>
+        </record>
+    </data>
+</odoo>

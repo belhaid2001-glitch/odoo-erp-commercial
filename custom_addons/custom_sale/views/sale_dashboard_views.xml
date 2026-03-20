@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tableau de bord des ventes -->
+    <record id="action_sale_dashboard" model="ir.actions.act_window">
+        <field name="name">Tableau de bord Ventes</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_mode">pivot,graph,tree</field>
+        <field name="domain">[('state', 'in', ['sale', 'done'])]</field>
+        <field name="context">{
+            'search_default_my_sales': 1,
+            'search_default_current_month': 1,
+        }</field>
+    </record>
+
+    <!-- Filtre de recherche étendu -->
+    <record id="view_sale_order_search_custom" model="ir.ui.view">
+        <field name="name">sale.order.search.custom</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.sale_order_view_search_inherit_sale"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <filter name="high_priority" string="Haute priorité"
+                        domain="[('priority', 'in', ['3', '4'])]"/>
+                <filter name="ready_to_invoice" string="Prêt à facturer"
+                        domain="[('is_ready_to_invoice', '=', True)]"/>
+                <filter name="pending_approval" string="En attente d'approbation"
+                        domain="[('approval_status', '=', 'pending')]"/>
+                <separator/>
+                <filter name="current_month" string="Mois en cours"
+                        domain="[('date_order', '&gt;=', (context_today() - relativedelta(day=1)).strftime('%%Y-%%m-%%d')),
+                                 ('date_order', '&lt;', (context_today() + relativedelta(months=1, day=1)).strftime('%%Y-%%m-%%d'))]"/>
+                <separator/>
+                <group expand="0" string="Regrouper par">
+                    <filter name="group_sale_type" string="Type de vente"
+                            context="{'group_by': 'sale_type'}"/>
+                    <filter name="group_approval" string="Statut d'approbation"
+                            context="{'group_by': 'approval_status'}"/>
+                    <filter name="group_priority" string="Priorité"
+                            context="{'group_by': 'priority'}"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

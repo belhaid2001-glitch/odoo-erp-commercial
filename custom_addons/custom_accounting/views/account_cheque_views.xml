@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vue formulaire chèque -->
+    <record id="view_account_cheque_form" model="ir.ui.view">
+        <field name="name">account.cheque.form</field>
+        <field name="model">account.cheque</field>
+        <field name="arch" type="xml">
+            <form string="Chèque">
+                <header>
+                    <button name="action_register" string="Enregistrer"
+                            type="object" class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_deposit" string="Déposer"
+                            type="object" class="btn-primary"
+                            invisible="state != 'registered'"/>
+                    <button name="action_clear" string="Compenser"
+                            type="object" class="btn-success"
+                            invisible="state != 'deposited'"/>
+                    <button name="action_return" string="Retourner"
+                            type="object" class="btn-danger"
+                            invisible="state not in ('registered', 'deposited')"/>
+                    <button name="action_cancel" string="Annuler"
+                            type="object"
+                            invisible="state in ('cleared', 'cancelled')"/>
+                    <button name="action_reset_draft" string="Brouillon"
+                            type="object"
+                            invisible="state not in ('cancelled', 'returned')"/>
+                    <button name="action_print_cheque" string="Imprimer"
+                            type="object" class="btn-secondary"
+                            icon="fa-print"
+                            invisible="cheque_type != 'issued'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,registered,deposited,cleared"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>Chèque N° <field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="cheque_type"/>
+                            <field name="partner_id"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="amount"/>
+                            <field name="journal_id"/>
+                        </group>
+                        <group>
+                            <field name="date"/>
+                            <field name="due_date"/>
+                            <field name="bank_id"/>
+                            <field name="bank_account"/>
+                            <field name="move_id"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="memo"/>
+                    </group>
+                    <notebook>
+                        <page string="Notes">
+                            <field name="notes"
+                                   placeholder="Notes sur ce chèque..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue liste chèques -->
+    <record id="view_account_cheque_tree" model="ir.ui.view">
+        <field name="name">account.cheque.tree</field>
+        <field name="model">account.cheque</field>
+        <field name="arch" type="xml">
+            <tree string="Chèques"
+                  decoration-success="state == 'cleared'"
+                  decoration-danger="state == 'returned'"
+                  decoration-muted="state == 'cancelled'">
+                <field name="name"/>
+                <field name="cheque_type"/>
+                <field name="partner_id"/>
+                <field name="amount" sum="Total"/>
+                <field name="date"/>
+                <field name="due_date"/>
+                <field name="bank_id"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-primary="state == 'registered'"
+                       decoration-warning="state == 'deposited'"
+                       decoration-success="state == 'cleared'"
+                       decoration-danger="state == 'returned'"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Action chèques -->
+    <record id="action_account_cheque" model="ir.actions.act_window">
+        <field name="name">Chèques</field>
+        <field name="res_model">account.cheque</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Enregistrez votre premier chèque
+            </p>
+            <p>
+                Gérez les chèques reçus et émis, suivez leur état
+                et imprimez-les directement depuis Odoo.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_account_cheque_received" model="ir.actions.act_window">
+        <field name="name">Chèques reçus</field>
+        <field name="res_model">account.cheque</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('cheque_type', '=', 'received')]</field>
+        <field name="context">{'default_cheque_type': 'received'}</field>
+    </record>
+
+    <record id="action_account_cheque_issued" model="ir.actions.act_window">
+        <field name="name">Chèques émis</field>
+        <field name="res_model">account.cheque</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('cheque_type', '=', 'issued')]</field>
+        <field name="context">{'default_cheque_type': 'issued'}</field>
+    </record>
+</odoo>

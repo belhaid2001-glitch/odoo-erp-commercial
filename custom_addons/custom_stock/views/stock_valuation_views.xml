@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Valorisation d'inventaire - Vues -->
+    <record id="view_stock_valuation_report_tree" model="ir.ui.view">
+        <field name="name">stock.valuation.report.tree</field>
+        <field name="model">stock.valuation.report</field>
+        <field name="arch" type="xml">
+            <tree string="Valorisation d'inventaire" create="false" edit="false">
+                <field name="product_id"/>
+                <field name="product_categ_id"/>
+                <field name="location_id"/>
+                <field name="quantity"/>
+                <field name="uom_id"/>
+                <field name="unit_cost"/>
+                <field name="total_value" sum="Valeur totale"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_stock_valuation_report_pivot" model="ir.ui.view">
+        <field name="name">stock.valuation.report.pivot</field>
+        <field name="model">stock.valuation.report</field>
+        <field name="arch" type="xml">
+            <pivot string="Valorisation d'inventaire">
+                <field name="product_categ_id" type="row"/>
+                <field name="location_id" type="col"/>
+                <field name="total_value" type="measure"/>
+                <field name="quantity" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_stock_valuation_report_graph" model="ir.ui.view">
+        <field name="name">stock.valuation.report.graph</field>
+        <field name="model">stock.valuation.report</field>
+        <field name="arch" type="xml">
+            <graph string="Valorisation d'inventaire" type="bar">
+                <field name="product_categ_id"/>
+                <field name="total_value" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="action_stock_valuation_report" model="ir.actions.act_window">
+        <field name="name">Valorisation d'inventaire</field>
+        <field name="res_model">stock.valuation.report</field>
+        <field name="view_mode">tree,pivot,graph</field>
+    </record>
+</odoo>

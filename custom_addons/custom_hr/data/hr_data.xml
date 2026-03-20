@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Séquence évaluations -->
+        <record id="seq_hr_evaluation" model="ir.sequence">
+            <field name="name">Évaluation employé</field>
+            <field name="code">hr.evaluation</field>
+            <field name="prefix">EVAL/%(year)s/</field>
+            <field name="padding">4</field>
+        </record>
+    </data>
+</odoo>

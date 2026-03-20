@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vue étiquettes analytiques -->
+    <record id="view_account_analytic_tag_custom_tree" model="ir.ui.view">
+        <field name="name">account.analytic.tag.custom.tree</field>
+        <field name="model">account.analytic.tag.custom</field>
+        <field name="arch" type="xml">
+            <tree string="Étiquettes analytiques" editable="bottom">
+                <field name="name"/>
+                <field name="color" widget="color_picker"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_account_analytic_tag_custom" model="ir.actions.act_window">
+        <field name="name">Étiquettes analytiques</field>
+        <field name="res_model">account.analytic.tag.custom</field>
+        <field name="view_mode">tree</field>
+    </record>
+</odoo>

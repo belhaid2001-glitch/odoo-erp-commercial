@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tableau de bord achats -->
+    <record id="action_purchase_dashboard" model="ir.actions.act_window">
+        <field name="name">Tableau de bord Achats</field>
+        <field name="res_model">purchase.order</field>
+        <field name="view_mode">pivot,graph,tree</field>
+        <field name="domain">[('state', 'in', ['purchase', 'done'])]</field>
+    </record>
+
+    <!-- Filtres personnalisés -->
+    <record id="view_purchase_order_search_custom" model="ir.ui.view">
+        <field name="name">purchase.order.search.custom</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.view_purchase_order_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <filter name="high_priority" string="Haute priorité"
+                        domain="[('priority', 'in', ['3', '4'])]"/>
+                <filter name="with_convention" string="Avec convention"
+                        domain="[('convention_id', '!=', False)]"/>
+                <filter name="quality_check" string="Contrôle qualité"
+                        domain="[('quality_check', '=', True)]"/>
+                <separator/>
+                <group expand="0" string="Regrouper par">
+                    <filter name="group_purchase_type" string="Type d'achat"
+                            context="{'group_by': 'purchase_type'}"/>
+                    <filter name="group_convention" string="Convention"
+                            context="{'group_by': 'convention_id'}"/>
+                    <filter name="group_reception" string="Statut réception"
+                            context="{'group_by': 'reception_status'}"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

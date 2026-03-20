@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Menu qualité -->
+    <menuitem id="menu_stock_quality"
+              name="Qualité"
+              parent="stock.menu_stock_root"
+              sequence="8"/>
+
+    <menuitem id="menu_stock_quality_checks"
+              name="Contrôles qualité"
+              parent="menu_stock_quality"
+              action="action_stock_quality_check"
+              sequence="10"/>
+
+    <menuitem id="menu_stock_quality_teams"
+              name="Équipes qualité"
+              parent="menu_stock_quality"
+              action="action_stock_quality_team"
+              sequence="20"/>
+
+    <!-- Menu valorisation -->
+    <menuitem id="menu_stock_valuation_custom"
+              name="Valorisation d'inventaire"
+              parent="stock.menu_stock_report"
+              action="action_stock_valuation_report"
+              sequence="50"/>
+</odoo>

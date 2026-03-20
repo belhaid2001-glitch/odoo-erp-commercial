@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vue formulaire contrôle qualité -->
+    <record id="view_stock_quality_check_form" model="ir.ui.view">
+        <field name="name">stock.quality.check.form</field>
+        <field name="model">stock.quality.check</field>
+        <field name="arch" type="xml">
+            <form string="Contrôle qualité">
+                <header>
+                    <button name="action_pass" string="Valider"
+                            type="object" class="btn-success"
+                            invisible="result != 'pending'"/>
+                    <button name="action_fail" string="Échouer"
+                            type="object" class="btn-danger"
+                            invisible="result != 'pending'"/>
+                    <button name="action_reset" string="Réinitialiser"
+                            type="object"
+                            invisible="result == 'pending'"/>
+                    <field name="result" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="picking_id"/>
+                            <field name="product_id"/>
+                            <field name="lot_id"/>
+                            <field name="check_type"/>
+                        </group>
+                        <group>
+                            <field name="quantity"/>
+                            <field name="quantity_checked"/>
+                            <field name="quantity_failed"/>
+                            <field name="inspector_id"/>
+                            <field name="check_date"/>
+                            <field name="team_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Observations">
+                            <field name="notes"
+                                   placeholder="Détails du contrôle qualité..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue liste contrôle qualité -->
+    <record id="view_stock_quality_check_tree" model="ir.ui.view">
+        <field name="name">stock.quality.check.tree</field>
+        <field name="model">stock.quality.check</field>
+        <field name="arch" type="xml">
+            <tree string="Contrôles qualité"
+                  decoration-success="result == 'pass'"
+                  decoration-danger="result == 'fail'"
+                  decoration-warning="result == 'pending'">
+                <field name="name"/>
+                <field name="picking_id"/>
+                <field name="product_id"/>
+                <field name="lot_id" optional="show"/>
+                <field name="check_type"/>
+                <field name="quantity"/>
+                <field name="quantity_checked"/>
+                <field name="quantity_failed"/>
+                <field name="inspector_id"/>
+                <field name="check_date"/>
+                <field name="result" widget="badge"
+                       decoration-success="result == 'pass'"
+                       decoration-danger="result == 'fail'"
+                       decoration-warning="result == 'pending'"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Action contrôle qualité -->
+    <record id="action_stock_quality_check" model="ir.actions.act_window">
+        <field name="name">Contrôles qualité</field>
+        <field name="res_model">stock.quality.check</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aucun contrôle qualité
+            </p>
+            <p>
+                Les contrôles qualité sont créés automatiquement
+                lors de la préparation des transferts.
+            </p>
+        </field>
+    </record>
+
+    <!-- Vue formulaire équipe qualité -->
+    <record id="view_stock_quality_team_form" model="ir.ui.view">
+        <field name="name">stock.quality.team.form</field>
+        <field name="model">stock.quality.team</field>
+        <field name="arch" type="xml">
+            <form string="Équipe qualité">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="leader_id"/>
+                        <field name="active"/>
+                    </group>
+                    <group string="Membres">
+                        <field name="member_ids" widget="many2many_tags"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue liste équipe qualité -->
+    <record id="view_stock_quality_team_tree" model="ir.ui.view">
+        <field name="name">stock.quality.team.tree</field>
+        <field name="model">stock.quality.team</field>
+        <field name="arch" type="xml">
+            <tree string="Équipes qualité">
+                <field name="name"/>
+                <field name="leader_id"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Action équipe qualité -->
+    <record id="action_stock_quality_team" model="ir.actions.act_window">
+        <field name="name">Équipes qualité</field>
+        <field name="res_model">stock.quality.team</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>

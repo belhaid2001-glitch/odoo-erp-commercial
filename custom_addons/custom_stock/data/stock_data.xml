@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Séquence contrôle qualité -->
+        <record id="seq_stock_quality_check" model="ir.sequence">
+            <field name="name">Contrôle qualité stock</field>
+            <field name="code">stock.quality.check</field>
+            <field name="prefix">QC/%(year)s/</field>
+            <field name="padding">4</field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vue formulaire des prévisions -->
+    <record id="view_sale_forecast_form" model="ir.ui.view">
+        <field name="name">sale.forecast.form</field>
+        <field name="model">sale.forecast</field>
+        <field name="arch" type="xml">
+            <form string="Prévision de vente">
+                <header>
+                    <button name="action_confirm" string="Confirmer"
+                            type="object" class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_done" string="Terminer"
+                            type="object" class="btn-success"
+                            invisible="state != 'confirmed'"/>
+                    <button name="action_cancel" string="Annuler"
+                            type="object"
+                            invisible="state in ('done', 'cancelled')"/>
+                    <button name="action_reset_draft" string="Remettre en brouillon"
+                            type="object"
+                            invisible="state not in ('cancelled',)"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,confirmed,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="date_forecast"/>
+                            <field name="date_target"/>
+                            <field name="user_id"/>
+                            <field name="team_id"/>
+                        </group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="product_id"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="forecast_amount"/>
+                            <field name="actual_amount"/>
+                            <field name="achievement_rate" widget="progressbar"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Notes">
+                            <field name="notes" placeholder="Ajoutez des notes..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue liste des prévisions -->
+    <record id="view_sale_forecast_tree" model="ir.ui.view">
+        <field name="name">sale.forecast.tree</field>
+        <field name="model">sale.forecast</field>
+        <field name="arch" type="xml">
+            <tree string="Prévisions de vente"
+                  decoration-success="achievement_rate >= 100"
+                  decoration-warning="achievement_rate >= 50 and achievement_rate &lt; 100"
+                  decoration-danger="achievement_rate &lt; 50">
+                <field name="name"/>
+                <field name="date_forecast"/>
+                <field name="date_target"/>
+                <field name="user_id"/>
+                <field name="partner_id" optional="show"/>
+                <field name="product_id" optional="show"/>
+                <field name="forecast_amount" sum="Total prévu"/>
+                <field name="actual_amount" sum="Total réalisé"/>
+                <field name="achievement_rate" widget="progressbar"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-success="state == 'done'"
+                       decoration-warning="state == 'confirmed'"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vue pivot -->
+    <record id="view_sale_forecast_pivot" model="ir.ui.view">
+        <field name="name">sale.forecast.pivot</field>
+        <field name="model">sale.forecast</field>
+        <field name="arch" type="xml">
+            <pivot string="Prévisions de vente">
+                <field name="user_id" type="row"/>
+                <field name="date_target" type="col" interval="month"/>
+                <field name="forecast_amount" type="measure"/>
+                <field name="actual_amount" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Vue graphique -->
+    <record id="view_sale_forecast_graph" model="ir.ui.view">
+        <field name="name">sale.forecast.graph</field>
+        <field name="model">sale.forecast</field>
+        <field name="arch" type="xml">
+            <graph string="Prévisions de vente" type="bar">
+                <field name="date_target" interval="month"/>
+                <field name="forecast_amount" type="measure"/>
+                <field name="actual_amount" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_sale_forecast" model="ir.actions.act_window">
+        <field name="name">Prévisions de vente</field>
+        <field name="res_model">sale.forecast</field>
+        <field name="view_mode">tree,form,pivot,graph</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créez votre première prévision de vente
+            </p>
+            <p>
+                Les prévisions vous permettent de planifier vos objectifs commerciaux
+                et de suivre leur réalisation en temps réel.
+            </p>
+        </field>
+    </record>
+</odoo>

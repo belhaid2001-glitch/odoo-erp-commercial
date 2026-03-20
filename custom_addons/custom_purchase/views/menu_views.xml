@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_purchase_convention"
+              name="Conventions"
+              parent="purchase.menu_purchase_root"
+              sequence="3"/>
+
+    <menuitem id="menu_purchase_convention_list"
+              name="Conventions d'achat"
+              parent="menu_purchase_convention"
+              action="action_purchase_convention"
+              sequence="10"/>
+
+    <menuitem id="menu_purchase_dashboard_custom"
+              name="Tableau de bord"
+              parent="purchase.menu_purchase_root"
+              action="action_purchase_dashboard"
+              sequence="0"/>
+</odoo>

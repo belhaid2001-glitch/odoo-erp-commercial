@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Extension vue formulaire employé -->
+    <record id="view_hr_employee_form_custom" model="ir.ui.view">
+        <field name="name">hr.employee.form.custom</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@class='oe_button_box']" position="inside">
+                <button name="action_view_evaluations"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-star">
+                    <field name="evaluation_count" widget="statinfo"
+                           string="Évaluations"/>
+                </button>
+            </xpath>
+
+            <xpath expr="//notebook" position="inside">
+                <page string="Informations RH" name="hr_custom_info">
+                    <group>
+                        <group string="Contrat">
+                            <field name="employee_type_custom"/>
+                            <field name="hire_date"/>
+                            <field name="end_date"/>
+                            <field name="seniority_years"/>
+                        </group>
+                        <group string="Identité">
+                            <field name="cin"/>
+                            <field name="cnss_number"/>
+                            <field name="blood_type"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Contact d'urgence">
+                            <field name="emergency_contact_name"/>
+                            <field name="emergency_contact_phone"/>
+                            <field name="emergency_contact_relation"/>
+                        </group>
+                        <group string="Performance">
+                            <field name="last_evaluation_date"/>
+                            <field name="last_evaluation_score"/>
+                        </group>
+                    </group>
+                </page>
+                <page string="Compétences &amp; Formation" name="skills_training">
+                    <group>
+                        <field name="skills_description"
+                               placeholder="Listez les compétences de l'employé..."/>
+                    </group>
+                    <group>
+                        <field name="training_notes"
+                               placeholder="Notes de formation et certifications..."/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Extension vue liste employé -->
+    <record id="view_hr_employee_tree_custom" model="ir.ui.view">
+        <field name="name">hr.employee.tree.custom</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='department_id']" position="after">
+                <field name="employee_type_custom" optional="show"/>
+                <field name="hire_date" optional="show"/>
+                <field name="seniority_years" optional="show"/>
+                <field name="last_evaluation_score" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

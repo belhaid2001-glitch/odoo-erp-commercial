@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Filtres de recherche personnalisés -->
+    <record id="view_hr_employee_search_custom" model="ir.ui.view">
+        <field name="name">hr.employee.search.custom</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <filter name="cdi" string="CDI"
+                        domain="[('employee_type_custom', '=', 'permanent')]"/>
+                <filter name="cdd" string="CDD"
+                        domain="[('employee_type_custom', '=', 'temporary')]"/>
+                <filter name="intern" string="Stagiaire"
+                        domain="[('employee_type_custom', '=', 'intern')]"/>
+                <separator/>
+                <group expand="0" string="Regrouper par">
+                    <filter name="group_contract_type" string="Type de contrat"
+                            context="{'group_by': 'employee_type_custom'}"/>
+                    <filter name="group_hire_date" string="Date d'embauche"
+                            context="{'group_by': 'hire_date:month'}"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Filtres évaluations -->
+    <record id="view_hr_evaluation_search" model="ir.ui.view">
+        <field name="name">hr.evaluation.search</field>
+        <field name="model">hr.evaluation</field>
+        <field name="arch" type="xml">
+            <search string="Recherche évaluations">
+                <field name="employee_id"/>
+                <field name="department_id"/>
+                <field name="evaluator_id"/>
+                <filter name="draft" string="Brouillon"
+                        domain="[('state', '=', 'draft')]"/>
+                <filter name="in_progress" string="En cours"
+                        domain="[('state', '=', 'in_progress')]"/>
+                <filter name="done" string="Terminées"
+                        domain="[('state', '=', 'done')]"/>
+                <separator/>
+                <filter name="excellent" string="Excellents"
+                        domain="[('global_rating', '=', 'excellent')]"/>
+                <filter name="to_improve" string="À améliorer"
+                        domain="[('global_rating', 'in', ['insufficient', 'to_improve'])]"/>
+                <separator/>
+                <group expand="0" string="Regrouper par">
+                    <filter name="group_department" string="Département"
+                            context="{'group_by': 'department_id'}"/>
+                    <filter name="group_type" string="Type"
+                            context="{'group_by': 'evaluation_type'}"/>
+                    <filter name="group_rating" string="Appréciation"
+                            context="{'group_by': 'global_rating'}"/>
+                    <filter name="group_date" string="Date"
+                            context="{'group_by': 'date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+</odoo>

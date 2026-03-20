@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Menu Chèques -->
+    <menuitem id="menu_account_cheque_root"
+              name="Chèques"
+              parent="account.menu_finance"
+              sequence="6"/>
+
+    <menuitem id="menu_account_cheque_received"
+              name="Chèques reçus"
+              parent="menu_account_cheque_root"
+              action="action_account_cheque_received"
+              sequence="10"/>
+
+    <menuitem id="menu_account_cheque_issued"
+              name="Chèques émis"
+              parent="menu_account_cheque_root"
+              action="action_account_cheque_issued"
+              sequence="20"/>
+
+    <menuitem id="menu_account_cheque_all"
+              name="Tous les chèques"
+              parent="menu_account_cheque_root"
+              action="action_account_cheque"
+              sequence="30"/>
+
+    <!-- Menu Analytique -->
+    <menuitem id="menu_account_analytic_tags_custom"
+              name="Étiquettes analytiques"
+              parent="account.account_analytic_menu"
+              action="action_account_analytic_tag_custom"
+              sequence="50"/>
+</odoo>

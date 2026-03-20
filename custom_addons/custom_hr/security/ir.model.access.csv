@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_evaluation_officer,hr.evaluation.officer,model_hr_evaluation,hr.group_hr_user,1,1,1,0
+access_hr_evaluation_manager,hr.evaluation.manager,model_hr_evaluation,hr.group_hr_manager,1,1,1,1
+access_hr_evaluation_goal_officer,hr.evaluation.goal.officer,model_hr_evaluation_goal,hr.group_hr_user,1,1,1,0
+access_hr_evaluation_goal_manager,hr.evaluation.goal.manager,model_hr_evaluation_goal,hr.group_hr_manager,1,1,1,1

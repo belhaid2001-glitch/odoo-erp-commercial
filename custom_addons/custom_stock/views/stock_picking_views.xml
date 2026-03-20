@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Extension vue formulaire picking -->
+    <record id="view_stock_picking_form_custom" model="ir.ui.view">
+        <field name="name">stock.picking.form.custom</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_start_preparation"
+                        string="Commencer préparation"
+                        type="object" class="btn-primary"
+                        invisible="preparation_status != 'not_started'"/>
+                <button name="action_mark_ready"
+                        string="Prêt"
+                        type="object" class="btn-success"
+                        invisible="preparation_status != 'in_progress'"/>
+                <button name="action_mark_shipped"
+                        string="Expédié"
+                        type="object"
+                        invisible="preparation_status != 'ready'"/>
+                <button name="action_create_quality_checks"
+                        string="Créer contrôles qualité"
+                        type="object"
+                        invisible="quality_check_required"/>
+            </xpath>
+
+            <xpath expr="//field[@name='origin']" position="after">
+                <field name="priority_custom" widget="priority"/>
+                <field name="preparation_status" widget="badge"
+                       decoration-info="preparation_status == 'not_started'"
+                       decoration-warning="preparation_status == 'in_progress'"
+                       decoration-success="preparation_status in ('ready', 'shipped')"/>
+                <field name="carrier_tracking"/>
+            </xpath>
+
+            <xpath expr="//notebook" position="inside">
+                <page string="Préparation" name="preparation">
+                    <group>
+                        <group>
+                            <field name="barcode_scanned"/>
+                            <field name="package_count"/>
+                            <field name="weight_total"/>
+                        </group>
+                        <group>
+                            <field name="quality_check_required"/>
+                            <field name="quality_status" widget="badge"
+                                   decoration-success="quality_status == 'passed'"
+                                   decoration-danger="quality_status == 'failed'"
+                                   decoration-warning="quality_status == 'pending'"/>
+                        </group>
+                    </group>
+                    <field name="preparation_notes"
+                           placeholder="Notes de préparation..."/>
+                    <field name="delivery_instructions"
+                           placeholder="Instructions de livraison..."/>
+                </page>
+                <page string="Contrôles qualité" name="quality_checks"
+                      invisible="not quality_check_required">
+                    <field name="quality_check_ids">
+                        <tree editable="bottom">
+                            <field name="name"/>
+                            <field name="product_id"/>
+                            <field name="lot_id"/>
+                            <field name="quantity"/>
+                            <field name="quantity_checked"/>
+                            <field name="quantity_failed"/>
+                            <field name="check_type"/>
+                            <field name="inspector_id"/>
+                            <field name="result" widget="badge"
+                                   decoration-success="result == 'pass'"
+                                   decoration-danger="result == 'fail'"
+                                   decoration-warning="result == 'pending'"/>
+                            <button name="action_pass" string="✓"
+                                    type="object" icon="fa-check"
+                                    invisible="result != 'pending'"/>
+                            <button name="action_fail" string="✗"
+                                    type="object" icon="fa-times"
+                                    invisible="result != 'pending'"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Extension vue liste picking -->
+    <record id="view_stock_picking_tree_custom" model="ir.ui.view">
+        <field name="name">stock.picking.tree.custom</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.vpicktree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="priority_custom" widget="priority"/>
+                <field name="preparation_status" optional="show" widget="badge"
+                       decoration-info="preparation_status == 'not_started'"
+                       decoration-warning="preparation_status == 'in_progress'"
+                       decoration-success="preparation_status in ('ready', 'shipped')"/>
+            </xpath>
+            <xpath expr="//field[@name='state']" position="after">
+                <field name="quality_status" optional="show" widget="badge"
+                       decoration-success="quality_status == 'passed'"
+                       decoration-danger="quality_status == 'failed'"/>
+                <field name="carrier_tracking" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

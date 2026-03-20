@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Menu Évaluations -->
+    <menuitem id="menu_hr_evaluation_root"
+              name="Évaluations"
+              parent="hr.menu_hr_root"
+              sequence="8"/>
+
+    <menuitem id="menu_hr_evaluation_list"
+              name="Évaluations"
+              parent="menu_hr_evaluation_root"
+              action="action_hr_evaluation"
+              sequence="10"/>
+</odoo>

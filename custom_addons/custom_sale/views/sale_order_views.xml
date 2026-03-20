@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Extension de la vue formulaire de la commande de vente -->
+    <record id="view_sale_order_form_custom" model="ir.ui.view">
+        <field name="name">sale.order.form.custom</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <!-- Ajout du champ priorité dans le header -->
+            <xpath expr="//field[@name='partner_id']" position="before">
+                <field name="priority" widget="priority"/>
+            </xpath>
+
+            <!-- Ajout des champs personnalisés -->
+            <xpath expr="//field[@name='payment_term_id']" position="after">
+                <field name="customer_reference"/>
+                <field name="sale_type"/>
+                <field name="approval_status" readonly="1"
+                       statusbar_visible="draft,pending,approved"/>
+            </xpath>
+
+            <!-- Boutons d'approbation -->
+            <xpath expr="//header" position="inside">
+                <button name="action_request_approval"
+                        string="Demander approbation"
+                        type="object"
+                        class="btn-primary"
+                        invisible="approval_status != 'draft' or state != 'draft'"/>
+                <button name="action_approve_order"
+                        string="Approuver"
+                        type="object"
+                        class="btn-success"
+                        invisible="approval_status != 'pending'"
+                        groups="sales_team.group_sale_manager"/>
+                <button name="action_reject_order"
+                        string="Rejeter"
+                        type="object"
+                        class="btn-danger"
+                        invisible="approval_status != 'pending'"
+                        groups="sales_team.group_sale_manager"/>
+            </xpath>
+
+            <!-- Onglet produits optionnels -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Produits optionnels" name="optional_products">
+                    <field name="optional_product_ids">
+                        <tree editable="bottom">
+                            <field name="product_id"/>
+                            <field name="description"/>
+                            <field name="quantity"/>
+                            <field name="price_unit"/>
+                            <field name="is_selected"/>
+                            <button name="action_add_to_order"
+                                    string="Ajouter"
+                                    type="object"
+                                    icon="fa-plus"
+                                    invisible="is_selected == True"/>
+                        </tree>
+                    </field>
+                </page>
+                <page string="Informations complémentaires" name="extra_info_custom">
+                    <group>
+                        <group string="Livraison">
+                            <field name="delivery_note"/>
+                        </group>
+                        <group string="Indicateurs">
+                            <field name="margin_percent"/>
+                            <field name="total_discount"/>
+                            <field name="is_ready_to_invoice"/>
+                        </group>
+                    </group>
+                    <group string="Approbation" invisible="approval_status == 'draft'">
+                        <field name="approved_by"/>
+                        <field name="approval_date"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Extension de la vue liste -->
+    <record id="view_sale_order_tree_custom" model="ir.ui.view">
+        <field name="name">sale.order.tree.custom</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_quotation_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="priority" widget="priority"/>
+                <field name="customer_reference" optional="show"/>
+                <field name="sale_type" optional="show"/>
+            </xpath>
+            <xpath expr="//field[@name='state']" position="after">
+                <field name="approval_status" optional="show"
+                       widget="badge"
+                       decoration-info="approval_status == 'pending'"
+                       decoration-success="approval_status == 'approved'"
+                       decoration-danger="approval_status == 'rejected'"/>
+                <field name="margin_percent" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

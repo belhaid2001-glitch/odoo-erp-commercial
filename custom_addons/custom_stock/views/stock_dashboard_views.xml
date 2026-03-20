@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Dashboard Stock -->
+    <record id="view_stock_picking_search_custom" model="ir.ui.view">
+        <field name="name">stock.picking.search.custom</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_internal_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <filter name="high_priority_custom" string="Haute priorité"
+                        domain="[('priority_custom', 'in', ['3', '4'])]"/>
+                <filter name="quality_pending" string="Qualité en attente"
+                        domain="[('quality_status', '=', 'pending')]"/>
+                <filter name="quality_failed" string="Qualité échouée"
+                        domain="[('quality_status', '=', 'failed')]"/>
+                <filter name="preparation_in_progress" string="En préparation"
+                        domain="[('preparation_status', '=', 'in_progress')]"/>
+                <separator/>
+                <group expand="0" string="Regrouper par">
+                    <filter name="group_preparation" string="Statut préparation"
+                            context="{'group_by': 'preparation_status'}"/>
+                    <filter name="group_quality" string="Statut qualité"
+                            context="{'group_by': 'quality_status'}"/>
+                    <filter name="group_priority_custom" string="Priorité"
+                            context="{'group_by': 'priority_custom'}"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>
