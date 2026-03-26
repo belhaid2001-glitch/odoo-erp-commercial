@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ==================== FILTRER APPS : afficher seulement nos modules ==================== -->
+    <record id="base.open_module_tree" model="ir.actions.act_window">
+        <field name="name">Apps</field>
+        <field name="res_model">ir.module.module</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="domain">[('author', 'ilike', 'ERP Commercial')]</field>
+        <field name="context">{'search_default_app': 0}</field>
+    </record>
+
+    <!-- ==================== OWL CLIENT ACTION (Power BI Dashboard) ==================== -->
+    <record id="action_dashboard_main_owl" model="ir.actions.client">
+        <field name="name">Tableau de Bord</field>
+        <field name="tag">custom_dashboard_main</field>
+    </record>
+
+    <!-- ==================== DASHBOARD PRINCIPAL (QWeb Client Action) ==================== -->
+
+    <!-- Template QWeb du tableau de bord -->
+    <record id="view_dashboard_main" model="ir.ui.view">
+        <field name="name">dashboard.main.qweb</field>
+        <field name="model">dashboard.kpi</field>
+        <field name="type">qweb</field>
+        <field name="arch" type="xml">
+            <div class="container-fluid o_dashboard_main p-3">
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h2 class="text-center">
+                            <i class="fa fa-dashboard"/> Tableau de Bord - ERP Commercial
+                        </h2>
+                    </div>
+                </div>
+            </div>
+        </field>
+    </record>
+
+    <!-- KPI Tree View -->
+    <record id="view_dashboard_kpi_tree" model="ir.ui.view">
+        <field name="name">dashboard.kpi.tree</field>
+        <field name="model">dashboard.kpi</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="category"/>
+                <field name="icon"/>
+                <field name="description"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- KPI Form View -->
+    <record id="view_dashboard_kpi_form" model="ir.ui.view">
+        <field name="name">dashboard.kpi.form</field>
+        <field name="model">dashboard.kpi</field>
+        <field name="arch" type="xml">
+            <form string="KPI">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="category"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group>
+                            <field name="icon"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <field name="description"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ==================== RACCOURCIS RAPPORTS ==================== -->
+
+    <!-- Action: Rapports de vente -->
+    <record id="action_dashboard_sale_report" model="ir.actions.act_window">
+        <field name="name">Analyse des Ventes</field>
+        <field name="res_model">sale.report</field>
+        <field name="view_mode">pivot,graph</field>
+    </record>
+
+    <!-- Action: Rapports d'achat -->
+    <record id="action_dashboard_purchase_report" model="ir.actions.act_window">
+        <field name="name">Analyse des Achats</field>
+        <field name="res_model">purchase.report</field>
+        <field name="view_mode">pivot,graph</field>
+    </record>
+
+    <!-- Action: Factures clients impayées -->
+    <record id="action_dashboard_unpaid_invoices" model="ir.actions.act_window">
+        <field name="name">Factures Clients Impayées</field>
+        <field name="res_model">account.move</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('move_type', '=', 'out_invoice'), ('payment_state', 'in', ['not_paid', 'partial']), ('state', '=', 'posted')]</field>
+    </record>
+
+    <!-- Action: Factures fournisseurs impayées -->
+    <record id="action_dashboard_unpaid_bills" model="ir.actions.act_window">
+        <field name="name">Factures Fournisseurs Impayées</field>
+        <field name="res_model">account.move</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('move_type', '=', 'in_invoice'), ('payment_state', 'in', ['not_paid', 'partial']), ('state', '=', 'posted')]</field>
+    </record>
+
+    <!-- Action: Devis en cours -->
+    <record id="action_dashboard_quotations" model="ir.actions.act_window">
+        <field name="name">Devis en Cours</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('state', '=', 'draft')]</field>
+    </record>
+
+    <!-- Action: Commandes à facturer -->
+    <record id="action_dashboard_to_invoice" model="ir.actions.act_window">
+        <field name="name">Commandes à Facturer</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('invoice_status', '=', 'to invoice')]</field>
+    </record>
+
+    <!-- Action: Livraisons en attente -->
+    <record id="action_dashboard_deliveries_pending" model="ir.actions.act_window">
+        <field name="name">Livraisons en Attente</field>
+        <field name="res_model">stock.picking</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('picking_type_code', '=', 'outgoing'), ('state', 'in', ['assigned', 'confirmed'])]</field>
+    </record>
+
+    <!-- Action: Réceptions en attente -->
+    <record id="action_dashboard_receipts_pending" model="ir.actions.act_window">
+        <field name="name">Réceptions en Attente</field>
+        <field name="res_model">stock.picking</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('picking_type_code', '=', 'incoming'), ('state', 'in', ['assigned', 'confirmed'])]</field>
+    </record>
+
+    <!-- Action: Pipeline CRM -->
+    <record id="action_dashboard_crm_pipeline" model="ir.actions.act_window">
+        <field name="name">Pipeline CRM</field>
+        <field name="res_model">crm.lead</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="domain">[('type', '=', 'opportunity')]</field>
+    </record>
+
+    <!-- Action: Opérations en retard -->
+    <record id="action_dashboard_late_pickings" model="ir.actions.act_window">
+        <field name="name">Opérations en Retard</field>
+        <field name="res_model">stock.picking</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('state', 'in', ['assigned', 'confirmed']), ('scheduled_date', '&lt;', context_today().strftime('%%Y-%%m-%%d'))]</field>
+    </record>
+
+    <!-- Action: Employés -->
+    <record id="action_dashboard_employees" model="ir.actions.act_window">
+        <field name="name">Employés</field>
+        <field name="res_model">hr.employee</field>
+        <field name="view_mode">kanban,tree,form</field>
+    </record>
+
+</odoo>

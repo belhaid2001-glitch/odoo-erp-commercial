@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================
+         AI BUTTONS INJECTED INTO EACH MODULE'S FORM VIEW
+         These views inherit from base Odoo views, so they work
+         regardless of whether custom_* modules are installed.
+         ============================================================ -->
+
+    <!-- ==================== SALE ORDER - AI BUTTON ==================== -->
+    <record id="view_sale_order_form_ai" model="ir.ui.view">
+        <field name="name">sale.order.form.ai</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_open_ai_wizard" string="🤖 Assistant IA"
+                        type="object" class="btn-info"
+                        help="Obtenez des suggestions IA : prix, descriptions, relances, analyses"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ==================== CRM LEAD - AI BUTTON ==================== -->
+    <record id="view_crm_lead_form_ai" model="ir.ui.view">
+        <field name="name">crm.lead.form.ai</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_open_ai_wizard" string="🤖 Assistant IA"
+                        type="object" class="btn-info"
+                        help="Scoring IA, prochaine action recommandée, analyse du lead"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ==================== PURCHASE ORDER - AI BUTTON ==================== -->
+    <record id="view_purchase_order_form_ai" model="ir.ui.view">
+        <field name="name">purchase.order.form.ai</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_open_ai_wizard" string="🤖 Assistant IA"
+                        type="object" class="btn-info"
+                        help="Suggestions IA : négociation fournisseur, comparaison, optimisation"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ==================== ACCOUNT MOVE (INVOICE) - AI BUTTON ==================== -->
+    <record id="view_account_move_form_ai" model="ir.ui.view">
+        <field name="name">account.move.form.ai</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_open_ai_wizard" string="🤖 Assistant IA"
+                        type="object" class="btn-info"
+                        help="Prédiction de paiement, génération de relance, analyse risque"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ==================== STOCK PICKING - AI BUTTON ==================== -->
+    <record id="view_stock_picking_form_ai" model="ir.ui.view">
+        <field name="name">stock.picking.form.ai</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_open_ai_wizard" string="🤖 Assistant IA"
+                        type="object" class="btn-info"
+                        help="Analyse stock, prévisions, suggestions de réapprovisionnement"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ==================== HR EMPLOYEE - AI BUTTON ==================== -->
+    <record id="view_hr_employee_form_ai" model="ir.ui.view">
+        <field name="name">hr.employee.form.ai</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('oe_button_box')]" position="inside">
+                <button name="action_open_ai_wizard" string="🤖 IA"
+                        type="object" class="oe_stat_button"
+                        icon="fa-magic"
+                        help="Suggestions de formation, analyse de compétences"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ==================== RES.PARTNER (CONTACTS) - AI BUTTON ==================== -->
+    <record id="view_partner_form_ai" model="ir.ui.view">
+        <field name="name">res.partner.form.ai</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <div name="button_box" position="inside">
+                <button name="action_open_ai_wizard" string="🤖 IA"
+                        type="object" class="oe_stat_button"
+                        icon="fa-magic"
+                        help="Analyse du contact, détection doublons, enrichissement"/>
+            </div>
+        </field>
+    </record>
+
+</odoo>

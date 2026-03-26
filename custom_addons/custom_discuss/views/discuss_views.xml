@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vue formulaire modèle de message -->
+    <record id="view_mail_template_custom_form" model="ir.ui.view">
+        <field name="name">mail.template.custom.form</field>
+        <field name="model">mail.template.custom</field>
+        <field name="arch" type="xml">
+            <form string="Modèle de message">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Ex: Bienvenue nouveau client"/></h1>
+                    </div>
+                    <group>
+                        <group string="&#128196; Classification">
+                            <field name="category" widget="badge"
+                                   help="Catégorie du modèle (commercial, support, interne, etc.)"/>
+                            <field name="sequence"
+                                   help="Ordre d'affichage dans la liste"/>
+                            <field name="is_internal" widget="boolean_toggle"
+                                   help="Si activé, ce modèle n'est utilisable que pour les messages internes"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                        <group string="&#128231; Contenu">
+                            <field name="subject" placeholder="Objet du message à envoyer..."
+                                   help="Sujet qui apparait dans l'objet de l'email"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="&#128221; Corps du message">
+                            <field name="body"
+                                   placeholder="Rédigez le contenu du modèle. Vous pouvez utiliser des variables comme {partner_name}..."
+                                   help="Contenu HTML du message"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue liste modèles -->
+    <record id="view_mail_template_custom_tree" model="ir.ui.view">
+        <field name="name">mail.template.custom.tree</field>
+        <field name="model">mail.template.custom</field>
+        <field name="arch" type="xml">
+            <tree string="Modèles de message">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="category" widget="badge"/>
+                <field name="subject"/>
+                <field name="is_internal"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Action modèles -->
+    <record id="action_mail_template_custom" model="ir.actions.act_window">
+        <field name="name">Modèles de message</field>
+        <field name="res_model">mail.template.custom</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créez vos modèles de message
+            </p>
+            <p>
+                Les modèles vous permettent de réutiliser des messages courants
+                pour gagner du temps dans votre communication.
+            </p>
+        </field>
+    </record>
+</odoo>

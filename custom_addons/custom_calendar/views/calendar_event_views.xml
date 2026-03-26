@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Extension vue formulaire événement -->
+    <record id="view_calendar_event_form_custom" model="ir.ui.view">
+        <field name="name">calendar.event.form.custom</field>
+        <field name="model">calendar.event</field>
+        <field name="inherit_id" ref="calendar.view_calendar_event_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_ids']" position="before">
+                <field name="event_type_custom"
+                       help="Catégorie du rendez-vous (commercial, technique, RH, etc.)"/>
+                <field name="priority" widget="priority"/>
+                <field name="meeting_location_type"
+                       help="Rendez-vous en présentiel, à distance ou hybride"/>
+                <field name="linked_module"
+                       help="Module Odoo relié à ce rendez-vous"/>
+            </xpath>
+
+            <xpath expr="//field[@name='location']" position="after">
+                <field name="meeting_url" widget="url"
+                       placeholder="https://meet.google.com/... ou https://zoom.us/..."
+                       invisible="meeting_location_type != 'remote'"
+                       help="Lien de la visioconférence"/>
+            </xpath>
+
+            <xpath expr="//notebook" position="inside">
+                <page string="&#128203; Préparation" name="preparation">
+                    <group>
+                        <field name="preparation_notes"
+                               placeholder="Points à aborder, documents à préparer, questions clés..."
+                               help="Notes de préparation avant le rendez-vous"/>
+                    </group>
+                </page>
+                <page string="&#128221; Compte-rendu" name="minutes">
+                    <group>
+                        <group>
+                            <field name="result" widget="badge"
+                                   decoration-success="result == 'positive'"
+                                   decoration-danger="result == 'negative'"
+                                   decoration-warning="result == 'neutral'"
+                                   help="Résultat global du rendez-vous"/>
+                        </group>
+                    </group>
+                    <field name="meeting_minutes"
+                           placeholder="Résumé des discussions, décisions prises, actions à suivre..."
+                           help="Compte-rendu détaillé du rendez-vous"/>
+                </page>
+                <page string="&#128260; Suivi" name="follow_up">
+                    <group>
+                        <group>
+                            <field name="follow_up_required" widget="boolean_toggle"
+                                   help="Un suivi est-il nécessaire après ce rendez-vous ?"/>
+                            <field name="follow_up_date"
+                                   invisible="not follow_up_required"
+                                   help="Date prévue pour le suivi"/>
+                        </group>
+                    </group>
+                    <field name="follow_up_notes"
+                           invisible="not follow_up_required"
+                           placeholder="Actions de suivi : relancer le client, envoyer un document, planifier un nouveau RDV..."
+                           help="Notes pour le suivi post-rendez-vous"/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Extension vue liste -->
+    <record id="view_calendar_event_tree_custom" model="ir.ui.view">
+        <field name="name">calendar.event.tree.custom</field>
+        <field name="model">calendar.event</field>
+        <field name="inherit_id" ref="calendar.view_calendar_event_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="event_type_custom" optional="show"/>
+                <field name="priority" widget="priority" optional="show"/>
+                <field name="meeting_location_type" optional="show"/>
+                <field name="result" optional="show" widget="badge"
+                       decoration-success="result == 'positive'"
+                       decoration-danger="result == 'negative'"
+                       decoration-warning="result == 'neutral'"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================
+         RAPPORT PDF — Document / Fiche Document
+         Accessible via : Documents > Rapports
+    ============================================================ -->
+
+    <record id="action_report_document" model="ir.actions.report">
+        <field name="name">Fiche document</field>
+        <field name="model">document.document</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">custom_documents.report_document_card</field>
+        <field name="report_file">custom_documents.report_document_card</field>
+        <field name="binding_model_id" ref="model_document_document"/>
+        <field name="binding_type">report</field>
+        <field name="print_report_name">'Doc_%s' % object.name</field>
+    </record>
+
+    <!-- Action fenêtre pour sélection avant impression -->
+    <record id="action_window_report_document" model="ir.actions.act_window">
+        <field name="name">Sélectionner les documents à imprimer</field>
+        <field name="res_model">document.document</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Aucun document</p>
+            <p>Sélectionnez des documents puis cliquez sur <b>Imprimer &gt; Rapport document</b></p>
+        </field>
+    </record>
+
+    <template id="report_document_card">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div class="row mb-4">
+                            <div class="col-7">
+                                <h2 style="color: #F4A460;"><i class="fa fa-folder-open"/> Fiche Document</h2>
+                                <h3><span t-field="doc.name"/></h3>
+                            </div>
+                            <div class="col-5 text-end">
+                                <p><strong>État :</strong> <span t-field="doc.state"/></p>
+                                <p><strong>Type :</strong> <span t-field="doc.document_type"/></p>
+                                <p><strong>Version :</strong> <span t-field="doc.version"/></p>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3" style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                            <div class="col-6">
+                                <h5 style="color: #F4A460;">Informations</h5>
+                                <p t-if="doc.folder_id"><strong>Dossier :</strong> <span t-field="doc.folder_id"/></p>
+                                <p t-if="doc.responsible_id"><strong>Propriétaire :</strong> <span t-field="doc.responsible_id"/></p>
+                                <p t-if="doc.partner_id"><strong>Contact lié :</strong> <span t-field="doc.partner_id"/></p>
+                            </div>
+                            <div class="col-6">
+                                <h5 style="color: #F4A460;">Dates</h5>
+                                <p><strong>Créé le :</strong> <span t-field="doc.create_date" t-options='{"widget": "date"}'/></p>
+                                <p t-if="doc.expiration_date"><strong>Expiration :</strong> <span t-field="doc.expiration_date"/></p>
+                                <p t-if="doc.file_size"><strong>Taille :</strong> <span t-field="doc.file_size"/> octets</p>
+                            </div>
+                        </div>
+
+                        <t t-if="doc.tag_ids">
+                            <div class="mb-3">
+                                <strong>Tags :</strong>
+                                <t t-foreach="doc.tag_ids" t-as="tag">
+                                    <span class="badge" style="background: #6c757d; color: #fff; margin: 2px;">
+                                        <span t-field="tag.name"/>
+                                    </span>
+                                </t>
+                            </div>
+                        </t>
+
+                        <div t-if="doc.notes" class="mt-3">
+                            <h5>Notes</h5>
+                            <div t-field="doc.notes"/>
+                        </div>
+
+                        <div class="mt-4 text-center" style="font-size: 10px; color: #6c757d;">
+                            <p>Document généré automatiquement — ERP Commercial</p>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

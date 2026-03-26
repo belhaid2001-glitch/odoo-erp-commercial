@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ==================== MENU PRINCIPAL ==================== -->
+
+    <!-- Menu racine Tableaux de Bord -->
+    <menuitem id="menu_dashboard_root"
+              name="Tableaux de Bord"
+              web_icon="custom_dashboard,static/description/icon.png"
+              action="action_dashboard_main_owl"
+              sequence="1"/>
+
+    <!-- ==================== DASHBOARD OVERVIEW ==================== -->
+    <menuitem id="menu_dashboard_overview"
+              name="Vue d'ensemble"
+              parent="menu_dashboard_root"
+              action="action_dashboard_main_owl"
+              sequence="1"/>
+
+    <!-- ==================== SECTION VENTES ==================== -->
+    <menuitem id="menu_dashboard_sales"
+              name="Ventes"
+              parent="menu_dashboard_root"
+              sequence="10"/>
+
+    <menuitem id="menu_dashboard_sale_report"
+              name="Analyse des ventes"
+              parent="menu_dashboard_sales"
+              action="action_dashboard_sale_report"
+              sequence="10"/>
+
+    <menuitem id="menu_dashboard_quotations"
+              name="Devis en cours"
+              parent="menu_dashboard_sales"
+              action="action_dashboard_quotations"
+              sequence="20"/>
+
+    <menuitem id="menu_dashboard_to_invoice"
+              name="À facturer"
+              parent="menu_dashboard_sales"
+              action="action_dashboard_to_invoice"
+              sequence="30"/>
+
+    <!-- ==================== SECTION ACHATS ==================== -->
+    <menuitem id="menu_dashboard_purchases"
+              name="Achats"
+              parent="menu_dashboard_root"
+              sequence="20"/>
+
+    <menuitem id="menu_dashboard_purchase_report"
+              name="Analyse des achats"
+              parent="menu_dashboard_purchases"
+              action="action_dashboard_purchase_report"
+              sequence="10"/>
+
+    <!-- ==================== SECTION STOCK ==================== -->
+    <menuitem id="menu_dashboard_stock"
+              name="Stock / Logistique"
+              parent="menu_dashboard_root"
+              sequence="30"/>
+
+    <menuitem id="menu_dashboard_deliveries"
+              name="Livraisons en attente"
+              parent="menu_dashboard_stock"
+              action="action_dashboard_deliveries_pending"
+              sequence="10"/>
+
+    <menuitem id="menu_dashboard_receipts"
+              name="Réceptions en attente"
+              parent="menu_dashboard_stock"
+              action="action_dashboard_receipts_pending"
+              sequence="20"/>
+
+    <menuitem id="menu_dashboard_late"
+              name="Opérations en retard"
+              parent="menu_dashboard_stock"
+              action="action_dashboard_late_pickings"
+              sequence="30"/>
+
+    <!-- ==================== SECTION COMPTABILITÉ ==================== -->
+    <menuitem id="menu_dashboard_accounting"
+              name="Comptabilité"
+              parent="menu_dashboard_root"
+              sequence="40"/>
+
+    <menuitem id="menu_dashboard_unpaid_inv"
+              name="Factures clients impayées"
+              parent="menu_dashboard_accounting"
+              action="action_dashboard_unpaid_invoices"
+              sequence="10"/>
+
+    <menuitem id="menu_dashboard_unpaid_bills"
+              name="Factures fournisseurs impayées"
+              parent="menu_dashboard_accounting"
+              action="action_dashboard_unpaid_bills"
+              sequence="20"/>
+
+    <!-- ==================== SECTION CRM ==================== -->
+    <menuitem id="menu_dashboard_crm"
+              name="CRM"
+              parent="menu_dashboard_root"
+              sequence="50"/>
+
+    <menuitem id="menu_dashboard_pipeline"
+              name="Pipeline"
+              parent="menu_dashboard_crm"
+              action="action_dashboard_crm_pipeline"
+              sequence="10"/>
+
+    <!-- ==================== SECTION RH ==================== -->
+    <menuitem id="menu_dashboard_hr"
+              name="Ressources Humaines"
+              parent="menu_dashboard_root"
+              sequence="60"/>
+
+    <menuitem id="menu_dashboard_employees"
+              name="Employés"
+              parent="menu_dashboard_hr"
+              action="action_dashboard_employees"
+              sequence="10"/>
+
+    <!-- ==================== CONFIGURATION ==================== -->
+    <menuitem id="menu_dashboard_config"
+              name="Configuration"
+              parent="menu_dashboard_root"
+              sequence="99"
+              groups="base.group_system"/>
+
+    <record id="action_dashboard_kpi" model="ir.actions.act_window">
+        <field name="name">Indicateurs KPI</field>
+        <field name="res_model">dashboard.kpi</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_dashboard_kpi_config"
+              name="Indicateurs KPI"
+              parent="menu_dashboard_config"
+              action="action_dashboard_kpi"
+              sequence="10"/>
+
+    <!-- ============ RAPPORTS ============ -->
+    <menuitem id="menu_dashboard_reports_custom"
+              name="📊 Rapports"
+              parent="menu_dashboard_root"
+              sequence="95"/>
+
+    <menuitem id="menu_dashboard_report_kpi"
+              name="Rapport KPI"
+              parent="menu_dashboard_reports_custom"
+              action="custom_dashboard.action_window_report_dashboard"
+              sequence="10"/>
+
+</odoo>

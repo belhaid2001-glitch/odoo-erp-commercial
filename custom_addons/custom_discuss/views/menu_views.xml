@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Menu Modèles de message -->
+    <menuitem id="menu_discuss_custom_root"
+              name="Configuration Discussion"
+              parent="mail.menu_root_discuss"
+              sequence="20"/>
+
+    <menuitem id="menu_mail_template_custom"
+              name="Modèles de message"
+              parent="menu_discuss_custom_root"
+              action="action_mail_template_custom"
+              sequence="10"/>
+
+    <!-- ============ RAPPORTS ============ -->
+    <menuitem id="menu_discuss_reports_custom"
+              name="📊 Rapports"
+              parent="mail.menu_root_discuss"
+              sequence="90"/>
+
+    <menuitem id="menu_discuss_report_template"
+              name="Fiche modèle email"
+              parent="menu_discuss_reports_custom"
+              action="custom_discuss.action_window_report_discuss"
+              sequence="10"/>
+</odoo>

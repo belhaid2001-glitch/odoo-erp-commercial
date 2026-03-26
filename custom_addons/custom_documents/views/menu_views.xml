@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ==================== MENUS ==================== -->
+
+    <!-- Menu racine Documents -->
+    <menuitem id="menu_document_root"
+              name="Documents"
+              web_icon="custom_documents,static/description/icon.png"
+              sequence="25"/>
+
+    <!-- Sous-menu Documents -->
+    <menuitem id="menu_document_documents"
+              name="Tous les documents"
+              parent="menu_document_root"
+              sequence="10"/>
+
+    <!-- Action Documents -->
+    <record id="action_document_document" model="ir.actions.act_window">
+        <field name="name">Documents</field>
+        <field name="res_model">document.document</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="search_view_id" ref="view_document_document_search"/>
+        <field name="context">{'search_default_my_documents': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créez votre premier document
+            </p>
+            <p>
+                Centralisez tous vos fichiers et documents dans une seule plateforme numérique.
+            </p>
+        </field>
+    </record>
+    <menuitem id="menu_document_all"
+              name="Documents"
+              parent="menu_document_documents"
+              action="action_document_document"
+              sequence="10"/>
+
+    <!-- Action Dossiers -->
+    <record id="action_document_folder" model="ir.actions.act_window">
+        <field name="name">Dossiers</field>
+        <field name="res_model">document.folder</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <menuitem id="menu_document_folders"
+              name="Dossiers"
+              parent="menu_document_documents"
+              action="action_document_folder"
+              sequence="20"/>
+
+    <!-- Configuration -->
+    <menuitem id="menu_document_config"
+              name="Configuration"
+              parent="menu_document_root"
+              sequence="90"
+              groups="base.group_system"/>
+
+    <!-- Action Tags -->
+    <record id="action_document_tag" model="ir.actions.act_window">
+        <field name="name">Étiquettes</field>
+        <field name="res_model">document.tag</field>
+        <field name="view_mode">tree</field>
+    </record>
+    <menuitem id="menu_document_tags"
+              name="Étiquettes"
+              parent="menu_document_config"
+              action="action_document_tag"
+              sequence="10"/>
+
+    <!-- ============ RAPPORTS ============ -->
+    <menuitem id="menu_documents_reports_custom"
+              name="📊 Rapports"
+              parent="menu_document_root"
+              sequence="80"/>
+
+    <menuitem id="menu_documents_report_card"
+              name="Fiche document"
+              parent="menu_documents_reports_custom"
+              action="custom_documents.action_window_report_document"
+              sequence="10"/>
+
+</odoo>

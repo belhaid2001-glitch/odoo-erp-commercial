@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Extension vue formulaire lead/opportunité -->
+    <record id="view_crm_lead_form_custom" model="ir.ui.view">
+        <field name="name">crm.lead.form.custom</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="arch" type="xml">
+            <!-- Boutons d'action -->
+            <xpath expr="//header" position="inside">
+                <button name="action_log_call"
+                        string="📞 Enregistrer appel"
+                        type="object" class="btn-secondary"/>
+                <button name="action_schedule_meeting"
+                        string="📅 Planifier RDV"
+                        type="object" class="btn-secondary"/>
+                <button name="action_quick_quotation"
+                        string="📋 Devis rapide"
+                        type="object" class="btn-primary"
+                        invisible="type != 'opportunity'"/>
+            </xpath>
+
+            <!-- Boutons statistiques -->
+            <xpath expr="//div[hasclass('oe_button_box')]" position="inside">
+                <button name="action_view_meetings"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-calendar">
+                    <field name="meeting_count_custom" widget="statinfo"
+                           string="RDV"/>
+                </button>
+                <button name="action_view_quotations"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-file-text-o">
+                    <field name="quote_count" widget="statinfo"
+                           string="Devis"/>
+                </button>
+            </xpath>
+
+            <!-- Champs après le revenu attendu -->
+            <xpath expr="//field[@name='expected_revenue']" position="after">
+                <field name="lead_quality" widget="badge"
+                       decoration-danger="lead_quality == 'cold'"
+                       decoration-warning="lead_quality == 'warm'"
+                       decoration-success="lead_quality == 'hot'"
+                       help="Température du lead : froid (peu intéressé), tiède (en réflexion), chaud (prêt à acheter)"/>
+                <field name="lead_source"
+                       help="Canal d'acquisition de ce lead (site web, salon, réseau, etc.)"/>
+                <field name="estimated_closing_date"
+                       help="Date estimée de signature/clôture"/>
+                <field name="conversion_rate"
+                       help="Taux de conversion estimé"/>
+            </xpath>
+
+            <!-- Onglets personnalisés -->
+            <xpath expr="//notebook" position="inside">
+                <page string="&#128200; Suivi commercial" name="commercial_tracking">
+                    <group>
+                        <group string="&#128222; Activité">
+                            <field name="call_count"
+                                   help="Nombre d'appels passés avec ce contact"/>
+                            <field name="last_contact_date"
+                                   help="Date du dernier contact (appel, email, RDV)"/>
+                            <field name="days_since_last_contact"
+                                   help="Nombre de jours sans contact. Au-delà de 7 jours, relancez !"/>
+                        </group>
+                        <group string="&#128197; Prochaine action">
+                            <field name="next_action_date"
+                                   help="Date planifiée pour la prochaine action"/>
+                            <field name="next_action_description"
+                                   placeholder="Ex: Rappeler pour valider le devis, envoyer le contrat..."
+                                   help="Description de l'action à réaliser"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="&#9878; Concurrence">
+                            <field name="competitor_ids" widget="many2many_tags"
+                                   help="Concurrents identifiés sur cette opportunité"/>
+                            <field name="loss_reason_notes"
+                                   placeholder="Pourquoi le client hésite : prix, délais, fonctionnalités manquantes..."
+                                   help="Analyse des risques de perte"/>
+                        </group>
+                    </group>
+                </page>
+                <page string="&#128221; Notes CRM" name="crm_notes">
+                    <field name="internal_notes"
+                           placeholder="Notes stratégiques : décisions du client, personnalité des contacts, budget identifié..."
+                           help="Notes internes visibles uniquement par l'équipe commerciale"/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Extension vue liste leads -->
+    <record id="view_crm_lead_tree_custom" model="ir.ui.view">
+        <field name="name">crm.lead.tree.custom</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_case_tree_view_leads"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='tag_ids']" position="after">
+                <field name="lead_quality" optional="show" widget="badge" string="Qualité"
+                       decoration-danger="lead_quality == 'cold'"
+                       decoration-warning="lead_quality == 'warm'"
+                       decoration-success="lead_quality == 'hot'"/>
+                <field name="lead_source" optional="show" string="Source"/>
+                <field name="estimated_closing_date" optional="hide" string="Clôture prévue"/>
+                <field name="call_count" optional="hide" string="Appels"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Extension vue kanban -->
+    <record id="view_crm_lead_kanban_custom" model="ir.ui.view">
+        <field name="name">crm.lead.kanban.custom</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_case_kanban_view_leads"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='expected_revenue']" position="after">
+                <field name="lead_quality"/>
+                <field name="lead_source"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

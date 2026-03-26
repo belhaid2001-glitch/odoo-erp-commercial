@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Modèles de message par défaut -->
+        <record id="template_welcome" model="mail.template.custom">
+            <field name="name">Bienvenue nouveau client</field>
+            <field name="category">commercial</field>
+            <field name="subject">Bienvenue chez nous !</field>
+            <field name="body"><![CDATA[
+                <p>Bonjour,</p>
+                <p>Nous sommes ravis de vous compter parmi nos clients. 
+                N'hésitez pas à nous contacter pour toute question.</p>
+                <p>Cordialement,<br/>L'équipe commerciale</p>
+            ]]></field>
+            <field name="sequence">1</field>
+        </record>
+
+        <record id="template_follow_up" model="mail.template.custom">
+            <field name="name">Suivi après rendez-vous</field>
+            <field name="category">commercial</field>
+            <field name="subject">Suite à notre rendez-vous</field>
+            <field name="body"><![CDATA[
+                <p>Bonjour,</p>
+                <p>Nous faisons suite à notre rendez-vous. 
+                Veuillez trouver ci-joint les éléments discutés.</p>
+                <p>Restant à votre disposition,<br/>Cordialement</p>
+            ]]></field>
+            <field name="sequence">2</field>
+        </record>
+
+        <record id="template_internal_announcement" model="mail.template.custom">
+            <field name="name">Annonce interne</field>
+            <field name="category">internal</field>
+            <field name="subject">Annonce importante</field>
+            <field name="is_internal" eval="True"/>
+            <field name="body"><![CDATA[
+                <p>Chers collègues,</p>
+                <p>[Contenu de l'annonce]</p>
+                <p>La direction</p>
+            ]]></field>
+            <field name="sequence">3</field>
+        </record>
+    </data>
+</odoo>

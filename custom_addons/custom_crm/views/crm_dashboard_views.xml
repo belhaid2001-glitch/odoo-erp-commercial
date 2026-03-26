@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Dashboard CRM -->
+    <record id="action_crm_dashboard" model="ir.actions.act_window">
+        <field name="name">Tableau de bord CRM</field>
+        <field name="res_model">crm.lead</field>
+        <field name="view_mode">pivot,graph,tree</field>
+        <field name="domain">[('type', '=', 'opportunity')]</field>
+        <field name="context">{
+            'search_default_my_opportunities': 1,
+        }</field>
+    </record>
+
+    <!-- Filtres de recherche -->
+    <record id="view_crm_lead_search_custom" model="ir.ui.view">
+        <field name="name">crm.lead.search.custom</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.view_crm_case_opportunities_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <separator/>
+                <filter name="hot_leads" string="Leads chauds"
+                        domain="[('lead_quality', '=', 'hot')]"/>
+                <filter name="warm_leads" string="Leads tièdes"
+                        domain="[('lead_quality', '=', 'warm')]"/>
+                <filter name="no_contact_7days" string="Sans contact 7j+"
+                        domain="['|', ('last_contact_date', '=', False), ('last_contact_date', '&lt;=', (context_today() - datetime.timedelta(days=7)).strftime('%%Y-%%m-%%d'))]"/>
+                <separator/>
+                <group expand="0" string="Regrouper par">
+                    <filter name="group_lead_source" string="Source"
+                            context="{'group_by': 'lead_source'}"/>
+                    <filter name="group_lead_quality" string="Qualité"
+                            context="{'group_by': 'lead_quality'}"/>
+                    <filter name="group_closing_date" string="Date clôture"
+                            context="{'group_by': 'estimated_closing_date:month'}"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

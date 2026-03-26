@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Dossiers par défaut -->
+        <record id="folder_general" model="document.folder">
+            <field name="name">Général</field>
+            <field name="sequence">1</field>
+            <field name="description">Documents généraux de l'entreprise</field>
+        </record>
+
+        <record id="folder_contracts" model="document.folder">
+            <field name="name">Contrats</field>
+            <field name="sequence">2</field>
+            <field name="description">Contrats clients et fournisseurs</field>
+        </record>
+
+        <record id="folder_hr" model="document.folder">
+            <field name="name">Ressources Humaines</field>
+            <field name="sequence">3</field>
+            <field name="description">Documents RH et employés</field>
+        </record>
+
+        <record id="folder_finance" model="document.folder">
+            <field name="name">Finance</field>
+            <field name="sequence">4</field>
+            <field name="description">Documents comptables et financiers</field>
+        </record>
+
+        <record id="folder_legal" model="document.folder">
+            <field name="name">Juridique</field>
+            <field name="sequence">5</field>
+            <field name="description">Documents juridiques et réglementaires</field>
+        </record>
+
+        <!-- Étiquettes par défaut -->
+        <record id="tag_important" model="document.tag">
+            <field name="name">Important</field>
+            <field name="color">1</field>
+        </record>
+
+        <record id="tag_urgent" model="document.tag">
+            <field name="name">Urgent</field>
+            <field name="color">4</field>
+        </record>
+
+        <record id="tag_confidentiel" model="document.tag">
+            <field name="name">Confidentiel</field>
+            <field name="color">9</field>
+        </record>
+
+        <record id="tag_a_signer" model="document.tag">
+            <field name="name">À signer</field>
+            <field name="color">3</field>
+        </record>
+
+    </data>
+</odoo>

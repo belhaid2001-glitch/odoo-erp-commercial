@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Action types de RDV -->
+    <record id="action_calendar_event_type_custom" model="ir.actions.act_window">
+        <field name="name">Types de rendez-vous</field>
+        <field name="res_model">calendar.event.type.custom</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créez vos types de rendez-vous
+            </p>
+        </field>
+    </record>
+
+    <!-- Vue liste types -->
+    <record id="view_calendar_event_type_custom_tree" model="ir.ui.view">
+        <field name="name">calendar.event.type.custom.tree</field>
+        <field name="model">calendar.event.type.custom</field>
+        <field name="arch" type="xml">
+            <tree string="Types de rendez-vous" editable="bottom">
+                <field name="name"/>
+                <field name="default_duration"/>
+                <field name="color" widget="color_picker"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+</odoo>

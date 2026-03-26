@@ -1,0 +1,433 @@
+/* ==========================================
+   POWER BI-STYLE DASHBOARD - ERP Commercial
+   ========================================== */
+
+:root {
+    --db-primary: #4e73df;
+    --db-success: #1cc88a;
+    --db-info: #36b9cc;
+    --db-warning: #f6c23e;
+    --db-danger: #e74a3b;
+    --db-purple: #8b5cf6;
+    --db-dark: #2c3e50;
+    --db-bg: #f0f2f5;
+    --db-card-bg: #ffffff;
+    --db-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    --db-shadow-hover: 0 6px 20px rgba(0, 0, 0, 0.15);
+    --db-radius: 12px;
+    --db-transition: all 0.3s ease;
+}
+
+/* ===== MAIN CONTAINER ===== */
+.o_dashboard_main {
+    background: var(--db-bg);
+    min-height: 100vh;
+    padding: 0;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+}
+
+/* ===== HEADER ===== */
+.dashboard-header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    color: white;
+    padding: 20px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.dashboard-header h1 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.dashboard-header h1 i {
+    margin-right: 10px;
+    color: var(--db-info);
+}
+
+.dashboard-header .header-subtitle {
+    font-size: 13px;
+    opacity: 0.7;
+    margin-top: 2px;
+}
+
+.dashboard-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.dashboard-actions .btn {
+    border-radius: 8px;
+    font-size: 13px;
+    padding: 6px 16px;
+    font-weight: 500;
+}
+
+.dashboard-actions .btn-outline-light {
+    border-color: rgba(255, 255, 255, 0.4);
+    color: white;
+}
+
+.dashboard-actions .btn-outline-light:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.6);
+}
+
+.dashboard-date {
+    font-size: 13px;
+    opacity: 0.8;
+}
+
+/* ===== CONTENT AREA ===== */
+.dashboard-content {
+    padding: 24px;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+/* ===== KPI CARDS GRID ===== */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.kpi-card {
+    background: var(--db-card-bg);
+    border-radius: var(--db-radius);
+    padding: 20px;
+    box-shadow: var(--db-shadow);
+    cursor: pointer;
+    transition: var(--db-transition);
+    border-left: 5px solid transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+.kpi-card:hover {
+    box-shadow: var(--db-shadow-hover);
+    transform: translateY(-3px);
+}
+
+.kpi-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    opacity: 0.06;
+    transform: translate(20px, -20px);
+}
+
+.kpi-card.kpi-revenue { border-left-color: var(--db-success); }
+.kpi-card.kpi-revenue::after { background: var(--db-success); }
+
+.kpi-card.kpi-orders { border-left-color: var(--db-primary); }
+.kpi-card.kpi-orders::after { background: var(--db-primary); }
+
+.kpi-card.kpi-purchase { border-left-color: var(--db-info); }
+.kpi-card.kpi-purchase::after { background: var(--db-info); }
+
+.kpi-card.kpi-invoice { border-left-color: var(--db-warning); }
+.kpi-card.kpi-invoice::after { background: var(--db-warning); }
+
+.kpi-card.kpi-stock { border-left-color: var(--db-danger); }
+.kpi-card.kpi-stock::after { background: var(--db-danger); }
+
+.kpi-card.kpi-crm { border-left-color: var(--db-purple); }
+.kpi-card.kpi-crm::after { background: var(--db-purple); }
+
+.kpi-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.kpi-label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #6c757d;
+}
+
+.kpi-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: white;
+}
+
+.kpi-revenue .kpi-icon { background: linear-gradient(135deg, #1cc88a, #17a673); }
+.kpi-orders .kpi-icon { background: linear-gradient(135deg, #4e73df, #2e59d9); }
+.kpi-purchase .kpi-icon { background: linear-gradient(135deg, #36b9cc, #258391); }
+.kpi-invoice .kpi-icon { background: linear-gradient(135deg, #f6c23e, #dda20a); }
+.kpi-stock .kpi-icon { background: linear-gradient(135deg, #e74a3b, #be2617); }
+.kpi-crm .kpi-icon { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+
+.kpi-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--db-dark);
+    line-height: 1.2;
+    display: block;
+    margin-bottom: 6px;
+}
+
+.kpi-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.kpi-sub {
+    font-size: 12px;
+    color: #858796;
+}
+
+.kpi-trend {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 20px;
+}
+
+.kpi-trend.trend-up {
+    color: #1cc88a;
+    background: rgba(28, 200, 138, 0.1);
+}
+
+.kpi-trend.trend-down {
+    color: #e74a3b;
+    background: rgba(231, 74, 59, 0.1);
+}
+
+.kpi-trend.trend-neutral {
+    color: #858796;
+    background: rgba(133, 135, 150, 0.1);
+}
+
+/* ===== CHARTS GRID ===== */
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.chart-card {
+    background: var(--db-card-bg);
+    border-radius: var(--db-radius);
+    padding: 20px;
+    box-shadow: var(--db-shadow);
+    transition: var(--db-transition);
+}
+
+.chart-card:hover {
+    box-shadow: var(--db-shadow-hover);
+}
+
+.chart-card h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--db-dark);
+    margin: 0 0 16px 0;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #f0f2f5;
+}
+
+.chart-card h3 i {
+    margin-right: 8px;
+    opacity: 0.7;
+}
+
+.chart-container {
+    position: relative;
+    height: 280px;
+}
+
+/* ===== ALERTS SECTION ===== */
+.alerts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.alert-card {
+    background: var(--db-card-bg);
+    border-radius: var(--db-radius);
+    padding: 16px 20px;
+    box-shadow: var(--db-shadow);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    transition: var(--db-transition);
+    border-left: 4px solid transparent;
+}
+
+.alert-card:hover {
+    box-shadow: var(--db-shadow-hover);
+    transform: translateY(-2px);
+}
+
+.alert-card.alert-danger { border-left-color: var(--db-danger); }
+.alert-card.alert-warning { border-left-color: var(--db-warning); }
+.alert-card.alert-info { border-left-color: var(--db-info); }
+.alert-card.alert-success { border-left-color: var(--db-success); }
+
+.alert-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.alert-danger .alert-icon { background: rgba(231, 74, 59, 0.1); color: var(--db-danger); }
+.alert-warning .alert-icon { background: rgba(246, 194, 62, 0.1); color: var(--db-warning); }
+.alert-info .alert-icon { background: rgba(54, 185, 204, 0.1); color: var(--db-info); }
+.alert-success .alert-icon { background: rgba(28, 200, 138, 0.1); color: var(--db-success); }
+
+.alert-content {
+    flex: 1;
+}
+
+.alert-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--db-dark);
+}
+
+.alert-subtitle {
+    font-size: 12px;
+    color: #858796;
+    margin-top: 2px;
+}
+
+.alert-badge {
+    font-size: 20px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 8px;
+    min-width: 40px;
+    text-align: center;
+}
+
+.alert-danger .alert-badge { background: rgba(231, 74, 59, 0.1); color: var(--db-danger); }
+.alert-warning .alert-badge { background: rgba(246, 194, 62, 0.1); color: var(--db-warning); }
+.alert-info .alert-badge { background: rgba(54, 185, 204, 0.1); color: var(--db-info); }
+.alert-success .alert-badge { background: rgba(28, 200, 138, 0.1); color: var(--db-success); }
+
+/* ===== SECTION TITLES ===== */
+.section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--db-dark);
+    margin: 0 0 16px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.section-title i {
+    color: var(--db-primary);
+}
+
+/* ===== LOADING ===== */
+.dashboard-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    color: #858796;
+    gap: 16px;
+}
+
+.dashboard-loading .fa-spinner {
+    color: var(--db-primary);
+}
+
+.dashboard-loading p {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1200px) {
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .dashboard-header {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+    .dashboard-content {
+        padding: 16px;
+    }
+    .kpi-value {
+        font-size: 22px;
+    }
+}
+
+@media (max-width: 480px) {
+    .kpi-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.kpi-card, .chart-card, .alert-card {
+    animation: fadeInUp 0.4s ease both;
+}
+
+.kpi-card:nth-child(1) { animation-delay: 0.05s; }
+.kpi-card:nth-child(2) { animation-delay: 0.1s; }
+.kpi-card:nth-child(3) { animation-delay: 0.15s; }
+.kpi-card:nth-child(4) { animation-delay: 0.2s; }
+.kpi-card:nth-child(5) { animation-delay: 0.25s; }
+.kpi-card:nth-child(6) { animation-delay: 0.3s; }
+
+.chart-card:nth-child(1) { animation-delay: 0.35s; }
+.chart-card:nth-child(2) { animation-delay: 0.4s; }
+.chart-card:nth-child(3) { animation-delay: 0.45s; }
+.chart-card:nth-child(4) { animation-delay: 0.5s; }

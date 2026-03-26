@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Action Segments -->
+    <record id="action_contact_segment" model="ir.actions.act_window">
+        <field name="name">Segments</field>
+        <field name="res_model">contact.segment</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Menu sous Contacts > Configuration -->
+    <menuitem id="menu_contacts_config_custom"
+              name="Configuration"
+              parent="contacts.menu_contacts"
+              sequence="90"
+              groups="base.group_system"/>
+
+    <menuitem id="menu_contact_segments"
+              name="Segments"
+              parent="menu_contacts_config_custom"
+              action="action_contact_segment"
+              sequence="10"/>
+
+    <!-- ============ RAPPORTS ============ -->
+    <menuitem id="menu_contacts_reports_custom"
+              name="📊 Rapports"
+              parent="contacts.menu_contacts"
+              sequence="80"/>
+
+    <menuitem id="menu_contacts_report_card"
+              name="Fiche contact"
+              parent="menu_contacts_reports_custom"
+              action="custom_contacts.action_window_report_contact"
+              sequence="10"/>
+
+</odoo>

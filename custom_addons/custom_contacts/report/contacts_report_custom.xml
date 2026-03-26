@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================
+         RAPPORT PDF — Fiche Contact
+         Accessible via : Contacts > Rapports
+    ============================================================ -->
+
+    <record id="action_report_contact_card" model="ir.actions.report">
+        <field name="name">Fiche contact</field>
+        <field name="model">res.partner</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">custom_contacts.report_contact_card</field>
+        <field name="report_file">custom_contacts.report_contact_card</field>
+        <field name="binding_model_id" ref="model_res_partner"/>
+        <field name="binding_type">report</field>
+        <field name="print_report_name">'Contact_%s' % object.name</field>
+    </record>
+
+    <!-- Action fenêtre pour sélection avant impression -->
+    <record id="action_window_report_contact" model="ir.actions.act_window">
+        <field name="name">Sélectionner les contacts à imprimer</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Aucun contact</p>
+            <p>Sélectionnez des contacts puis cliquez sur <b>Imprimer &gt; Fiche contact</b></p>
+        </field>
+    </record>
+
+    <template id="report_contact_card">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div class="row mb-4">
+                            <div class="col-8">
+                                <h2 style="color: #17a2b8;"><i class="fa fa-address-book"/> Fiche Contact</h2>
+                                <h3><span t-field="doc.name"/></h3>
+                                <p t-if="doc.function" style="font-size: 15px; color: #6c757d;"><span t-field="doc.function"/></p>
+                            </div>
+                            <div class="col-4 text-end">
+                                <img t-if="doc.image_128" t-att-src="image_data_uri(doc.image_128)" style="max-height: 80px; border-radius: 50%;"/>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3" style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                            <div class="col-6">
+                                <h5 style="color: #17a2b8;">Coordonnées</h5>
+                                <p t-if="doc.email"><i class="fa fa-envelope"/> <span t-field="doc.email"/></p>
+                                <p t-if="doc.phone"><i class="fa fa-phone"/> <span t-field="doc.phone"/></p>
+                                <p t-if="doc.mobile"><i class="fa fa-mobile"/> <span t-field="doc.mobile"/></p>
+                                <p t-if="doc.website"><i class="fa fa-globe"/> <span t-field="doc.website"/></p>
+                                <div t-if="doc.street">
+                                    <p t-if="doc.street"><span t-field="doc.street"/></p>
+                                    <p t-if="doc.street2"><span t-field="doc.street2"/></p>
+                                    <p><span t-if="doc.zip" t-field="doc.zip"/> <span t-if="doc.city" t-field="doc.city"/></p>
+                                    <p t-if="doc.country_id"><span t-field="doc.country_id"/></p>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <h5 style="color: #17a2b8;">Informations Maroc</h5>
+                                <p t-if="doc.ice"><strong>ICE :</strong> <span t-field="doc.ice"/></p>
+                                <p t-if="doc.rc"><strong>RC :</strong> <span t-field="doc.rc"/></p>
+                                <p t-if="doc.if_code"><strong>IF :</strong> <span t-field="doc.if_code"/></p>
+                                <p t-if="doc.cnss"><strong>CNSS :</strong> <span t-field="doc.cnss"/></p>
+                                <p t-if="doc.contact_type_custom"><strong>Type :</strong> <span t-field="doc.contact_type_custom"/></p>
+                                <p t-if="doc.contact_priority"><strong>Priorité :</strong> <span t-field="doc.contact_priority"/></p>
+                            </div>
+                        </div>
+
+                        <t t-if="doc.segment_ids">
+                            <div class="mb-3">
+                                <strong>Segments :</strong>
+                                <t t-foreach="doc.segment_ids" t-as="seg">
+                                    <span class="badge" style="background: #17a2b8; color: #fff; margin: 2px;">
+                                        <span t-field="seg.name"/>
+                                    </span>
+                                </t>
+                            </div>
+                        </t>
+
+                        <div class="row mb-3">
+                            <div class="col-4 text-center" style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin: 0 5px;">
+                                <h5>Ventes</h5>
+                                <p style="font-size: 20px;"><span t-field="doc.total_sale_amount" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></p>
+                                <p><span t-field="doc.sale_order_count"/> commandes</p>
+                            </div>
+                            <div class="col-4 text-center" style="background: #e8f5e9; padding: 15px; border-radius: 8px; margin: 0 5px;">
+                                <h5>Achats</h5>
+                                <p style="font-size: 20px;"><span t-field="doc.total_purchase_amount" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></p>
+                                <p><span t-field="doc.purchase_order_count"/> commandes</p>
+                            </div>
+                        </div>
+
+                        <div t-if="doc.comment" class="mt-3">
+                            <h5>Notes</h5>
+                            <div t-field="doc.comment"/>
+                        </div>
+
+                        <div class="mt-4 text-center" style="font-size: 10px; color: #6c757d;">
+                            <p>Document généré automatiquement — ERP Commercial</p>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

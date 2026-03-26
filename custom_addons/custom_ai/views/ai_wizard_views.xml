@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ==================== AI WIZARD FORM ==================== -->
+    <record id="view_ai_wizard_form" model="ir.ui.view">
+        <field name="name">ai.wizard.form</field>
+        <field name="model">ai.wizard</field>
+        <field name="arch" type="xml">
+            <form string="🤖 Assistant IA">
+                <group>
+                    <group string="🎯 Action">
+                        <field name="action_type" widget="radio"/>
+                        <field name="custom_prompt" widget="text"
+                               placeholder="Décrivez votre demande ici..."
+                               invisible="action_type != 'custom'"/>
+                    </group>
+                    <group string="📄 Contexte">
+                        <field name="res_model" readonly="1"/>
+                        <field name="res_id" readonly="1"/>
+                        <field name="module_name" readonly="1"/>
+                    </group>
+                </group>
+                <separator string="💡 Résultat IA" invisible="not ai_result"/>
+                <field name="ai_result" invisible="not ai_result"
+                       class="o_field_html"/>
+                <field name="ai_provider" invisible="1"/>
+                <footer>
+                    <button name="action_generate" type="object"
+                            string="🚀 Générer" class="btn-primary"/>
+                    <button name="action_apply" type="object"
+                            string="✅ Appliquer" class="btn-success"
+                            invisible="not ai_result"/>
+                    <button string="Fermer" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- ==================== AI WIZARD ACTION ==================== -->
+    <record id="action_ai_wizard" model="ir.actions.act_window">
+        <field name="name">🤖 Assistant IA</field>
+        <field name="res_model">ai.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

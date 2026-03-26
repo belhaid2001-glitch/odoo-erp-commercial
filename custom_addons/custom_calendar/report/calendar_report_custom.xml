@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================
+         RAPPORT PDF — Événement / Réunion
+         Accessible via : Calendrier > Rapports
+    ============================================================ -->
+
+    <record id="action_report_calendar_event" model="ir.actions.report">
+        <field name="name">Rapport de réunion</field>
+        <field name="model">calendar.event</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">custom_calendar.report_calendar_event</field>
+        <field name="report_file">custom_calendar.report_calendar_event</field>
+        <field name="binding_model_id" ref="model_calendar_event"/>
+        <field name="binding_type">report</field>
+        <field name="print_report_name">'Reunion_%s' % object.name</field>
+    </record>
+
+    <!-- Action fenêtre pour sélection avant impression -->
+    <record id="action_window_report_calendar" model="ir.actions.act_window">
+        <field name="name">Sélectionner les réunions à imprimer</field>
+        <field name="res_model">calendar.event</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Aucune réunion</p>
+            <p>Sélectionnez des réunions puis cliquez sur <b>Imprimer &gt; Rapport de réunion</b></p>
+        </field>
+    </record>
+
+    <template id="report_calendar_event">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div class="row mb-4">
+                            <div class="col-7">
+                                <h2 style="color: #F06050;"><i class="fa fa-calendar"/> Compte-rendu de Réunion</h2>
+                                <h3><span t-field="doc.name"/></h3>
+                            </div>
+                            <div class="col-5 text-end">
+                                <p><strong>Date :</strong> <span t-field="doc.start" t-options='{"widget": "datetime"}'/></p>
+                                <p><strong>Durée :</strong> <span t-field="doc.duration"/> h</p>
+                                <p t-if="doc.event_type_custom"><strong>Type :</strong> <span t-field="doc.event_type_custom"/></p>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3" style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                            <div class="col-6">
+                                <h5 style="color: #F06050;">Lieu</h5>
+                                <p t-if="doc.location"><i class="fa fa-map-marker"/> <span t-field="doc.location"/></p>
+                                <p t-if="doc.meeting_location_type"><strong>Type :</strong> <span t-field="doc.meeting_location_type"/></p>
+                                <p t-if="doc.meeting_url">Lien de la réunion</p>
+                            </div>
+                            <div class="col-6">
+                                <h5 style="color: #F06050;">Organisateur</h5>
+                                <p><span t-field="doc.user_id"/></p>
+                                <p t-if="doc.priority"><strong>Priorité :</strong> <span t-field="doc.priority"/></p>
+                            </div>
+                        </div>
+
+                        <t t-if="doc.attendee_ids">
+                            <h4 class="mt-4 mb-3" style="color: #F06050;">Participants</h4>
+                            <table class="table table-sm table-bordered">
+                                <thead style="background: #F06050; color: #fff;">
+                                    <tr>
+                                        <th>Participant</th>
+                                        <th class="text-center">Statut</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="doc.attendee_ids" t-as="att">
+                                        <td><span t-field="att.partner_id"/></td>
+                                        <td class="text-center"><span t-field="att.state"/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </t>
+
+                        <div t-if="doc.result" class="mt-3" style="background: #d4edda; padding: 15px; border-radius: 8px;">
+                            <h5><i class="fa fa-check-circle" style="color: #28a745;"/> Résultat de la réunion</h5>
+                            <p><span t-field="doc.result"/></p>
+                        </div>
+
+                        <div t-if="doc.meeting_minutes" class="mt-3" style="background: #e3f2fd; padding: 15px; border-radius: 8px;">
+                            <h5><i class="fa fa-file-text"/> Procès-verbal</h5>
+                            <div t-field="doc.meeting_minutes"/>
+                        </div>
+
+                        <div t-if="doc.follow_up_date" class="mt-3" style="background: #fff3cd; padding: 10px; border-radius: 5px;">
+                            <strong><i class="fa fa-clock-o"/> Suivi prévu :</strong> <span t-field="doc.follow_up_date"/>
+                            <span t-if="doc.follow_up_notes"> — <span t-field="doc.follow_up_notes"/></span>
+                        </div>
+
+                        <div t-if="doc.description" class="mt-3">
+                            <h5>Description</h5>
+                            <div t-field="doc.description"/>
+                        </div>
+
+                        <div class="mt-4 text-center" style="font-size: 10px; color: #6c757d;">
+                            <p>Document généré automatiquement — ERP Commercial</p>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

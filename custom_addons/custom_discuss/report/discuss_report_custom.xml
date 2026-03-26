@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================
+         RAPPORT PDF — Modèle de message personnalisé
+         Accessible via : Discussion > Rapports
+    ============================================================ -->
+
+    <record id="action_report_mail_template" model="ir.actions.report">
+        <field name="name">Fiche modèle email</field>
+        <field name="model">mail.template.custom</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">custom_discuss.report_mail_template_custom</field>
+        <field name="report_file">custom_discuss.report_mail_template_custom</field>
+        <field name="binding_model_id" ref="model_mail_template_custom"/>
+        <field name="binding_type">report</field>
+        <field name="print_report_name">'Template_%s' % object.name</field>
+    </record>
+
+    <!-- Action fenêtre pour sélection avant impression -->
+    <record id="action_window_report_discuss" model="ir.actions.act_window">
+        <field name="name">Sélectionner les modèles à imprimer</field>
+        <field name="res_model">mail.template.custom</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Aucun modèle de discussion</p>
+            <p>Sélectionnez des modèles puis cliquez sur <b>Imprimer &gt; Rapport modèle</b></p>
+        </field>
+    </record>
+
+    <template id="report_mail_template_custom">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div class="row mb-4">
+                            <div class="col-7">
+                                <h2 style="color: #7C7BAD;"><i class="fa fa-envelope"/> Modèle d'Email</h2>
+                                <h3><span t-field="doc.name"/></h3>
+                            </div>
+                            <div class="col-5 text-end">
+                                <p t-if="doc.category"><strong>Catégorie :</strong> <span t-field="doc.category"/></p>
+                                <p><strong>Actif :</strong>
+                                    <span t-if="doc.active" style="color: #28a745;">Oui</span>
+                                    <span t-else="" style="color: #dc3545;">Non</span>
+                                </p>
+                                <p t-if="doc.is_internal"><i class="fa fa-lock"/> Usage interne</p>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3" style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                            <div class="col-12">
+                                <h5 style="color: #7C7BAD;">Sujet</h5>
+                                <p style="font-size: 16px;"><span t-field="doc.subject"/></p>
+                            </div>
+                        </div>
+
+                        <div class="mt-3" style="border: 1px solid #dee2e6; padding: 20px; border-radius: 8px;">
+                            <h5 style="color: #7C7BAD;">Contenu du modèle</h5>
+                            <div t-field="doc.body"/>
+                        </div>
+
+                        <div class="mt-3" style="background: #e9ecef; padding: 10px; border-radius: 5px;">
+                            <small>
+                                <strong>Informations :</strong>
+                                Séquence : <span t-field="doc.sequence"/> |
+                                Créé par : <span t-field="doc.create_uid"/> |
+                                Dernière modification : <span t-field="doc.write_date" t-options='{"widget": "date"}'/>
+                            </small>
+                        </div>
+
+                        <div class="mt-4 text-center" style="font-size: 10px; color: #6c757d;">
+                            <p>Document généré automatiquement — ERP Commercial</p>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

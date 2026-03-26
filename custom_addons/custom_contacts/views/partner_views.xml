@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ==================== RES.PARTNER FORM EXTENSION ==================== -->
+
+    <record id="view_partner_form_inherit_custom" model="ir.ui.view">
+        <field name="name">res.partner.form.inherit.custom_contacts</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Champs nécessaires pour les conditions invisible -->
+            <div name="button_box" position="before">
+                <field name="customer_rank" invisible="1"/>
+                <field name="supplier_rank" invisible="1"/>
+            </div>
+
+            <!-- Boutons statistiques en haut -->
+            <div name="button_box" position="inside">
+                <button name="action_view_sale_orders" type="object"
+                        class="oe_stat_button" icon="fa-shopping-cart"
+                        invisible="customer_rank == 0">
+                    <field name="sale_order_count_custom" widget="statinfo"
+                           string="Commandes"/>
+                </button>
+                <button name="action_view_purchase_orders" type="object"
+                        class="oe_stat_button" icon="fa-truck"
+                        invisible="supplier_rank == 0">
+                    <field name="purchase_order_count_custom" widget="statinfo"
+                           string="Achats"/>
+                </button>
+            </div>
+
+            <!-- Champs après le VAT -->
+            <field name="vat" position="after">
+                <field name="ice" placeholder="Ex: 001234567000089"
+                       help="Identifiant Commun de l'Entreprise (15 chiffres)"/>
+                <field name="rc" placeholder="Ex: 123456"
+                       help="Numéro du Registre de Commerce"/>
+                <field name="if_code" placeholder="Ex: 12345678"
+                       help="Identifiant Fiscal"/>
+                <field name="cnss" placeholder="Ex: 1234567"
+                       help="Numéro CNSS de l'entreprise"/>
+            </field>
+
+            <!-- Classification et communication dans l'onglet interne -->
+            <page name="internal_notes" position="before">
+                <page string="&#128200; Classification" name="classification">
+                    <group>
+                        <group string="&#129309; Relations">
+                            <field name="contact_type_custom"
+                                   help="Type de relation commerciale avec ce contact"/>
+                            <field name="contact_priority"
+                                   help="Niveau de priorité (VIP, premium, standard)"/>
+                        </group>
+                        <group string="&#127970; Information entreprise">
+                            <field name="capital" invisible="not is_company"
+                                   help="Capital social de l'entreprise"/>
+                            <field name="date_creation_company" invisible="not is_company"
+                                   help="Date de création de l'entreprise"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="&#127919; Segments">
+                            <field name="segment_ids" widget="many2many_tags"
+                                   options="{'color_field': 'color'}"
+                                   help="Segments marketing pour cibler vos communications"/>
+                        </group>
+                        <group string="&#128231; Communication">
+                            <field name="preferred_contact_method"
+                                   help="Moyen de contact préféré du client"/>
+                            <field name="linkedin" widget="url" placeholder="https://linkedin.com/in/..."/>
+                            <field name="facebook" widget="url" placeholder="https://facebook.com/..."/>
+                            <field name="instagram" widget="url" placeholder="https://instagram.com/..."/>
+                        </group>
+                    </group>
+                </page>
+                <page string="&#128202; Statistiques" name="stats">
+                    <div class="alert alert-info" role="alert" style="margin-bottom:10px;">
+                        <i class="fa fa-info-circle"/> Statistiques calculées automatiquement à partir de l'historique des commandes.
+                    </div>
+                    <group>
+                        <group string="&#128176; Ventes">
+                            <field name="total_sale_amount"
+                                   help="Montant total des commandes de vente confirmées"/>
+                            <field name="sale_order_count_custom"
+                                   help="Nombre de commandes de vente"/>
+                            <field name="first_order_date"
+                                   help="Date de la première commande"/>
+                            <field name="last_order_date"
+                                   help="Date de la dernière commande"/>
+                        </group>
+                        <group string="&#128666; Achats">
+                            <field name="total_purchase_amount"
+                                   help="Montant total des commandes d'achat"/>
+                            <field name="purchase_order_count_custom"
+                                   help="Nombre de commandes d'achat"/>
+                        </group>
+                    </group>
+                </page>
+            </page>
+
+            <!-- Notes internes  -->
+            <page name="internal_notes" position="inside">
+                <field name="internal_notes"/>
+            </page>
+
+        </field>
+    </record>
+
+    <!-- ==================== RES.PARTNER TREE EXTENSION ==================== -->
+
+    <record id="view_partner_tree_inherit_custom" model="ir.ui.view">
+        <field name="name">res.partner.tree.inherit.custom_contacts</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_tree"/>
+        <field name="arch" type="xml">
+            <field name="email" position="after">
+                <field name="contact_type_custom" optional="show" string="Type contact"/>
+                <field name="contact_priority" optional="hide" string="Priorité"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- ==================== RES.PARTNER SEARCH EXTENSION ==================== -->
+
+    <record id="view_partner_search_inherit_custom" model="ir.ui.view">
+        <field name="name">res.partner.search.inherit.custom_contacts</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <filter name="type_company" position="after">
+                <separator/>
+                <filter string="Prospects" name="filter_prospect"
+                        domain="[('contact_type_custom', '=', 'prospect')]"/>
+                <filter string="Clients" name="filter_client"
+                        domain="[('contact_type_custom', '=', 'client')]"/>
+                <filter string="Fournisseurs" name="filter_supplier"
+                        domain="[('contact_type_custom', '=', 'supplier')]"/>
+                <filter string="Partenaires" name="filter_partner_rel"
+                        domain="[('contact_type_custom', '=', 'partner')]"/>
+                <separator/>
+                <filter string="VIP" name="filter_vip"
+                        domain="[('contact_priority', '=', 'vip')]"/>
+            </filter>
+        </field>
+    </record>
+
+    <!-- ==================== SEGMENTS ==================== -->
+
+    <record id="view_contact_segment_tree" model="ir.ui.view">
+        <field name="name">contact.segment.tree</field>
+        <field name="model">contact.segment</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom">
+                <field name="name"/>
+                <field name="description"/>
+                <field name="partner_count"/>
+                <field name="color" widget="color_picker"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_contact_segment_form" model="ir.ui.view">
+        <field name="name">contact.segment.form</field>
+        <field name="model">contact.segment</field>
+        <field name="arch" type="xml">
+            <form string="Segment">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <field name="description"/>
+                        <field name="partner_count"/>
+                    </group>
+                    <field name="partner_ids">
+                        <tree>
+                            <field name="name"/>
+                            <field name="email"/>
+                            <field name="phone"/>
+                            <field name="city"/>
+                        </tree>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>

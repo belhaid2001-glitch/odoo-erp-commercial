@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="custom_dashboard.DashboardMain">
+        <div class="o_dashboard_main">
+
+            <!-- LOADING STATE -->
+            <t t-if="state.loading">
+                <div class="dashboard-loading">
+                    <i class="fa fa-spinner fa-spin fa-3x"/>
+                    <p>Chargement du tableau de bord...</p>
+                </div>
+            </t>
+
+            <t t-else="">
+                <!-- ===== HEADER BAR ===== -->
+                <div class="dashboard-header">
+                    <div>
+                        <h1><i class="fa fa-tachometer"/> Tableau de Bord ERP</h1>
+                        <div class="header-subtitle" t-esc="state.data.period_label"/>
+                    </div>
+                    <div class="dashboard-actions">
+                        <span class="dashboard-date">
+                            <i class="fa fa-calendar"/> <t t-esc="state.data.today"/>
+                        </span>
+                        <button class="btn btn-sm btn-outline-light" t-on-click="refresh">
+                            <i class="fa fa-refresh"/> Actualiser
+                        </button>
+                    </div>
+                </div>
+
+                <div class="dashboard-content">
+
+                    <!-- ===== KPI CARDS ===== -->
+                    <div class="kpi-grid">
+
+                        <!-- Revenue Card -->
+                        <div class="kpi-card kpi-revenue" t-on-click="() => this.openAction('sale')">
+                            <div class="kpi-header">
+                                <span class="kpi-label">Chiffre d'Affaires</span>
+                                <div class="kpi-icon"><i class="fa fa-line-chart"/></div>
+                            </div>
+                            <span class="kpi-value" t-esc="fmt(state.data.kpis.revenue_this_month)"/>
+                            <div class="kpi-footer">
+                                <span class="kpi-sub">
+                                    <t t-esc="state.data.kpis.orders_count"/> commandes
+                                </span>
+                                <span t-attf-class="kpi-trend {{ state.data.kpis.revenue_trend >= 0 ? 'trend-up' : 'trend-down' }}">
+                                    <i t-attf-class="fa {{ state.data.kpis.revenue_trend >= 0 ? 'fa-arrow-up' : 'fa-arrow-down' }}"/>
+                                    <t t-esc="Math.abs(state.data.kpis.revenue_trend).toFixed(1)"/>%
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Quotations Card -->
+                        <div class="kpi-card kpi-orders" t-on-click="() => this.openAction('quotations')">
+                            <div class="kpi-header">
+                                <span class="kpi-label">Devis en cours</span>
+                                <div class="kpi-icon"><i class="fa fa-file-text-o"/></div>
+                            </div>
+                            <span class="kpi-value" t-esc="state.data.kpis.quotations_count"/>
+                            <div class="kpi-footer">
+                                <span class="kpi-sub">
+                                    <t t-esc="state.data.kpis.to_invoice_count"/> à facturer
+                                </span>
+                                <span class="kpi-trend trend-neutral">
+                                    <i class="fa fa-clock-o"/> En attente
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Purchase Card -->
+                        <div class="kpi-card kpi-purchase" t-on-click="() => this.openAction('purchase')">
+                            <div class="kpi-header">
+                                <span class="kpi-label">Achats du mois</span>
+                                <div class="kpi-icon"><i class="fa fa-truck"/></div>
+                            </div>
+                            <span class="kpi-value" t-esc="fmt(state.data.kpis.purchase_total)"/>
+                            <div class="kpi-footer">
+                                <span class="kpi-sub">
+                                    <t t-esc="state.data.kpis.rfq_count"/> demandes de prix
+                                </span>
+                                <span t-attf-class="kpi-trend {{ state.data.kpis.purchase_trend >= 0 ? 'trend-up' : 'trend-down' }}">
+                                    <i t-attf-class="fa {{ state.data.kpis.purchase_trend >= 0 ? 'fa-arrow-up' : 'fa-arrow-down' }}"/>
+                                    <t t-esc="Math.abs(state.data.kpis.purchase_trend).toFixed(1)"/>%
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Invoices Card -->
+                        <div class="kpi-card kpi-invoice" t-on-click="() => this.openAction('invoices')">
+                            <div class="kpi-header">
+                                <span class="kpi-label">Factures impayées</span>
+                                <div class="kpi-icon"><i class="fa fa-money"/></div>
+                            </div>
+                            <span class="kpi-value" t-esc="fmt(state.data.kpis.unpaid_invoices)"/>
+                            <div class="kpi-footer">
+                                <span class="kpi-sub">
+                                    <t t-esc="state.data.kpis.unpaid_count"/> factures
+                                </span>
+                                <span t-if="state.data.kpis.overdue_count > 0" class="kpi-trend trend-down">
+                                    <i class="fa fa-exclamation-triangle"/>
+                                    <t t-esc="state.data.kpis.overdue_count"/> en retard
+                                </span>
+                                <span t-else="" class="kpi-trend trend-up">
+                                    <i class="fa fa-check"/> À jour
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Stock Card -->
+                        <div class="kpi-card kpi-stock" t-on-click="() => this.openAction('stock')">
+                            <div class="kpi-header">
+                                <span class="kpi-label">Logistique</span>
+                                <div class="kpi-icon"><i class="fa fa-cubes"/></div>
+                            </div>
+                            <span class="kpi-value">
+                                <t t-esc="state.data.kpis.deliveries_pending"/>
+                                <span style="font-size:16px;color:#858796;"> livr.</span>
+                            </span>
+                            <div class="kpi-footer">
+                                <span class="kpi-sub">
+                                    <t t-esc="state.data.kpis.receipts_pending"/> réceptions
+                                </span>
+                                <span t-if="state.data.kpis.late_pickings > 0" class="kpi-trend trend-down">
+                                    <i class="fa fa-warning"/>
+                                    <t t-esc="state.data.kpis.late_pickings"/> en retard
+                                </span>
+                                <span t-else="" class="kpi-trend trend-up">
+                                    <i class="fa fa-check"/> OK
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- CRM Card -->
+                        <div class="kpi-card kpi-crm" t-on-click="() => this.openAction('crm')">
+                            <div class="kpi-header">
+                                <span class="kpi-label">Pipeline CRM</span>
+                                <div class="kpi-icon"><i class="fa fa-bullseye"/></div>
+                            </div>
+                            <span class="kpi-value" t-esc="fmt(state.data.kpis.pipeline_value)"/>
+                            <div class="kpi-footer">
+                                <span class="kpi-sub">
+                                    <t t-esc="state.data.kpis.open_opportunities"/> opportunités
+                                </span>
+                                <span t-if="state.data.kpis.hot_leads > 0" class="kpi-trend trend-up">
+                                    <i class="fa fa-fire"/>
+                                    <t t-esc="state.data.kpis.hot_leads"/> chauds
+                                </span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- ===== CHARTS ===== -->
+                    <h3 class="section-title"><i class="fa fa-bar-chart"/> Analyses</h3>
+                    <div class="charts-grid">
+
+                        <div class="chart-card">
+                            <h3><i class="fa fa-area-chart"/> Revenus vs Dépenses (6 mois)</h3>
+                            <div class="chart-container">
+                                <canvas t-ref="revenueChart"/>
+                            </div>
+                        </div>
+
+                        <div class="chart-card">
+                            <h3><i class="fa fa-pie-chart"/> Répartition des ventes</h3>
+                            <div class="chart-container">
+                                <canvas t-ref="categoryChart"/>
+                            </div>
+                        </div>
+
+                        <div class="chart-card">
+                            <h3><i class="fa fa-bar-chart"/> Flux logistiques</h3>
+                            <div class="chart-container">
+                                <canvas t-ref="stockChart"/>
+                            </div>
+                        </div>
+
+                        <div class="chart-card">
+                            <h3><i class="fa fa-filter"/> Pipeline CRM par étape</h3>
+                            <div class="chart-container">
+                                <canvas t-ref="crmChart"/>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- ===== ALERTS & ACTIONS ===== -->
+                    <h3 class="section-title"><i class="fa fa-bell"/> Actions requises</h3>
+                    <div class="alerts-grid">
+                        <t t-foreach="state.data.alerts" t-as="alert" t-key="alert.id">
+                            <div t-attf-class="alert-card alert-{{ alert.type }}"
+                                 t-on-click="() => this.openAlertAction(alert)">
+                                <div class="alert-icon">
+                                    <i t-attf-class="fa {{ alert.icon }}"/>
+                                </div>
+                                <div class="alert-content">
+                                    <div class="alert-title" t-esc="alert.title"/>
+                                    <div class="alert-subtitle" t-esc="alert.subtitle"/>
+                                </div>
+                                <div class="alert-badge" t-esc="alert.count"/>
+                            </div>
+                        </t>
+                    </div>
+
+                </div>
+            </t>
+        </div>
+    </t>
+
+</templates>

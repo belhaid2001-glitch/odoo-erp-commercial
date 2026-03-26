@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ==================== AI CONFIG in Settings ==================== -->
+    <record id="res_config_settings_view_form_ai" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.ai</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Intelligence Artificielle" string="Intelligence Artificielle"
+                     name="custom_ai"
+                     data-key="custom_ai"
+                     logo="/custom_ai/static/description/icon.png"
+                     groups="base.group_system">
+                    <block title="🤖 Configuration IA" name="ai_settings">
+                        <setting string="Fournisseur d'IA"
+                                 help="Choisissez le moteur d'intelligence artificielle à utiliser">
+                            <field name="ai_provider" widget="radio"/>
+                        </setting>
+                        <setting string="Clé API"
+                                 help="Clé d'authentification pour le service IA externe"
+                                 invisible="ai_provider == 'builtin'">
+                            <field name="ai_api_key" password="True"
+                                   placeholder="sk-xxxxxxxxxxxxxxxx"/>
+                        </setting>
+                        <setting string="URL API"
+                                 help="Endpoint de l'API IA"
+                                 invisible="ai_provider == 'builtin'">
+                            <field name="ai_api_url"
+                                   placeholder="https://api.openai.com/v1"/>
+                        </setting>
+                        <setting string="Modèle"
+                                 help="Modèle de langage à utiliser"
+                                 invisible="ai_provider == 'builtin'">
+                            <field name="ai_model"
+                                   placeholder="gpt-3.5-turbo"/>
+                        </setting>
+                        <setting string="Température"
+                                 help="Contrôle la créativité (0 = précis, 1 = créatif)"
+                                 invisible="ai_provider == 'builtin'">
+                            <field name="ai_temperature" widget="float"/>
+                        </setting>
+                    </block>
+                    <block title="ℹ️ Informations" name="ai_info">
+                        <div class="text-muted ms-3 mb-3">
+                            <p><strong>Mode Intelligence intégrée :</strong>
+                               Fonctionne sans API externe. Utilise des règles métier
+                               et des modèles statistiques simples pour fournir des
+                               suggestions, analyses et prédictions.</p>
+                            <p><strong>Mode API (OpenAI/Ollama) :</strong>
+                               Résultats plus précis et personnalisés grâce à l'IA
+                               générative. Nécessite une clé API valide.</p>
+                        </div>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

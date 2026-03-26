@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Étapes du pipeline par défaut personnalisées -->
+        <record id="stage_qualification" model="crm.stage">
+            <field name="name">Qualification</field>
+            <field name="sequence">5</field>
+        </record>
+
+        <record id="stage_negociation" model="crm.stage">
+            <field name="name">Négociation</field>
+            <field name="sequence">25</field>
+        </record>
+    </data>
+
+    <!-- Action concurrents -->
+    <record id="action_crm_competitor" model="ir.actions.act_window">
+        <field name="name">Concurrents</field>
+        <field name="res_model">crm.competitor</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Ajoutez vos concurrents
+            </p>
+            <p>
+                Suivez les concurrents sur vos opportunités pour mieux
+                adapter votre stratégie commerciale.
+            </p>
+        </field>
+    </record>
+
+    <!-- Vue formulaire concurrent -->
+    <record id="view_crm_competitor_form" model="ir.ui.view">
+        <field name="name">crm.competitor.form</field>
+        <field name="model">crm.competitor</field>
+        <field name="arch" type="xml">
+            <form string="Concurrent">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Nom du concurrent"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="website" widget="url"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Analyse">
+                            <group>
+                                <field name="strength" placeholder="Points forts du concurrent..."/>
+                            </group>
+                            <group>
+                                <field name="weakness" placeholder="Points faibles du concurrent..."/>
+                            </group>
+                        </page>
+                        <page string="Notes">
+                            <field name="notes" placeholder="Notes diverses..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue liste concurrent -->
+    <record id="view_crm_competitor_tree" model="ir.ui.view">
+        <field name="name">crm.competitor.tree</field>
+        <field name="model">crm.competitor</field>
+        <field name="arch" type="xml">
+            <tree string="Concurrents">
+                <field name="name"/>
+                <field name="website"/>
+            </tree>
+        </field>
+    </record>
+</odoo>

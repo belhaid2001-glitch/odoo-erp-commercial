@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Menu Tableau de bord CRM -->
+    <menuitem id="menu_crm_dashboard_custom"
+              name="Tableau de bord"
+              parent="crm.crm_menu_root"
+              action="action_crm_dashboard"
+              sequence="1"/>
+
+    <!-- Menu Concurrents -->
+    <menuitem id="menu_crm_config_custom"
+              name="Configuration CRM"
+              parent="crm.crm_menu_root"
+              sequence="20"/>
+
+    <menuitem id="menu_crm_competitor"
+              name="Concurrents"
+              parent="menu_crm_config_custom"
+              action="action_crm_competitor"
+              sequence="10"/>
+
+    <!-- ============ RAPPORTS ============ -->
+    <menuitem id="menu_crm_reports_custom"
+              name="📊 Rapports"
+              parent="crm.crm_menu_root"
+              sequence="90"/>
+
+    <menuitem id="menu_crm_report_lead"
+              name="Fiche opportunité"
+              parent="menu_crm_reports_custom"
+              action="custom_crm.action_window_report_crm_lead"
+              sequence="10"/>
+</odoo>

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================
+         RAPPORT PDF — Fiche Opportunité CRM
+         Accessible via : CRM > Rapports
+    ============================================================ -->
+
+    <record id="action_report_crm_lead_custom" model="ir.actions.report">
+        <field name="name">Fiche opportunité</field>
+        <field name="model">crm.lead</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">custom_crm.report_crm_lead_custom</field>
+        <field name="report_file">custom_crm.report_crm_lead_custom</field>
+        <field name="binding_model_id" ref="model_crm_lead"/>
+        <field name="binding_type">report</field>
+        <field name="print_report_name">'Opportunite_%s' % object.name</field>
+    </record>
+
+    <!-- Action fenêtre pour sélection avant impression -->
+    <record id="action_window_report_crm_lead" model="ir.actions.act_window">
+        <field name="name">Sélectionner les opportunités à imprimer</field>
+        <field name="res_model">crm.lead</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Aucune opportunité</p>
+            <p>Sélectionnez des opportunités puis cliquez sur <b>Imprimer &gt; Fiche opportunité</b></p>
+        </field>
+    </record>
+
+    <template id="report_crm_lead_custom">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div class="row mb-4">
+                            <div class="col-7">
+                                <h2 style="color: #D5397B;"><i class="fa fa-bullseye"/> Fiche Opportunité</h2>
+                                <h3><span t-field="doc.name"/></h3>
+                            </div>
+                            <div class="col-5 text-end">
+                                <p><strong>Étape :</strong> <span t-field="doc.stage_id"/></p>
+                                <p><strong>Probabilité :</strong> <span t-field="doc.probability"/>%</p>
+                                <p t-if="doc.lead_quality"><strong>Qualité :</strong> <span t-field="doc.lead_quality"/></p>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3" style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                            <div class="col-6">
+                                <h5 style="color: #D5397B;">Client</h5>
+                                <p t-if="doc.partner_id"><strong><span t-field="doc.partner_id"/></strong></p>
+                                <p t-if="doc.email_from"><i class="fa fa-envelope"/> <span t-field="doc.email_from"/></p>
+                                <p t-if="doc.phone"><i class="fa fa-phone"/> <span t-field="doc.phone"/></p>
+                            </div>
+                            <div class="col-3 text-center" style="background: #D5397B; color: #fff; padding: 15px; border-radius: 8px;">
+                                <h5 style="color: #fff;">Revenu Espéré</h5>
+                                <p style="font-size: 22px; margin: 0;"><span t-field="doc.expected_revenue" t-options='{"widget": "monetary", "display_currency": doc.company_currency}'/></p>
+                            </div>
+                            <div class="col-3 text-center">
+                                <h5>Source</h5>
+                                <p><span t-field="doc.lead_source"/></p>
+                                <h5 class="mt-2">Appels</h5>
+                                <p><span t-field="doc.call_count"/></p>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-4">
+                                <p t-if="doc.user_id"><strong>Commercial :</strong> <span t-field="doc.user_id"/></p>
+                            </div>
+                            <div class="col-4">
+                                <p t-if="doc.team_id"><strong>Équipe :</strong> <span t-field="doc.team_id"/></p>
+                            </div>
+                            <div class="col-4">
+                                <p t-if="doc.estimated_closing_date"><strong>Clôture estimée :</strong> <span t-field="doc.estimated_closing_date"/></p>
+                            </div>
+                        </div>
+
+                        <t t-if="doc.competitor_ids">
+                            <h4 class="mt-4 mb-3" style="color: #D5397B;">Concurrents identifiés</h4>
+                            <table class="table table-sm table-bordered">
+                                <thead style="background: #D5397B; color: #fff;">
+                                    <tr>
+                                        <th>Concurrent</th>
+                                        <th>Forces</th>
+                                        <th>Faiblesses</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="doc.competitor_ids" t-as="comp">
+                                        <td><span t-field="comp.name"/></td>
+                                        <td><span t-field="comp.strength"/></td>
+                                        <td><span t-field="comp.weakness"/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </t>
+
+                        <div t-if="doc.next_action_description" class="mt-3" style="background: #cce5ff; padding: 10px; border-radius: 5px;">
+                            <strong><i class="fa fa-arrow-right"/> Prochaine action :</strong> <span t-field="doc.next_action_description"/>
+                            <span t-if="doc.next_action_date"> — <span t-field="doc.next_action_date"/></span>
+                        </div>
+
+                        <div t-if="doc.internal_notes" class="mt-3">
+                            <h5>Notes internes</h5>
+                            <div t-field="doc.internal_notes"/>
+                        </div>
+
+                        <div class="mt-4 text-center" style="font-size: 10px; color: #6c757d;">
+                            <p>Document généré automatiquement — ERP Commercial</p>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>
