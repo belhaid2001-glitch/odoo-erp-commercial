@@ -8,61 +8,78 @@
         <field name="arch" type="xml">
             <xpath expr="//header" position="inside">
                 <button name="action_send_payment_reminder"
-                        string="Envoyer relance"
+                        string="&#9888; Envoyer relance"
                         type="object"
                         class="btn-warning"
-                        invisible="payment_state in ('paid', 'reversed') or move_type != 'out_invoice'"/>
+                        invisible="payment_state in ('paid', 'reversed') or move_type != 'out_invoice'"
+                        confirm="Envoyer une relance de paiement au client ?"
+                        help="Envoie un rappel de paiement au client par email"/>
                 <button name="action_validate_invoice"
-                        string="Valider"
+                        string="&#9989; Valider"
                         type="object"
                         class="btn-primary"
                         invisible="state != 'posted' or validated_by"
-                        groups="account.group_account_manager"/>
+                        groups="account.group_account_manager"
+                        help="Validation managériale de la facture"/>
             </xpath>
 
             <xpath expr="//notebook" position="inside">
-                <page string="Suivi &amp; Relances" name="tracking_reminders"
+                <page string="&#128276; Suivi &amp; Relances" name="tracking_reminders"
                       invisible="move_type not in ('out_invoice', 'out_refund')">
+                    <div class="alert alert-info" role="alert" style="margin-bottom:10px;">
+                        <i class="fa fa-info-circle"/> Suivez les relances et le niveau de risque de cette facture. Les relances sont envoyées automatiquement par le planificateur.
+                    </div>
                     <group>
-                        <group string="Relances">
-                            <field name="payment_reminder_sent"/>
-                            <field name="last_reminder_date"/>
-                            <field name="reminder_count"/>
-                            <field name="days_overdue"/>
+                        <group string="&#128232; Relances">
+                            <field name="payment_reminder_sent" widget="boolean_toggle"
+                                   help="Indique si au moins une relance a été envoyée"/>
+                            <field name="last_reminder_date"
+                                   help="Date de la dernière relance envoyée"/>
+                            <field name="reminder_count"
+                                   help="Nombre total de relances envoyées"/>
+                            <field name="days_overdue"
+                                   help="Nombre de jours depuis la date d'échéance"/>
                         </group>
-                        <group string="Risque &amp; Validation">
+                        <group string="&#128200; Risque &amp; Validation">
                             <field name="risk_level" widget="badge"
                                    decoration-success="risk_level == 'low'"
                                    decoration-warning="risk_level == 'medium'"
-                                   decoration-danger="risk_level in ('high', 'critical')"/>
-                            <field name="validated_by"/>
-                            <field name="validation_date"/>
+                                   decoration-danger="risk_level in ('high', 'critical')"
+                                   help="Niveau de risque calculé selon le retard de paiement"/>
+                            <field name="validated_by"
+                                   help="Responsable ayant validé cette facture"/>
+                            <field name="validation_date"
+                                   help="Date de la validation managériale"/>
                         </group>
                     </group>
-                    <field name="internal_notes"
-                           placeholder="Notes internes sur cette facture..."/>
+                    <group>
+                        <field name="internal_notes"
+                               placeholder="Notes internes : motifs de retard, accords de paiement, actions prévues..."
+                               help="Notes visibles uniquement en interne"/>
+                    </group>
                 </page>
-                <page string="Chèques" name="cheques">
+                <page string="&#128179; Chèques" name="cheques">
                     <field name="cheque_ids">
                         <tree editable="bottom">
-                            <field name="name"/>
-                            <field name="cheque_type"/>
-                            <field name="partner_id"/>
-                            <field name="amount"/>
-                            <field name="date"/>
-                            <field name="due_date"/>
-                            <field name="bank_id"/>
-                            <field name="state" widget="badge"
+                            <field name="name" string="N° Chèque"/>
+                            <field name="cheque_type" string="Type"/>
+                            <field name="partner_id" string="Tiers"/>
+                            <field name="amount" string="Montant" sum="Total"/>
+                            <field name="date" string="Date émission"/>
+                            <field name="due_date" string="Échéance"/>
+                            <field name="bank_id" string="Banque"/>
+                            <field name="state" widget="badge" string="Statut"
                                    decoration-success="state == 'cleared'"
                                    decoration-warning="state == 'deposited'"
                                    decoration-danger="state == 'returned'"/>
                         </tree>
                     </field>
                 </page>
-                <page string="Analytique" name="analytic_custom">
+                <page string="&#128202; Analytique" name="analytic_custom">
                     <group>
                         <field name="analytic_tag_ids" widget="many2many_tags"
-                               options="{'color_field': 'color'}"/>
+                               options="{'color_field': 'color'}"
+                               help="Étiquettes pour le suivi analytique des coûts et revenus"/>
                     </group>
                 </page>
             </xpath>
@@ -76,12 +93,12 @@
         <field name="inherit_id" ref="account.view_out_invoice_tree"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='state']" position="after">
-                <field name="days_overdue" optional="show"/>
-                <field name="risk_level" optional="show" widget="badge"
+                <field name="days_overdue" optional="show" string="Retard (j)"/>
+                <field name="risk_level" optional="show" widget="badge" string="Risque"
                        decoration-success="risk_level == 'low'"
                        decoration-warning="risk_level == 'medium'"
                        decoration-danger="risk_level in ('high', 'critical')"/>
-                <field name="reminder_count" optional="hide"/>
+                <field name="reminder_count" optional="hide" string="Relances"/>
             </xpath>
         </field>
     </record>

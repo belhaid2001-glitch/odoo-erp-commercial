@@ -7,13 +7,14 @@ class PurchaseOrder(models.Model):
     _inherit = 'purchase.order'
 
     # --- Champs personnalisés ---
-    priority = fields.Selection([
-        ('0', 'Normale'),
-        ('1', 'Basse'),
-        ('2', 'Moyenne'),
-        ('3', 'Haute'),
-        ('4', 'Urgente'),
-    ], string='Priorité', default='0', tracking=True)
+    priority = fields.Selection(
+        selection_add=[
+            ('2', 'Moyenne'),
+            ('3', 'Haute'),
+            ('4', 'Urgente'),
+        ],
+        string='Priorité', default='0', tracking=True,
+    )
 
     supplier_reference = fields.Char(
         string='Référence Fournisseur',

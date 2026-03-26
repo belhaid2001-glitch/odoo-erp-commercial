@@ -6,79 +6,97 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
-            <!-- Ajout du champ priorité dans le header -->
+            <!-- Priorité avec étoiles -->
             <xpath expr="//field[@name='partner_id']" position="before">
                 <field name="priority" widget="priority"/>
             </xpath>
 
-            <!-- Ajout des champs personnalisés -->
+            <!-- Champs personnalisés après les conditions -->
             <xpath expr="//field[@name='payment_term_id']" position="after">
-                <field name="customer_reference"/>
-                <field name="sale_type"/>
-                <field name="approval_status" readonly="1"
-                       statusbar_visible="draft,pending,approved"/>
+                <field name="customer_reference" placeholder="Ex: PO-2026-001"
+                       help="Référence de commande communiquée par le client"/>
+                <field name="sale_type" help="Classez cette commande par type pour vos analyses"/>
             </xpath>
 
-            <!-- Boutons d'approbation -->
+            <!-- Workflow d'approbation -->
             <xpath expr="//header" position="inside">
                 <button name="action_request_approval"
-                        string="Demander approbation"
+                        string="&#128227; Demander approbation"
                         type="object"
                         class="btn-primary"
-                        invisible="approval_status != 'draft' or state != 'draft'"/>
+                        invisible="approval_status != 'draft' or state != 'draft'"
+                        help="Soumettre ce devis pour validation par un responsable"/>
                 <button name="action_approve_order"
-                        string="Approuver"
+                        string="&#9989; Approuver"
                         type="object"
                         class="btn-success"
                         invisible="approval_status != 'pending'"
-                        groups="sales_team.group_sale_manager"/>
+                        groups="sales_team.group_sale_manager"
+                        confirm="Confirmer l'approbation de ce devis ?"/>
                 <button name="action_reject_order"
-                        string="Rejeter"
+                        string="&#10060; Rejeter"
                         type="object"
                         class="btn-danger"
                         invisible="approval_status != 'pending'"
-                        groups="sales_team.group_sale_manager"/>
+                        groups="sales_team.group_sale_manager"
+                        confirm="Êtes-vous sûr de vouloir rejeter ce devis ?"/>
+                <field name="approval_status" widget="statusbar"
+                       statusbar_visible="draft,pending,approved"
+                       invisible="approval_status == 'draft'"/>
             </xpath>
 
-            <!-- Onglet produits optionnels -->
+            <!-- Onglets enrichis -->
             <xpath expr="//notebook" position="inside">
-                <page string="Produits optionnels" name="optional_products">
+                <page string="&#127873; Produits optionnels" name="optional_products"
+                      help="Proposez des produits complémentaires que le client peut choisir d'ajouter">
+                    <div class="alert alert-info" role="alert" style="margin-bottom:10px;">
+                        <i class="fa fa-info-circle"/> Ajoutez ici des produits suggérés. Le client pourra les ajouter à sa commande depuis le portail.
+                    </div>
                     <field name="optional_product_ids">
-                        <tree editable="bottom">
-                            <field name="product_id"/>
-                            <field name="description"/>
-                            <field name="quantity"/>
-                            <field name="price_unit"/>
-                            <field name="is_selected"/>
+                        <tree editable="bottom" decoration-success="is_selected == True"
+                              decoration-muted="is_selected == False">
+                            <field name="product_id" string="Produit suggéré"/>
+                            <field name="description" string="Description"/>
+                            <field name="quantity" string="Qté"/>
+                            <field name="price_unit" string="Prix unit." widget="monetary"/>
+                            <field name="is_selected" string="Ajouté" widget="boolean_toggle"/>
                             <button name="action_add_to_order"
-                                    string="Ajouter"
+                                    string="Ajouter à la commande"
                                     type="object"
-                                    icon="fa-plus"
+                                    icon="fa-plus-circle"
+                                    class="btn-link text-success"
                                     invisible="is_selected == True"/>
                         </tree>
                     </field>
                 </page>
-                <page string="Informations complémentaires" name="extra_info_custom">
+                <page string="&#128203; Infos complémentaires" name="extra_info_custom">
                     <group>
-                        <group string="Livraison">
-                            <field name="delivery_note"/>
+                        <group string="&#128666; Livraison">
+                            <field name="delivery_note" placeholder="Instructions spéciales pour la livraison..."
+                                   help="Ces notes apparaîtront sur les documents de livraison"/>
                         </group>
-                        <group string="Indicateurs">
-                            <field name="margin_percent"/>
-                            <field name="total_discount"/>
-                            <field name="is_ready_to_invoice"/>
+                        <group string="&#128200; Indicateurs de Performance">
+                            <field name="margin_percent" widget="percentage"
+                                   help="Marge bénéficiaire en pourcentage du montant HT"/>
+                            <field name="total_discount"
+                                   help="Total des remises accordées sur cette commande"/>
+                            <field name="is_ready_to_invoice" widget="boolean_toggle"/>
                         </group>
                     </group>
-                    <group string="Approbation" invisible="approval_status == 'draft'">
-                        <field name="approved_by"/>
-                        <field name="approval_date"/>
+                    <group string="&#9989; Approbation" invisible="approval_status == 'draft'">
+                        <group>
+                            <field name="approved_by"/>
+                        </group>
+                        <group>
+                            <field name="approval_date"/>
+                        </group>
                     </group>
                 </page>
             </xpath>
         </field>
     </record>
 
-    <!-- Extension de la vue liste -->
+    <!-- Extension de la vue liste avec décorations -->
     <record id="view_sale_order_tree_custom" model="ir.ui.view">
         <field name="name">sale.order.tree.custom</field>
         <field name="model">sale.order</field>
@@ -86,16 +104,17 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='name']" position="after">
                 <field name="priority" widget="priority"/>
-                <field name="customer_reference" optional="show"/>
-                <field name="sale_type" optional="show"/>
+                <field name="customer_reference" optional="show" string="Réf. Client"/>
+                <field name="sale_type" optional="show" string="Type"/>
             </xpath>
             <xpath expr="//field[@name='state']" position="after">
                 <field name="approval_status" optional="show"
-                       widget="badge"
+                       widget="badge" string="Approbation"
                        decoration-info="approval_status == 'pending'"
                        decoration-success="approval_status == 'approved'"
                        decoration-danger="approval_status == 'rejected'"/>
-                <field name="margin_percent" optional="hide"/>
+                <field name="margin_percent" optional="hide" string="Marge %"
+                       widget="percentage"/>
             </xpath>
         </field>
     </record>

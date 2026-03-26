@@ -11,4 +11,22 @@
               parent="menu_hr_evaluation_root"
               action="action_hr_evaluation"
               sequence="10"/>
+
+    <!-- ============ RAPPORTS ============ -->
+    <menuitem id="menu_hr_reports_custom"
+              name="📊 Rapports"
+              parent="hr.menu_hr_root"
+              sequence="90"/>
+
+    <menuitem id="menu_hr_report_employee"
+              name="Fiche employé"
+              parent="menu_hr_reports_custom"
+              action="custom_hr.action_window_report_hr_employee"
+              sequence="10"/>
+
+    <menuitem id="menu_hr_report_evaluation"
+              name="Rapport d'évaluation"
+              parent="menu_hr_reports_custom"
+              action="custom_hr.action_window_report_hr_evaluation"
+              sequence="20"/>
 </odoo>

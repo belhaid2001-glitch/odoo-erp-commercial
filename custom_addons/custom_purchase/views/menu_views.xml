@@ -16,4 +16,22 @@
               parent="purchase.menu_purchase_root"
               action="action_purchase_dashboard"
               sequence="0"/>
+
+    <!-- ============ RAPPORTS ============ -->
+    <menuitem id="menu_purchase_reports_custom"
+              name="📊 Rapports"
+              parent="purchase.menu_purchase_root"
+              sequence="90"/>
+
+    <menuitem id="menu_purchase_report_order"
+              name="Rapport commande fournisseur"
+              parent="menu_purchase_reports_custom"
+              action="custom_purchase.action_window_report_purchase_order"
+              sequence="10"/>
+
+    <menuitem id="menu_purchase_report_convention"
+              name="Rapport convention d'achat"
+              parent="menu_purchase_reports_custom"
+              action="custom_purchase.action_window_report_purchase_convention"
+              sequence="20"/>
 </odoo>

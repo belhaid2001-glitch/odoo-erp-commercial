@@ -7,13 +7,15 @@
         <field name="arch" type="xml">
             <form string="Contrôle qualité">
                 <header>
-                    <button name="action_pass" string="Valider"
+                    <button name="action_pass" string="&#9989; Valider"
                             type="object" class="btn-success"
-                            invisible="result != 'pending'"/>
-                    <button name="action_fail" string="Échouer"
+                            invisible="result != 'pending'"
+                            help="Marquer ce contrôle comme conforme"/>
+                    <button name="action_fail" string="&#10060; Échouer"
                             type="object" class="btn-danger"
-                            invisible="result != 'pending'"/>
-                    <button name="action_reset" string="Réinitialiser"
+                            invisible="result != 'pending'"
+                            confirm="Confirmer l'échec de ce contrôle qualité ?"/>
+                    <button name="action_reset" string="&#128260; Réinitialiser"
                             type="object"
                             invisible="result == 'pending'"/>
                     <field name="result" widget="statusbar"/>
@@ -23,25 +25,37 @@
                         <h1><field name="name" readonly="1"/></h1>
                     </div>
                     <group>
-                        <group>
-                            <field name="picking_id"/>
-                            <field name="product_id"/>
-                            <field name="lot_id"/>
-                            <field name="check_type"/>
+                        <group string="&#128230; Produit">
+                            <field name="picking_id"
+                                   help="Opération de stock associée"/>
+                            <field name="product_id"
+                                   help="Produit contrôlé"/>
+                            <field name="lot_id"
+                                   help="Numéro de lot ou de série"/>
+                            <field name="check_type"
+                                   help="Type de contrôle : visuel, dimensionnel, fonctionnel..."/>
                         </group>
-                        <group>
-                            <field name="quantity"/>
-                            <field name="quantity_checked"/>
-                            <field name="quantity_failed"/>
-                            <field name="inspector_id"/>
-                            <field name="check_date"/>
-                            <field name="team_id"/>
+                        <group string="&#128202; Mesures">
+                            <field name="quantity"
+                                   help="Quantité attendue"/>
+                            <field name="quantity_checked"
+                                   help="Quantité effectivement contrôlée"/>
+                            <field name="quantity_failed"
+                                   help="Quantité non conforme"
+                                   decoration-danger="quantity_failed > 0"/>
+                            <field name="inspector_id" widget="many2one_avatar_user"
+                                   help="Inspecteur ayant réalisé le contrôle"/>
+                            <field name="check_date"
+                                   help="Date du contrôle"/>
+                            <field name="team_id"
+                                   help="Équipe qualité responsable"/>
                         </group>
                     </group>
                     <notebook>
-                        <page string="Observations">
+                        <page string="&#128221; Observations">
                             <field name="notes"
-                                   placeholder="Détails du contrôle qualité..."/>
+                                   placeholder="Défaut constaté, mesures correctives proposées, photos à joindre..."
+                                   help="Détails et observations du contrôle qualité"/>
                         </page>
                     </notebook>
                 </sheet>
@@ -63,17 +77,18 @@
                   decoration-success="result == 'pass'"
                   decoration-danger="result == 'fail'"
                   decoration-warning="result == 'pending'">
-                <field name="name"/>
-                <field name="picking_id"/>
+                <field name="name" string="Réf."/>
+                <field name="picking_id" string="Opération"/>
                 <field name="product_id"/>
-                <field name="lot_id" optional="show"/>
-                <field name="check_type"/>
-                <field name="quantity"/>
-                <field name="quantity_checked"/>
-                <field name="quantity_failed"/>
-                <field name="inspector_id"/>
-                <field name="check_date"/>
-                <field name="result" widget="badge"
+                <field name="lot_id" optional="show" string="Lot/Série"/>
+                <field name="check_type" string="Type"/>
+                <field name="quantity" string="Qté prévue"/>
+                <field name="quantity_checked" string="Qté contrôlée"/>
+                <field name="quantity_failed" string="Qté rejetée"
+                       decoration-danger="quantity_failed > 0"/>
+                <field name="inspector_id" widget="many2one_avatar_user" string="Inspecteur"/>
+                <field name="check_date" string="Date"/>
+                <field name="result" widget="badge" string="Résultat"
                        decoration-success="result == 'pass'"
                        decoration-danger="result == 'fail'"
                        decoration-warning="result == 'pending'"/>

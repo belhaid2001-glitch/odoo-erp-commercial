@@ -17,4 +17,22 @@
               parent="sale.sale_menu_root"
               action="action_sale_dashboard"
               sequence="0"/>
+
+    <!-- ============ RAPPORTS ============ -->
+    <menuitem id="menu_sale_reports_custom"
+              name="📊 Rapports"
+              parent="sale.sale_menu_root"
+              sequence="90"/>
+
+    <menuitem id="menu_sale_report_order"
+              name="Rapport commande de vente"
+              parent="menu_sale_reports_custom"
+              action="custom_sale.action_window_report_sale_order"
+              sequence="10"/>
+
+    <menuitem id="menu_sale_report_forecast"
+              name="Rapport prévisions"
+              parent="menu_sale_reports_custom"
+              action="custom_sale.action_window_report_sale_forecast"
+              sequence="20"/>
 </odoo>

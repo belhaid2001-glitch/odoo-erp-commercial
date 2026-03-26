@@ -6,7 +6,7 @@
         <field name="model">hr.employee</field>
         <field name="inherit_id" ref="hr.view_employee_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//div[@class='oe_button_box']" position="inside">
+            <xpath expr="//div[hasclass('oe_button_box')]" position="inside">
                 <button name="action_view_evaluations"
                         type="object"
                         class="oe_stat_button"
@@ -17,40 +17,57 @@
             </xpath>
 
             <xpath expr="//notebook" position="inside">
-                <page string="Informations RH" name="hr_custom_info">
+                <page string="&#128188; Informations RH" name="hr_custom_info">
                     <group>
-                        <group string="Contrat">
-                            <field name="employee_type_custom"/>
-                            <field name="hire_date"/>
-                            <field name="end_date"/>
-                            <field name="seniority_years"/>
+                        <group string="&#128196; Contrat">
+                            <field name="employee_type_custom"
+                                   help="Type de contrat de l'employé (CDI, CDD, stage, freelance)"/>
+                            <field name="hire_date"
+                                   help="Date d'entrée dans l'entreprise"/>
+                            <field name="end_date"
+                                   help="Date de fin de contrat (CDD/stage)"/>
+                            <field name="seniority_years"
+                                   help="Ancienneté calculée automatiquement"/>
                         </group>
-                        <group string="Identité">
-                            <field name="cin"/>
-                            <field name="cnss_number"/>
-                            <field name="blood_type"/>
+                        <group string="&#127380; Identité">
+                            <field name="cin" placeholder="Ex: AB123456"
+                                   help="Numéro de la Carte d'Identité Nationale"/>
+                            <field name="cnss_number" placeholder="Ex: 123456789"
+                                   help="Numéro d'immatriculation CNSS"/>
+                            <field name="blood_type"
+                                   help="Groupe sanguin (information médicale d'urgence)"/>
                         </group>
                     </group>
                     <group>
-                        <group string="Contact d'urgence">
-                            <field name="emergency_contact_name"/>
-                            <field name="emergency_contact_phone"/>
-                            <field name="emergency_contact_relation"/>
+                        <group string="&#128680; Contact d'urgence">
+                            <field name="emergency_contact_name"
+                                   placeholder="Nom complet du contact"
+                                   help="Personne à contacter en cas d'urgence"/>
+                            <field name="emergency_contact_phone"
+                                   placeholder="+212 6XX XXX XXX"
+                                   help="Numéro de téléphone du contact d'urgence"/>
+                            <field name="emergency_contact_relation"
+                                   placeholder="Ex: Conjoint, Parent, Frère..."
+                                   help="Lien de parenté avec l'employé"/>
                         </group>
-                        <group string="Performance">
-                            <field name="last_evaluation_date"/>
-                            <field name="last_evaluation_score"/>
+                        <group string="&#11088; Performance">
+                            <field name="last_evaluation_date"
+                                   help="Date de la dernière évaluation réalisée"/>
+                            <field name="last_evaluation_score"
+                                   help="Score global obtenu lors de la dernière évaluation"/>
                         </group>
                     </group>
                 </page>
-                <page string="Compétences &amp; Formation" name="skills_training">
+                <page string="&#127891; Compétences &amp; Formation" name="skills_training">
                     <group>
                         <field name="skills_description"
-                               placeholder="Listez les compétences de l'employé..."/>
+                               placeholder="Compétences techniques et fonctionnelles : langues, logiciels, certifications..."
+                               help="Décrivez les compétences clés de l'employé"/>
                     </group>
                     <group>
                         <field name="training_notes"
-                               placeholder="Notes de formation et certifications..."/>
+                               placeholder="Formations suivies, certifications obtenues, dates et organismes..."
+                               help="Historique et plan de formation"/>
                     </group>
                 </page>
             </xpath>
@@ -64,10 +81,10 @@
         <field name="inherit_id" ref="hr.view_employee_tree"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='department_id']" position="after">
-                <field name="employee_type_custom" optional="show"/>
-                <field name="hire_date" optional="show"/>
-                <field name="seniority_years" optional="show"/>
-                <field name="last_evaluation_score" optional="hide"/>
+                <field name="employee_type_custom" optional="show" string="Contrat"/>
+                <field name="hire_date" optional="show" string="Embauche"/>
+                <field name="seniority_years" optional="show" string="Ancienneté"/>
+                <field name="last_evaluation_score" optional="hide" string="Score"/>
             </xpath>
         </field>
     </record>

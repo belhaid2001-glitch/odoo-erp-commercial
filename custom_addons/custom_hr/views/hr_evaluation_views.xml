@@ -7,16 +7,19 @@
         <field name="arch" type="xml">
             <form string="Évaluation">
                 <header>
-                    <button name="action_start" string="Commencer"
+                    <button name="action_start" string="&#9654; Commencer"
                             type="object" class="btn-primary"
-                            invisible="state != 'draft'"/>
-                    <button name="action_done" string="Terminer"
+                            invisible="state != 'draft'"
+                            help="Démarrer le processus d'évaluation"/>
+                    <button name="action_done" string="&#9989; Terminer"
                             type="object" class="btn-success"
-                            invisible="state != 'in_progress'"/>
+                            invisible="state != 'in_progress'"
+                            confirm="Terminer cette évaluation ? Le score final sera figé."/>
                     <button name="action_cancel" string="Annuler"
                             type="object"
-                            invisible="state in ('done', 'cancelled')"/>
-                    <button name="action_reset_draft" string="Brouillon"
+                            invisible="state in ('done', 'cancelled')"
+                            confirm="Annuler cette évaluation ?"/>
+                    <button name="action_reset_draft" string="&#128260; Brouillon"
                             type="object"
                             invisible="state not in ('cancelled',)"/>
                     <field name="state" widget="statusbar"
@@ -27,18 +30,22 @@
                         <h1><field name="name" readonly="1"/></h1>
                     </div>
                     <group>
-                        <group>
-                            <field name="employee_id"/>
+                        <group string="&#128100; Employé">
+                            <field name="employee_id"
+                                   help="Employé évalué"/>
                             <field name="department_id"/>
                             <field name="job_id"/>
-                            <field name="evaluator_id"/>
+                            <field name="evaluator_id" widget="many2one_avatar_user"
+                                   help="Personne réalisant l'évaluation"/>
                         </group>
-                        <group>
+                        <group string="&#128197; Période &amp; Résultat">
                             <field name="date"/>
-                            <field name="evaluation_type"/>
+                            <field name="evaluation_type"
+                                   help="Type d'évaluation : annuelle, mi-parcours, stage..."/>
                             <field name="period_start"/>
                             <field name="period_end"/>
-                            <field name="global_score"/>
+                            <field name="global_score"
+                                   help="Score global calculé automatiquement"/>
                             <field name="global_rating" widget="badge"
                                    decoration-success="global_rating in ('good', 'excellent')"
                                    decoration-warning="global_rating == 'satisfactory'"
@@ -46,21 +53,30 @@
                         </group>
                     </group>
                     <notebook>
-                        <page string="Notation" name="scores">
+                        <page string="&#127942; Notation" name="scores">
+                            <div class="alert alert-info" role="alert" style="margin-bottom:10px;">
+                                <i class="fa fa-info-circle"/> Notez chaque critère de 1 (insuffisant) à 5 (excellent). Le score global est calculé automatiquement.
+                            </div>
                             <group>
-                                <group string="Performance">
-                                    <field name="score_quality" widget="radio"/>
-                                    <field name="score_productivity" widget="radio"/>
-                                    <field name="score_initiative" widget="radio"/>
+                                <group string="&#128200; Performance">
+                                    <field name="score_quality" widget="radio"
+                                           help="Qualité du travail fourni"/>
+                                    <field name="score_productivity" widget="radio"
+                                           help="Volume et rapidité d'exécution"/>
+                                    <field name="score_initiative" widget="radio"
+                                           help="Prise d'initiative et proactivité"/>
                                 </group>
-                                <group string="Comportement">
-                                    <field name="score_teamwork" widget="radio"/>
-                                    <field name="score_punctuality" widget="radio"/>
-                                    <field name="score_communication" widget="radio"/>
+                                <group string="&#129309; Comportement">
+                                    <field name="score_teamwork" widget="radio"
+                                           help="Esprit d'équipe et collaboration"/>
+                                    <field name="score_punctuality" widget="radio"
+                                           help="Ponctualité et respect des délais"/>
+                                    <field name="score_communication" widget="radio"
+                                           help="Communication orale et écrite"/>
                                 </group>
                             </group>
                         </page>
-                        <page string="Objectifs" name="goals">
+                        <page string="&#127919; Objectifs" name="goals">
                             <field name="goal_ids">
                                 <tree editable="bottom">
                                     <field name="name"/>
@@ -76,27 +92,32 @@
                                 </tree>
                             </field>
                         </page>
-                        <page string="Commentaires" name="comments">
+                        <page string="&#128172; Commentaires" name="comments">
                             <group>
-                                <group string="Évaluation">
+                                <group string="&#128269; Évaluation">
                                     <field name="strengths"
-                                           placeholder="Points forts de l'employé..."/>
+                                           placeholder="Points forts : compétences techniques, leadership, créativité..."
+                                           help="Décrivez les points forts de l'employé"/>
                                     <field name="improvements"
-                                           placeholder="Points à améliorer..."/>
+                                           placeholder="Axes d'amélioration : gestion du temps, communication, rigueur..."
+                                           help="Identifiez les domaines à travailler"/>
                                 </group>
-                                <group string="Prochaine période">
+                                <group string="&#128640; Prochaine période">
                                     <field name="objectives"
-                                           placeholder="Objectifs pour la prochaine période..."/>
+                                           placeholder="Objectifs : certifications à obtenir, projets à mener, compétences à développer..."
+                                           help="Définissez les objectifs pour la prochaine période"/>
                                 </group>
                             </group>
                             <group>
                                 <group>
                                     <field name="evaluator_comments"
-                                           placeholder="Commentaires de l'évaluateur..."/>
+                                           placeholder="Avis général de l'évaluateur..."
+                                           help="Commentaires libres du manager"/>
                                 </group>
                                 <group>
                                     <field name="employee_comments"
-                                           placeholder="Commentaires de l'employé..."/>
+                                           placeholder="Réponse et remarques de l'employé..."
+                                           help="L'employé peut donner son retour ici"/>
                                 </group>
                             </group>
                         </page>

@@ -25,9 +25,32 @@
               sequence="30"/>
 
     <!-- Menu Analytique -->
+    <menuitem id="menu_account_analytic_custom_root"
+              name="Analytique"
+              parent="account.menu_finance"
+              sequence="7"/>
+
     <menuitem id="menu_account_analytic_tags_custom"
               name="Étiquettes analytiques"
-              parent="account.account_analytic_menu"
+              parent="menu_account_analytic_custom_root"
               action="action_account_analytic_tag_custom"
-              sequence="50"/>
+              sequence="10"/>
+
+    <!-- ============ RAPPORTS ============ -->
+    <menuitem id="menu_account_reports_custom"
+              name="📊 Rapports"
+              parent="account.menu_finance"
+              sequence="90"/>
+
+    <menuitem id="menu_account_report_invoice"
+              name="Rapport facture personnalisé"
+              parent="menu_account_reports_custom"
+              action="custom_accounting.action_window_report_account_move"
+              sequence="10"/>
+
+    <menuitem id="menu_account_report_cheque"
+              name="Impression chèque"
+              parent="menu_account_reports_custom"
+              action="custom_accounting.action_report_cheque"
+              sequence="20"/>
 </odoo>
