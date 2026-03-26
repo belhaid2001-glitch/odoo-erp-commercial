@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================
+         RAPPORT PDF — Bon de commande personnalisé
+         Accessible via : Vente > Rapports > Rapport de commande
+    ============================================================ -->
+
+    <!-- Action de rapport -->
+    <record id="action_report_sale_order_custom" model="ir.actions.report">
+        <field name="name">Rapport de commande personnalisé</field>
+        <field name="model">sale.order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">custom_sale.report_sale_order_custom</field>
+        <field name="report_file">custom_sale.report_sale_order_custom</field>
+        <field name="binding_model_id" ref="model_sale_order"/>
+        <field name="binding_type">report</field>
+        <field name="print_report_name">'Commande_%s' % object.name</field>
+    </record>
+
+    <!-- Action de rapport — Prévision de vente -->
+    <record id="action_report_sale_forecast" model="ir.actions.report">
+        <field name="name">Rapport de prévision de vente</field>
+        <field name="model">sale.forecast</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">custom_sale.report_sale_forecast</field>
+        <field name="report_file">custom_sale.report_sale_forecast</field>
+        <field name="binding_model_id" ref="model_sale_forecast"/>
+        <field name="binding_type">report</field>
+        <field name="print_report_name">'Prévision_%s' % object.name</field>
+    </record>
+
+    <!-- ═══ Actions fenêtre pour sélection avant impression ═══ -->
+    <record id="action_window_report_sale_order" model="ir.actions.act_window">
+        <field name="name">Sélectionner les commandes à imprimer</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Aucune commande de vente</p>
+            <p>Sélectionnez des commandes puis cliquez sur <b>Imprimer &gt; Rapport de commande personnalisé</b></p>
+        </field>
+    </record>
+
+    <record id="action_window_report_sale_forecast" model="ir.actions.act_window">
+        <field name="name">Sélectionner les prévisions à imprimer</field>
+        <field name="res_model">sale.forecast</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Aucune prévision de vente</p>
+            <p>Sélectionnez des prévisions puis cliquez sur <b>Imprimer &gt; Rapport de prévision</b></p>
+        </field>
+    </record>
+
+    <!-- ═══ Template : Rapport Commande ═══ -->
+    <template id="report_sale_order_custom">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <!-- En-tête -->
+                        <div class="row mb-4">
+                            <div class="col-7">
+                                <h2 style="color: #875A7B;">
+                                    <i class="fa fa-shopping-cart"/> Rapport de Commande
+                                </h2>
+                                <h3><span t-field="doc.name"/></h3>
+                            </div>
+                            <div class="col-5 text-end">
+                                <p><strong>Date :</strong> <span t-field="doc.date_order" t-options='{"widget": "date"}'/></p>
+                                <p><strong>Vendeur :</strong> <span t-field="doc.user_id"/></p>
+                                <p t-if="doc.approval_status != 'draft'">
+                                    <strong>Statut d'approbation :</strong>
+                                    <span t-field="doc.approval_status"/>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Informations client -->
+                        <div class="row mb-3" style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                            <div class="col-6">
+                                <h5 style="color: #495057;">Client</h5>
+                                <p><strong><span t-field="doc.partner_id"/></strong></p>
+                                <span t-field="doc.partner_id" t-options='{"widget": "contact", "fields": ["address", "phone", "email"]}'/>
+                            </div>
+                            <div class="col-6">
+                                <h5 style="color: #495057;">Détails</h5>
+                                <p t-if="doc.customer_reference"><strong>Réf. client :</strong> <span t-field="doc.customer_reference"/></p>
+                                <p><strong>Type :</strong> <span t-field="doc.sale_type"/></p>
+                                <p><strong>Priorité :</strong> <span t-field="doc.priority"/></p>
+                            </div>
+                        </div>
+
+                        <!-- Lignes de commande -->
+                        <h4 class="mt-4 mb-3" style="color: #875A7B;">Lignes de commande</h4>
+                        <table class="table table-sm table-bordered">
+                            <thead style="background: #875A7B; color: #fff;">
+                                <tr>
+                                    <th>Produit</th>
+                                    <th class="text-center">Qté</th>
+                                    <th class="text-end">Prix unitaire</th>
+                                    <th class="text-center">Remise (%)</th>
+                                    <th class="text-end">Sous-total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="doc.order_line" t-as="line">
+                                    <td><span t-field="line.product_id"/></td>
+                                    <td class="text-center"><span t-field="line.product_uom_qty"/> <span t-field="line.product_uom"/></td>
+                                    <td class="text-end"><span t-field="line.price_unit" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></td>
+                                    <td class="text-center"><span t-field="line.discount"/>%</td>
+                                    <td class="text-end"><span t-field="line.price_subtotal" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- Totaux -->
+                        <div class="row mt-3">
+                            <div class="col-6">
+                                <div t-if="doc.delivery_note" style="background: #fff3cd; padding: 10px; border-radius: 5px;">
+                                    <strong><i class="fa fa-truck"/> Instructions de livraison :</strong>
+                                    <p t-field="doc.delivery_note"/>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td><strong>Sous-total HT</strong></td>
+                                        <td class="text-end"><span t-field="doc.amount_untaxed" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></td>
+                                    </tr>
+                                    <tr t-if="doc.total_discount">
+                                        <td>Remise totale</td>
+                                        <td class="text-end" style="color: #dc3545;">-<span t-field="doc.total_discount" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Taxes</td>
+                                        <td class="text-end"><span t-field="doc.amount_tax" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></td>
+                                    </tr>
+                                    <tr style="font-size: 16px; font-weight: bold; border-top: 2px solid #875A7B;">
+                                        <td>Total TTC</td>
+                                        <td class="text-end"><span t-field="doc.amount_total" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></td>
+                                    </tr>
+                                    <tr t-if="doc.margin_percent">
+                                        <td style="color: #28a745;">Marge</td>
+                                        <td class="text-end" style="color: #28a745;"><span t-field="doc.margin_percent"/>%</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Approbation -->
+                        <div t-if="doc.approved_by" class="row mt-3" style="background: #d4edda; padding: 10px; border-radius: 5px;">
+                            <div class="col-12">
+                                <i class="fa fa-check-circle" style="color: #28a745;"/>
+                                <strong> Approuvé par :</strong> <span t-field="doc.approved_by"/>
+                                <span> le </span> <span t-field="doc.approval_date" t-options='{"widget": "date"}'/>
+                            </div>
+                        </div>
+
+                        <!-- Pied de page -->
+                        <div class="mt-4 text-center" style="font-size: 10px; color: #6c757d;">
+                            <p>Document généré automatiquement — ERP Commercial</p>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <!-- ═══ Template : Rapport Prévision ═══ -->
+    <template id="report_sale_forecast">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div class="row mb-4">
+                            <div class="col-7">
+                                <h2 style="color: #875A7B;">
+                                    <i class="fa fa-line-chart"/> Rapport de Prévision de Vente
+                                </h2>
+                                <h3><span t-field="doc.name"/></h3>
+                            </div>
+                            <div class="col-5 text-end">
+                                <p><strong>État :</strong> <span t-field="doc.state"/></p>
+                                <p><strong>Responsable :</strong> <span t-field="doc.user_id"/></p>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3" style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                            <div class="col-4">
+                                <h5>Période</h5>
+                                <p><strong>Du :</strong> <span t-field="doc.date_forecast"/></p>
+                                <p><strong>Au :</strong> <span t-field="doc.date_target"/></p>
+                            </div>
+                            <div class="col-4">
+                                <h5>Client / Produit</h5>
+                                <p t-if="doc.partner_id"><span t-field="doc.partner_id"/></p>
+                                <p t-if="doc.product_id"><span t-field="doc.product_id"/></p>
+                            </div>
+                            <div class="col-4" style="background: #875A7B; color: #fff; padding: 15px; border-radius: 8px; text-align: center;">
+                                <h5 style="color: #fff;">Montant Prévu</h5>
+                                <p style="font-size: 24px; margin: 0;"><span t-field="doc.forecast_amount" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></p>
+                                <p t-if="doc.achievement_rate" style="margin-top: 5px;">
+                                    Réalisation : <span t-field="doc.achievement_rate"/>%
+                                </p>
+                            </div>
+                        </div>
+
+                        <div t-if="doc.notes" class="mt-3">
+                            <h5>Notes</h5>
+                            <p t-field="doc.notes"/>
+                        </div>
+
+                        <div class="mt-4 text-center" style="font-size: 10px; color: #6c757d;">
+                            <p>Document généré automatiquement — ERP Commercial</p>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

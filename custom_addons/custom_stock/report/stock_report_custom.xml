@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================
+         RAPPORT PDF — Bon de livraison + Contrôle qualité
+         Accessible via : Stock > Rapports
+    ============================================================ -->
+
+    <record id="action_report_stock_picking_custom" model="ir.actions.report">
+        <field name="name">Rapport de livraison personnalisé</field>
+        <field name="model">stock.picking</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">custom_stock.report_stock_picking_custom</field>
+        <field name="report_file">custom_stock.report_stock_picking_custom</field>
+        <field name="binding_model_id" ref="model_stock_picking"/>
+        <field name="binding_type">report</field>
+        <field name="print_report_name">'BL_%s' % object.name</field>
+    </record>
+
+    <record id="action_report_quality_check" model="ir.actions.report">
+        <field name="name">Rapport de contrôle qualité</field>
+        <field name="model">stock.quality.check</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">custom_stock.report_quality_check</field>
+        <field name="report_file">custom_stock.report_quality_check</field>
+        <field name="binding_model_id" ref="model_stock_quality_check"/>
+        <field name="binding_type">report</field>
+        <field name="print_report_name">'QC_%s' % object.name</field>
+    </record>
+
+    <!-- Actions fenêtre pour sélection avant impression -->
+    <record id="action_window_report_stock_picking" model="ir.actions.act_window">
+        <field name="name">Sélectionner les bons de livraison à imprimer</field>
+        <field name="res_model">stock.picking</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Aucun bon de livraison</p>
+            <p>Sélectionnez des bons puis cliquez sur <b>Imprimer &gt; Rapport bon de livraison</b></p>
+        </field>
+    </record>
+
+    <record id="action_window_report_quality_check" model="ir.actions.act_window">
+        <field name="name">Sélectionner les contrôles qualité à imprimer</field>
+        <field name="res_model">stock.quality.check</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Aucun contrôle qualité</p>
+            <p>Sélectionnez des contrôles puis cliquez sur <b>Imprimer &gt; Rapport contrôle qualité</b></p>
+        </field>
+    </record>
+
+    <!-- Template Bon de livraison -->
+    <template id="report_stock_picking_custom">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div class="row mb-4">
+                            <div class="col-7">
+                                <h2 style="color: #714B67;"><i class="fa fa-cube"/> Bon de Livraison</h2>
+                                <h3><span t-field="doc.name"/></h3>
+                            </div>
+                            <div class="col-5 text-end">
+                                <p><strong>Date :</strong> <span t-field="doc.scheduled_date" t-options='{"widget": "date"}'/></p>
+                                <p><strong>Type :</strong> <span t-field="doc.picking_type_id"/></p>
+                                <p><strong>Préparation :</strong> <span t-field="doc.preparation_status"/></p>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3" style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                            <div class="col-6">
+                                <h5>Destinataire</h5>
+                                <p t-if="doc.partner_id"><strong><span t-field="doc.partner_id"/></strong></p>
+                                <p><strong>Origine :</strong> <span t-field="doc.location_id"/></p>
+                                <p><strong>Destination :</strong> <span t-field="doc.location_dest_id"/></p>
+                            </div>
+                            <div class="col-6">
+                                <h5>Logistique</h5>
+                                <p t-if="doc.weight_total"><strong>Poids total :</strong> <span t-field="doc.weight_total"/> kg</p>
+                                <p t-if="doc.package_count"><strong>Nombre de colis :</strong> <span t-field="doc.package_count"/></p>
+                                <p t-if="doc.carrier_tracking"><strong>N° suivi :</strong> <span t-field="doc.carrier_tracking"/></p>
+                            </div>
+                        </div>
+
+                        <h4 class="mt-4 mb-3" style="color: #714B67;">Produits</h4>
+                        <table class="table table-sm table-bordered">
+                            <thead style="background: #714B67; color: #fff;">
+                                <tr>
+                                    <th>Produit</th>
+                                    <th class="text-center">Qté demandée</th>
+                                    <th class="text-center">Qté réservée</th>
+                                    <th class="text-center">Qté faite</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="doc.move_ids" t-as="move">
+                                    <td><span t-field="move.product_id"/></td>
+                                    <td class="text-center"><span t-field="move.product_uom_qty"/></td>
+                                    <td class="text-center"><span t-field="move.quantity"/></td>
+                                    <td class="text-center"><span t-field="move.quantity"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- Qualité -->
+                        <t t-if="doc.quality_check_ids">
+                            <h4 class="mt-4 mb-3" style="color: #714B67;">Contrôles Qualité</h4>
+                            <table class="table table-sm table-bordered">
+                                <thead style="background: #e9ecef;">
+                                    <tr>
+                                        <th>Contrôle</th>
+                                        <th>Produit</th>
+                                        <th class="text-center">Type</th>
+                                        <th class="text-center">Résultat</th>
+                                        <th>Inspecteur</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="doc.quality_check_ids" t-as="qc">
+                                        <td><span t-field="qc.name"/></td>
+                                        <td><span t-field="qc.product_id"/></td>
+                                        <td class="text-center"><span t-field="qc.check_type"/></td>
+                                        <td class="text-center">
+                                            <span t-if="qc.result == 'pass'" style="color: #28a745; font-weight: bold;">✓ Conforme</span>
+                                            <span t-if="qc.result == 'fail'" style="color: #dc3545; font-weight: bold;">✗ Non conforme</span>
+                                            <span t-if="qc.result == 'pending'" style="color: #ffc107;">⏳ En attente</span>
+                                        </td>
+                                        <td><span t-field="qc.inspector_id"/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </t>
+
+                        <div t-if="doc.delivery_instructions" class="mt-3" style="background: #fff3cd; padding: 10px; border-radius: 5px;">
+                            <strong><i class="fa fa-exclamation-triangle"/> Instructions de livraison :</strong>
+                            <p t-field="doc.delivery_instructions"/>
+                        </div>
+
+                        <div class="mt-4 text-center" style="font-size: 10px; color: #6c757d;">
+                            <p>Document généré automatiquement — ERP Commercial</p>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <!-- Template Contrôle Qualité -->
+    <template id="report_quality_check">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div class="row mb-4">
+                            <div class="col-7">
+                                <h2 style="color: #714B67;"><i class="fa fa-check-square"/> Fiche de Contrôle Qualité</h2>
+                                <h3><span t-field="doc.name"/></h3>
+                            </div>
+                            <div class="col-5 text-end">
+                                <p><strong>Date :</strong> <span t-field="doc.check_date"/></p>
+                                <p><strong>Résultat :</strong>
+                                    <span t-if="doc.result == 'pass'" style="color: #28a745; font-weight: bold;">✓ CONFORME</span>
+                                    <span t-if="doc.result == 'fail'" style="color: #dc3545; font-weight: bold;">✗ NON CONFORME</span>
+                                    <span t-if="doc.result == 'pending'" style="color: #ffc107;">EN ATTENTE</span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3" style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                            <div class="col-4"><h5>Produit</h5><p><span t-field="doc.product_id"/></p></div>
+                            <div class="col-4"><h5>Type de contrôle</h5><p><span t-field="doc.check_type"/></p></div>
+                            <div class="col-4"><h5>Inspecteur</h5><p><span t-field="doc.inspector_id"/></p></div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-4"><strong>Qté à contrôler :</strong> <span t-field="doc.quantity"/></div>
+                            <div class="col-4"><strong>Qté contrôlée :</strong> <span t-field="doc.quantity_checked"/></div>
+                            <div class="col-4"><strong>Qté rejetée :</strong> <span t-field="doc.quantity_failed" style="color: #dc3545;"/></div>
+                        </div>
+
+                        <div t-if="doc.picking_id" class="mb-3">
+                            <strong>Bon de livraison :</strong> <span t-field="doc.picking_id"/>
+                        </div>
+
+                        <div t-if="doc.notes" class="mt-3">
+                            <h5>Observations</h5>
+                            <p t-field="doc.notes"/>
+                        </div>
+
+                        <div class="row mt-5">
+                            <div class="col-6 text-center">
+                                <p>_______________________________</p>
+                                <p>Signature Inspecteur</p>
+                            </div>
+                            <div class="col-6 text-center">
+                                <p>_______________________________</p>
+                                <p>Signature Responsable</p>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 text-center" style="font-size: 10px; color: #6c757d;">
+                            <p>Document généré automatiquement — ERP Commercial</p>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>
