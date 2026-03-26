@@ -1,0 +1,307 @@
+# ===========================================================================
+#  CI/CD Pipeline — Tests automatisés ERP Commercial (Odoo 17)
+#  Exécute les tests Python Odoo + Playwright UI
+# ===========================================================================
+name: ERP Commercial — Tests
+
+on:
+  push:
+    branches: [main, develop, feature/*]
+    paths:
+      - 'custom_addons/**'
+      - 'docker-compose.yml'
+      - '.github/workflows/test.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'custom_addons/**'
+
+env:
+  ODOO_DB: odoo_erp_commercial
+  ODOO_USER: admin
+  ODOO_PASSWORD: admin
+  POSTGRES_USER: odoo
+  POSTGRES_PASSWORD: odoo_secret_2026
+
+jobs:
+  # ─── Job 1 : Tests unitaires Python Odoo ─────────────────────────
+  odoo-tests:
+    name: Tests unitaires Odoo
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: postgres
+          POSTGRES_USER: ${{ env.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U odoo"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    container:
+      image: odoo:17.0
+      env:
+        HOST: postgres
+        USER: ${{ env.POSTGRES_USER }}
+        PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Copier les modules custom
+        run: |
+          cp -r custom_addons/* /mnt/extra-addons/ 2>/dev/null || true
+          ls -la /mnt/extra-addons/
+
+      - name: Initialiser la base de données
+        run: |
+          odoo -d $ODOO_DB \
+            --db_host=postgres \
+            --db_user=$POSTGRES_USER \
+            --db_password=$POSTGRES_PASSWORD \
+            --addons-path=/mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons \
+            -i custom_sale,custom_purchase,custom_stock,custom_accounting,custom_hr,custom_crm,custom_calendar,custom_documents,custom_discuss,custom_contacts,custom_dashboard,custom_ai \
+            --stop-after-init \
+            --without-demo=False
+
+      - name: Exécuter les tests — custom_sale
+        run: |
+          odoo -d $ODOO_DB \
+            --db_host=postgres \
+            --db_user=$POSTGRES_USER \
+            --db_password=$POSTGRES_PASSWORD \
+            --addons-path=/mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons \
+            --test-enable \
+            --test-tags=/custom_sale \
+            --stop-after-init \
+            --log-level=test
+
+      - name: Exécuter les tests — custom_purchase
+        run: |
+          odoo -d $ODOO_DB \
+            --db_host=postgres \
+            --db_user=$POSTGRES_USER \
+            --db_password=$POSTGRES_PASSWORD \
+            --addons-path=/mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons \
+            --test-enable \
+            --test-tags=/custom_purchase \
+            --stop-after-init \
+            --log-level=test
+
+      - name: Exécuter les tests — custom_stock
+        run: |
+          odoo -d $ODOO_DB \
+            --db_host=postgres \
+            --db_user=$POSTGRES_USER \
+            --db_password=$POSTGRES_PASSWORD \
+            --addons-path=/mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons \
+            --test-enable \
+            --test-tags=/custom_stock \
+            --stop-after-init \
+            --log-level=test
+
+      - name: Exécuter les tests — custom_accounting
+        run: |
+          odoo -d $ODOO_DB \
+            --db_host=postgres \
+            --db_user=$POSTGRES_USER \
+            --db_password=$POSTGRES_PASSWORD \
+            --addons-path=/mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons \
+            --test-enable \
+            --test-tags=/custom_accounting \
+            --stop-after-init \
+            --log-level=test
+
+      - name: Exécuter les tests — custom_hr
+        run: |
+          odoo -d $ODOO_DB \
+            --db_host=postgres \
+            --db_user=$POSTGRES_USER \
+            --db_password=$POSTGRES_PASSWORD \
+            --addons-path=/mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons \
+            --test-enable \
+            --test-tags=/custom_hr \
+            --stop-after-init \
+            --log-level=test
+
+      - name: Exécuter les tests — custom_crm
+        run: |
+          odoo -d $ODOO_DB \
+            --db_host=postgres \
+            --db_user=$POSTGRES_USER \
+            --db_password=$POSTGRES_PASSWORD \
+            --addons-path=/mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons \
+            --test-enable \
+            --test-tags=/custom_crm \
+            --stop-after-init \
+            --log-level=test
+
+      - name: Exécuter les tests — custom_calendar
+        run: |
+          odoo -d $ODOO_DB \
+            --db_host=postgres \
+            --db_user=$POSTGRES_USER \
+            --db_password=$POSTGRES_PASSWORD \
+            --addons-path=/mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons \
+            --test-enable \
+            --test-tags=/custom_calendar \
+            --stop-after-init \
+            --log-level=test
+
+      - name: Exécuter les tests — custom_documents
+        run: |
+          odoo -d $ODOO_DB \
+            --db_host=postgres \
+            --db_user=$POSTGRES_USER \
+            --db_password=$POSTGRES_PASSWORD \
+            --addons-path=/mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons \
+            --test-enable \
+            --test-tags=/custom_documents \
+            --stop-after-init \
+            --log-level=test
+
+      - name: Exécuter les tests — custom_discuss
+        run: |
+          odoo -d $ODOO_DB \
+            --db_host=postgres \
+            --db_user=$POSTGRES_USER \
+            --db_password=$POSTGRES_PASSWORD \
+            --addons-path=/mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons \
+            --test-enable \
+            --test-tags=/custom_discuss \
+            --stop-after-init \
+            --log-level=test
+
+      - name: Exécuter les tests — custom_contacts
+        run: |
+          odoo -d $ODOO_DB \
+            --db_host=postgres \
+            --db_user=$POSTGRES_USER \
+            --db_password=$POSTGRES_PASSWORD \
+            --addons-path=/mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons \
+            --test-enable \
+            --test-tags=/custom_contacts \
+            --stop-after-init \
+            --log-level=test
+
+      - name: Exécuter les tests — custom_dashboard
+        run: |
+          odoo -d $ODOO_DB \
+            --db_host=postgres \
+            --db_user=$POSTGRES_USER \
+            --db_password=$POSTGRES_PASSWORD \
+            --addons-path=/mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons \
+            --test-enable \
+            --test-tags=/custom_dashboard \
+            --stop-after-init \
+            --log-level=test
+
+      - name: Exécuter les tests — custom_ai
+        run: |
+          odoo -d $ODOO_DB \
+            --db_host=postgres \
+            --db_user=$POSTGRES_USER \
+            --db_password=$POSTGRES_PASSWORD \
+            --addons-path=/mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons \
+            --test-enable \
+            --test-tags=/custom_ai \
+            --stop-after-init \
+            --log-level=test
+
+  # ─── Job 2 : Tests E2E Playwright ────────────────────────────────
+  playwright-tests:
+    name: Tests E2E Playwright
+    runs-on: ubuntu-latest
+    needs: odoo-tests
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Démarrer l'environnement Docker
+        run: |
+          docker compose up -d
+          echo "Attente du démarrage d'Odoo (60s)..."
+          sleep 60
+          # Vérifier qu'Odoo répond
+          for i in $(seq 1 30); do
+            if curl -s http://localhost:8069/web/login > /dev/null 2>&1; then
+              echo "Odoo est prêt !"
+              break
+            fi
+            echo "Tentative $i/30..."
+            sleep 5
+          done
+
+      - name: Installer les modules custom
+        run: |
+          docker exec odoo_erp_app odoo -d $ODOO_DB \
+            --db_host=db \
+            --db_user=$POSTGRES_USER \
+            --db_password=$POSTGRES_PASSWORD \
+            -i custom_sale,custom_purchase,custom_stock,custom_accounting,custom_hr,custom_crm,custom_calendar,custom_documents,custom_discuss,custom_contacts,custom_dashboard,custom_ai \
+            --stop-after-init \
+            --without-demo=False
+          docker compose restart odoo
+          sleep 30
+
+      - name: Installer Python 3.11 et dépendances
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Installer Playwright
+        run: |
+          pip install pytest pytest-playwright playwright
+          playwright install chromium --with-deps
+
+      - name: Exécuter les tests Playwright
+        run: |
+          cd custom_addons
+          pytest tests/playwright/ -v \
+            --tracing=on \
+            --screenshot=on \
+            --video=on \
+            --output=test-results/
+        env:
+          ODOO_URL: http://localhost:8069
+
+      - name: Sauvegarder les artefacts de test
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-test-results
+          path: custom_addons/test-results/
+          retention-days: 7
+
+      - name: Arrêter l'environnement Docker
+        if: always()
+        run: docker compose down -v
+
+  # ─── Job 3 : Rapport de qualité ──────────────────────────────────
+  quality-report:
+    name: Rapport de qualité
+    runs-on: ubuntu-latest
+    needs: [odoo-tests, playwright-tests]
+    if: always()
+
+    steps:
+      - name: Résumé du pipeline
+        run: |
+          echo "## 📋 Rapport de Tests ERP Commercial" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Module | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Tests unitaires Odoo | ${{ needs.odoo-tests.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Tests E2E Playwright | ${{ needs.playwright-tests.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Pipeline terminé à $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY

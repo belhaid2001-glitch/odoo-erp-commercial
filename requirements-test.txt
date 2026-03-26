@@ -1,0 +1,6 @@
+# Dépendances pour les tests E2E Playwright
+pytest>=7.4.0
+pytest-playwright>=0.4.3
+playwright>=1.40.0
+pytest-timeout>=2.2.0
+pytest-html>=4.1.0
