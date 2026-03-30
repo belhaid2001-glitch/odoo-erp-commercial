@@ -7,7 +7,7 @@
         =================================================================
         Nos modules custom étendent les menus standard Odoo.
         On les rebrand avec nos noms et icônes personnalisés.
-        On cache uniquement les menus qui n'ont aucun module custom associé.
+        On réinitialise les groups_id pour que tous les utilisateurs y accèdent.
     -->
 
     <!-- ==================== REBRANDING DES MENUS EXISTANTS ==================== -->
@@ -16,58 +16,56 @@
     <record id="sale.sale_menu_root" model="ir.ui.menu">
         <field name="name">Ventes</field>
         <field name="web_icon">custom_sale,static/description/icon.png</field>
+        <field name="groups_id" eval="[(5, 0, 0)]"/>
     </record>
 
     <!-- Achats → Icône personnalisée ERP Commercial -->
     <record id="purchase.menu_purchase_root" model="ir.ui.menu">
         <field name="name">Achats</field>
         <field name="web_icon">custom_purchase,static/description/icon.png</field>
+        <field name="groups_id" eval="[(5, 0, 0)]"/>
     </record>
 
     <!-- Stock / Inventaire → Icône personnalisée ERP Commercial -->
     <record id="stock.menu_stock_root" model="ir.ui.menu">
         <field name="name">Stock &amp; Inventaire</field>
         <field name="web_icon">custom_stock,static/description/icon.png</field>
+        <field name="groups_id" eval="[(5, 0, 0)]"/>
     </record>
 
     <!-- Comptabilité / Facturation → Icône personnalisée ERP Commercial -->
     <record id="account.menu_finance" model="ir.ui.menu">
         <field name="name">Comptabilité</field>
         <field name="web_icon">custom_accounting,static/description/icon.png</field>
+        <field name="groups_id" eval="[(5, 0, 0)]"/>
     </record>
 
     <!-- CRM → Icône personnalisée ERP Commercial -->
     <record id="crm.crm_menu_root" model="ir.ui.menu">
         <field name="name">CRM</field>
         <field name="web_icon">custom_crm,static/description/icon.png</field>
+        <field name="groups_id" eval="[(5, 0, 0)]"/>
     </record>
 
     <!-- Contacts → Icône personnalisée ERP Commercial -->
     <record id="contacts.menu_contacts" model="ir.ui.menu">
         <field name="name">Contacts</field>
         <field name="web_icon">custom_contacts,static/description/icon.png</field>
+        <field name="groups_id" eval="[(5, 0, 0)]"/>
     </record>
 
     <!-- Employés / RH → Icône personnalisée ERP Commercial -->
     <record id="hr.menu_hr_root" model="ir.ui.menu">
         <field name="name">Ressources Humaines</field>
         <field name="web_icon">custom_hr,static/description/icon.png</field>
+        <field name="groups_id" eval="[(5, 0, 0)]"/>
     </record>
 
     <!-- Discussion → Icône personnalisée ERP Commercial -->
     <record id="mail.menu_root_discuss" model="ir.ui.menu">
         <field name="name">Discussion</field>
         <field name="web_icon">custom_discuss,static/description/icon.png</field>
+        <field name="groups_id" eval="[(5, 0, 0)]"/>
     </record>
-
-    <!--
-        NOTE:
-        - Calendrier (calendar.mail_menu_calendar) est géré par custom_calendar
-        - Documents (custom_documents) a son propre menu racine
-        - WhatsApp (custom_whatsapp) a son propre menu racine
-        - Tableaux de Bord (custom_dashboard) a son propre menu racine
-        - Le menu Paramètres reste visible pour les administrateurs
-        - Le menu Apps est filtré par author='ERP Commercial' dans dashboard_views.xml
-    -->
 
 </odoo>
