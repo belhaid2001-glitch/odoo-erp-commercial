@@ -6,6 +6,12 @@ from odoo.exceptions import UserError
 class StockPicking(models.Model):
     _inherit = 'stock.picking'
 
+    # --- Lien projet ---
+    stock_project_id = fields.Many2one(
+        'stock.project', string='Projet',
+        tracking=True, help='Projet associé à cette opération de stock',
+    )
+
     # --- Champs personnalisés ---
     priority_custom = fields.Selection([
         ('0', 'Normale'),

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ==================== EXERCICE FISCAL - FORMULAIRE ==================== -->
+    <record id="view_account_fiscal_year_form" model="ir.ui.view">
+        <field name="name">account.fiscal.year.form</field>
+        <field name="model">account.fiscal.year.custom</field>
+        <field name="arch" type="xml">
+            <form string="Exercice fiscal">
+                <header>
+                    <button name="action_close" string="🔒 Clôturer"
+                            type="object" class="btn-warning"
+                            invisible="state != 'open'"
+                            confirm="Êtes-vous sûr de vouloir clôturer cet exercice ?"/>
+                    <button name="action_reopen" string="🔓 Réouvrir"
+                            type="object" 
+                            invisible="state != 'closed'"
+                            groups="account.group_account_manager"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                        </group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <field name="notes" placeholder="Notes sur cet exercice fiscal..."/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_account_fiscal_year_tree" model="ir.ui.view">
+        <field name="name">account.fiscal.year.tree</field>
+        <field name="model">account.fiscal.year.custom</field>
+        <field name="arch" type="xml">
+            <tree decoration-muted="state == 'closed'">
+                <field name="name"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'open'"
+                       decoration-muted="state == 'closed'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_account_fiscal_year" model="ir.actions.act_window">
+        <field name="name">Exercices fiscaux</field>
+        <field name="res_model">account.fiscal.year.custom</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+</odoo>

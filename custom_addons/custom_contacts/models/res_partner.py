@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import re
 from odoo import models, fields, api, _
 
 
@@ -121,6 +122,51 @@ class ResPartner(models.Model):
 
     # --- Notes internes ---
     internal_notes = fields.Html(string='Notes internes')
+
+    # --- Ville marocaine helper ---
+    morocco_city_id = fields.Many2one(
+        'res.city.morocco',
+        string='Ville (Maroc)',
+        help='Sélectionnez une ville marocaine pour remplir automatiquement la région, le code postal et le pays.',
+    )
+
+    # --- Onchange : auto-fill depuis ville marocaine ---
+    @api.onchange('morocco_city_id')
+    def _onchange_morocco_city_id(self):
+        if self.morocco_city_id:
+            city = self.morocco_city_id
+            self.city = city.name
+            self.zip = city.zip_code or self.zip
+            self.state_id = city.state_id or self.state_id
+            self.country_id = city.country_id or self.env.ref('base.ma', raise_if_not_found=False)
+
+    # --- Onchange : default Maroc quand state_id marocain ---
+    @api.onchange('state_id')
+    def _onchange_state_id_morocco(self):
+        if self.state_id and self.state_id.country_id.code == 'MA':
+            self.country_id = self.state_id.country_id
+
+    # --- Format téléphone marocain ---
+    @api.onchange('phone', 'mobile')
+    def _onchange_format_phone_morocco(self):
+        for field_name in ('phone', 'mobile'):
+            value = getattr(self, field_name)
+            if value:
+                # Nettoyer les espaces
+                clean = re.sub(r'\s+', '', value)
+                # 06xxxxxxxx ou 07xxxxxxxx → +212 6xx xx xx xx
+                if re.match(r'^0[5-7]\d{8}$', clean):
+                    formatted = f'+212 {clean[1]}{clean[2:4]} {clean[4:6]} {clean[6:8]} {clean[8:10]}'
+                    setattr(self, field_name, formatted)
+
+    # --- Default country Maroc ---
+    @api.model
+    def default_get(self, fields_list):
+        res = super().default_get(fields_list)
+        morocco = self.env.ref('base.ma', raise_if_not_found=False)
+        if morocco and 'country_id' in fields_list and not res.get('country_id'):
+            res['country_id'] = morocco.id
+        return res
 
     # --- Calculs ---
     def _compute_sale_stats(self):

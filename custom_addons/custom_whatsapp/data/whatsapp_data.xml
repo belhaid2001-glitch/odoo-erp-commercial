@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Séquence messages WhatsApp -->
+        <record id="seq_whatsapp_message" model="ir.sequence">
+            <field name="name">Message WhatsApp</field>
+            <field name="code">whatsapp.message</field>
+            <field name="prefix">WA/%(year)s/</field>
+            <field name="padding">4</field>
+        </record>
+
+        <!-- ==================== TEMPLATES PAR DÉFAUT ==================== -->
+
+        <record id="template_greeting" model="whatsapp.template">
+            <field name="name">Bienvenue client</field>
+            <field name="category">greeting</field>
+            <field name="model_name">res.partner</field>
+            <field name="sequence">1</field>
+            <field name="body">Bonjour {partner_name} 👋
+
+Bienvenue chez {company_name} ! Nous sommes ravis de vous compter parmi nos clients.
+
+N'hésitez pas à nous contacter pour toute question.
+
+Cordialement,
+{company_name}</field>
+        </record>
+
+        <record id="template_quotation" model="whatsapp.template">
+            <field name="name">Envoi de devis</field>
+            <field name="category">sale</field>
+            <field name="model_name">sale.order</field>
+            <field name="sequence">2</field>
+            <field name="body">Bonjour {partner_name} 📋
+
+Suite à notre échange, veuillez trouver votre devis *{reference}* d'un montant de *{amount} DH*.
+
+Restant à votre disposition pour toute question.
+
+Cordialement,
+{salesperson} - {company_name}</field>
+        </record>
+
+        <record id="template_invoice" model="whatsapp.template">
+            <field name="name">Envoi de facture</field>
+            <field name="category">invoice</field>
+            <field name="model_name">account.move</field>
+            <field name="sequence">3</field>
+            <field name="body">Bonjour {partner_name} 📄
+
+Votre facture *{reference}* d'un montant de *{amount} DH* est disponible.
+
+Merci de procéder au règlement dans les délais convenus.
+
+Cordialement,
+{company_name}</field>
+        </record>
+
+        <record id="template_payment_reminder" model="whatsapp.template">
+            <field name="name">Relance de paiement</field>
+            <field name="category">reminder</field>
+            <field name="model_name">account.move</field>
+            <field name="sequence">4</field>
+            <field name="body">Bonjour {partner_name} ⏰
+
+Nous nous permettons de vous rappeler que la facture *{reference}* d'un montant de *{amount} DH* est en attente de règlement.
+
+Merci de régulariser la situation dans les meilleurs délais.
+
+Cordialement,
+{company_name}</field>
+        </record>
+
+        <record id="template_delivery" model="whatsapp.template">
+            <field name="name">Notification de livraison</field>
+            <field name="category">delivery</field>
+            <field name="model_name">stock.picking</field>
+            <field name="sequence">5</field>
+            <field name="body">Bonjour {partner_name} 🚚
+
+Votre commande *{reference}* est en cours de livraison.
+
+Merci de nous confirmer la bonne réception.
+
+Cordialement,
+{company_name}</field>
+        </record>
+
+        <record id="template_promotion" model="whatsapp.template">
+            <field name="name">Offre promotionnelle</field>
+            <field name="category">promotion</field>
+            <field name="model_name">res.partner</field>
+            <field name="sequence">6</field>
+            <field name="body">Bonjour {partner_name} 🎉
+
+Profitez de nos offres spéciales du moment !
+
+Contactez-nous pour en savoir plus.
+
+{company_name}
+📞 Appelez-nous ou répondez à ce message.</field>
+        </record>
+
+    </data>
+</odoo>

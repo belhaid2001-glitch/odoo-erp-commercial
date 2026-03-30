@@ -23,6 +23,8 @@
     'depends': [
         'stock',
         'product',
+        'purchase',
+        'mail',
     ],
     'data': [
         'security/ir.model.access.csv',
@@ -30,6 +32,8 @@
         'views/stock_quality_views.xml',
         'views/stock_dashboard_views.xml',
         'views/stock_valuation_views.xml',
+        'views/stock_project_views.xml',
+        'views/stock_intelligent_reorder_views.xml',
         'data/stock_data.xml',
         'report/stock_report_custom.xml',
         'views/menu_views.xml',

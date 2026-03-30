@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ==================== MESSAGE WHATSAPP - FORMULAIRE ==================== -->
+    <record id="view_whatsapp_message_form" model="ir.ui.view">
+        <field name="name">whatsapp.message.form</field>
+        <field name="model">whatsapp.message</field>
+        <field name="arch" type="xml">
+            <form string="Message WhatsApp">
+                <header>
+                    <button name="action_send_whatsapp" string="📱 Envoyer via WhatsApp"
+                            type="object" class="btn-success"
+                            invisible="state != 'draft'"/>
+                    <button name="action_resend" string="🔄 Renvoyer"
+                            type="object" class="btn-primary"
+                            invisible="state not in ('sent', 'failed')"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group string="Destinataire">
+                            <field name="partner_id"/>
+                            <field name="phone"/>
+                            <field name="template_id"/>
+                        </group>
+                        <group string="Informations">
+                            <field name="name"/>
+                            <field name="send_date"/>
+                            <field name="user_id" widget="many2one_avatar_user"/>
+                            <field name="model_name" invisible="not model_name"/>
+                            <field name="record_name" invisible="not record_name"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="message" placeholder="Tapez votre message ici..."/>
+                    </group>
+                    <group invisible="state != 'failed'">
+                        <field name="error_message"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- ==================== MESSAGE WHATSAPP - LISTE ==================== -->
+    <record id="view_whatsapp_message_tree" model="ir.ui.view">
+        <field name="name">whatsapp.message.tree</field>
+        <field name="model">whatsapp.message</field>
+        <field name="arch" type="xml">
+            <tree decoration-success="state == 'sent'"
+                  decoration-danger="state == 'failed'"
+                  decoration-muted="state == 'draft'">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="phone"/>
+                <field name="message" widget="text"/>
+                <field name="send_date"/>
+                <field name="user_id" widget="many2one_avatar_user"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'sent'"
+                       decoration-danger="state == 'failed'"
+                       decoration-info="state == 'draft'"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ==================== RECHERCHE ==================== -->
+    <record id="view_whatsapp_message_search" model="ir.ui.view">
+        <field name="name">whatsapp.message.search</field>
+        <field name="model">whatsapp.message</field>
+        <field name="arch" type="xml">
+            <search string="Recherche messages">
+                <field name="partner_id"/>
+                <field name="phone"/>
+                <field name="message"/>
+                <separator/>
+                <filter name="sent" string="Envoyés" domain="[('state', '=', 'sent')]"/>
+                <filter name="draft" string="Brouillons" domain="[('state', '=', 'draft')]"/>
+                <filter name="failed" string="Échoués" domain="[('state', '=', 'failed')]"/>
+                <separator/>
+                <filter name="today" string="Aujourd'hui" domain="[('send_date', '>=', (context_today()).strftime('%%Y-%%m-%%d'))]"/>
+                <filter name="this_week" string="Cette semaine" domain="[('send_date', '>=', (context_today() - datetime.timedelta(days=7)).strftime('%%Y-%%m-%%d'))]"/>
+                <group expand="0" string="Grouper par">
+                    <filter name="group_partner" string="Destinataire" context="{'group_by': 'partner_id'}"/>
+                    <filter name="group_state" string="État" context="{'group_by': 'state'}"/>
+                    <filter name="group_user" string="Envoyé par" context="{'group_by': 'user_id'}"/>
+                    <filter name="group_date" string="Date" context="{'group_by': 'send_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ==================== TEMPLATE WHATSAPP - FORMULAIRE ==================== -->
+    <record id="view_whatsapp_template_form" model="ir.ui.view">
+        <field name="name">whatsapp.template.form</field>
+        <field name="model">whatsapp.template</field>
+        <field name="arch" type="xml">
+            <form string="Template WhatsApp">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="category"/>
+                            <field name="model_name"/>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <div class="alert alert-info" role="alert">
+                                <strong>Variables disponibles :</strong><br/>
+                                <code>{partner_name}</code> - Nom du contact<br/>
+                                <code>{company_name}</code> - Nom de la société<br/>
+                                <code>{amount}</code> - Montant<br/>
+                                <code>{reference}</code> - Référence du document<br/>
+                                <code>{date}</code> - Date du jour<br/>
+                                <code>{salesperson}</code> - Commercial
+                            </div>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="body" placeholder="Bonjour {partner_name}, ..."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ==================== TEMPLATE WHATSAPP - LISTE ==================== -->
+    <record id="view_whatsapp_template_tree" model="ir.ui.view">
+        <field name="name">whatsapp.template.tree</field>
+        <field name="model">whatsapp.template</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="category" widget="badge"/>
+                <field name="model_name"/>
+                <field name="body"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ==================== ACTIONS ==================== -->
+    <record id="action_whatsapp_messages" model="ir.actions.act_window">
+        <field name="name">Messages WhatsApp</field>
+        <field name="res_model">whatsapp.message</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_whatsapp_message_search"/>
+    </record>
+
+    <record id="action_whatsapp_templates" model="ir.actions.act_window">
+        <field name="name">Templates WhatsApp</field>
+        <field name="res_model">whatsapp.template</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+</odoo>

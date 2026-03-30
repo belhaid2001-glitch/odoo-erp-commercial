@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ==================== RAPPORT TVA - VUES ==================== -->
+    <record id="view_account_tax_report_tree" model="ir.ui.view">
+        <field name="name">account.tax.report.tree</field>
+        <field name="model">account.tax.report.custom</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="date_month"/>
+                <field name="tax_name"/>
+                <field name="tax_amount" string="Taux"/>
+                <field name="base_amount" string="Base HT" sum="Total Base"/>
+                <field name="tax_collected" string="TVA collectée" sum="Total Collectée"/>
+                <field name="tax_deductible" string="TVA déductible" sum="Total Déductible"/>
+                <field name="tax_due" string="TVA à payer" sum="Total Due"
+                       decoration-danger="tax_due > 0"
+                       decoration-success="tax_due &lt;= 0"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_account_tax_report_pivot" model="ir.ui.view">
+        <field name="name">account.tax.report.pivot</field>
+        <field name="model">account.tax.report.custom</field>
+        <field name="arch" type="xml">
+            <pivot string="Rapport TVA">
+                <field name="date_month" type="row" interval="month"/>
+                <field name="tax_name" type="col"/>
+                <field name="tax_collected" type="measure"/>
+                <field name="tax_deductible" type="measure"/>
+                <field name="tax_due" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_account_tax_report_graph" model="ir.ui.view">
+        <field name="name">account.tax.report.graph</field>
+        <field name="model">account.tax.report.custom</field>
+        <field name="arch" type="xml">
+            <graph string="Rapport TVA" type="bar">
+                <field name="date_month" interval="month"/>
+                <field name="tax_collected" type="measure"/>
+                <field name="tax_deductible" type="measure"/>
+                <field name="tax_due" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="action_account_tax_report" model="ir.actions.act_window">
+        <field name="name">Rapport TVA</field>
+        <field name="res_model">account.tax.report.custom</field>
+        <field name="view_mode">tree,pivot,graph</field>
+    </record>
+
+</odoo>

@@ -1,5 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
+    <!-- ==================== PROJETS DE STOCK ==================== -->
+    <menuitem id="menu_stock_projects"
+              name="📁 Projets de Stock"
+              parent="stock.menu_stock_root"
+              action="action_stock_project"
+              sequence="3"/>
+
+    <!-- ==================== RÉAPPROVISIONNEMENT INTELLIGENT ==================== -->
+    <menuitem id="menu_stock_intelligent"
+              name="🧠 Réappro. Intelligent"
+              parent="stock.menu_stock_root"
+              sequence="5"/>
+
+    <menuitem id="menu_stock_intelligent_rules"
+              name="Règles de réapprovisionnement"
+              parent="menu_stock_intelligent"
+              action="action_stock_intelligent_reorder"
+              sequence="10"/>
+
+    <menuitem id="menu_stock_critical_alerts"
+              name="🔴 Alertes critiques"
+              parent="menu_stock_intelligent"
+              action="action_stock_critical_reorder"
+              sequence="20"/>
+
     <!-- Menu qualité -->
     <menuitem id="menu_stock_quality"
               name="Qualité"

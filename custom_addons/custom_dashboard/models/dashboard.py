@@ -34,111 +34,192 @@ class DashboardKpi(models.Model):
     #  POWER BI-STYLE FULL DASHBOARD DATA
     # ====================================================================
     @api.model
-    def get_full_dashboard_data(self):
+    def get_full_dashboard_data(self, filters=None):
         """Return all data needed by the OWL dashboard component."""
+        filters = filters or {}
         today = fields.Date.today()
+
+        # --- Gestion des filtres de période ---
+        period = filters.get('period', 'this_month')
+        if period == 'today':
+            date_from = today
+            date_to = today
+        elif period == 'this_week':
+            date_from = today - timedelta(days=today.weekday())
+            date_to = today
+        elif period == 'this_month':
+            date_from = today.replace(day=1)
+            date_to = today
+        elif period == 'this_quarter':
+            quarter_month = ((today.month - 1) // 3) * 3 + 1
+            date_from = today.replace(month=quarter_month, day=1)
+            date_to = today
+        elif period == 'this_year':
+            date_from = today.replace(month=1, day=1)
+            date_to = today
+        elif period == 'custom':
+            date_from = fields.Date.from_string(filters.get('date_from', str(today.replace(day=1))))
+            date_to = fields.Date.from_string(filters.get('date_to', str(today)))
+        else:
+            date_from = today.replace(day=1)
+            date_to = today
+
         first_day_month = today.replace(day=1)
         last_month_start = (first_day_month - timedelta(days=1)).replace(day=1)
         last_month_end = first_day_month - timedelta(days=1)
 
-        kpis = self._dashboard_kpis(today, first_day_month, last_month_start)
-        charts = self._dashboard_charts(today, first_day_month)
+        # Catégories actives
+        active_categories = filters.get('categories', ['sale', 'purchase', 'stock', 'accounting', 'crm', 'hr'])
+
+        kpis = self._dashboard_kpis(today, date_from, date_to, last_month_start, active_categories)
+        charts = self._dashboard_charts(today, date_from, date_to, active_categories)
         alerts = self._dashboard_alerts(today)
+
+        period_labels = {
+            'today': "Aujourd'hui",
+            'this_week': 'Cette semaine',
+            'this_month': 'Ce mois',
+            'this_quarter': 'Ce trimestre',
+            'this_year': "Cette année",
+            'custom': 'Période personnalisée',
+        }
 
         return {
             'kpis': kpis,
             'charts': charts,
             'alerts': alerts,
             'today': today.strftime('%d/%m/%Y'),
-            'period_label': 'Données du mois en cours',
+            'period_label': period_labels.get(period, 'Données du mois en cours'),
+            'active_filters': {
+                'period': period,
+                'date_from': str(date_from),
+                'date_to': str(date_to),
+                'categories': active_categories,
+            },
         }
 
     # ---------- KPIs ----------
     @api.model
-    def _dashboard_kpis(self, today, first_day_month, last_month_start):
+    def _dashboard_kpis(self, today, date_from, date_to, last_month_start, active_categories):
         SO = self.env['sale.order']
         PO = self.env['purchase.order']
         AM = self.env['account.move']
         SP = self.env['stock.picking']
         CL = self.env['crm.lead']
 
+        result = {
+            'revenue_this_month': 0, 'revenue_trend': 0,
+            'orders_count': 0, 'quotations_count': 0, 'to_invoice_count': 0,
+            'purchase_total': 0, 'purchase_trend': 0, 'rfq_count': 0,
+            'unpaid_invoices': 0, 'unpaid_count': 0, 'overdue_count': 0,
+            'deliveries_pending': 0, 'receipts_pending': 0, 'late_pickings': 0,
+            'pipeline_value': 0, 'open_opportunities': 0, 'hot_leads': 0,
+        }
+
         # --- Sales ---
-        sale_this = SO.search([('date_order', '>=', first_day_month),
-                               ('state', 'in', ['sale', 'done'])])
-        sale_last = SO.search([('date_order', '>=', last_month_start),
-                               ('date_order', '<', first_day_month),
-                               ('state', 'in', ['sale', 'done'])])
-        rev_this = sum(sale_this.mapped('amount_total'))
-        rev_last = sum(sale_last.mapped('amount_total'))
-        quotations = SO.search_count([('state', '=', 'draft')])
-        to_invoice = SO.search_count([('invoice_status', '=', 'to invoice')])
+        if 'sale' in active_categories:
+            sale_this = SO.search([('date_order', '>=', date_from),
+                                   ('date_order', '<=', date_to),
+                                   ('state', 'in', ['sale', 'done'])])
+            sale_last = SO.search([('date_order', '>=', last_month_start),
+                                   ('date_order', '<', date_from),
+                                   ('state', 'in', ['sale', 'done'])])
+            rev_this = sum(sale_this.mapped('amount_total'))
+            rev_last = sum(sale_last.mapped('amount_total'))
+            result.update({
+                'revenue_this_month': rev_this,
+                'revenue_trend': ((rev_this - rev_last) / rev_last * 100) if rev_last else 0,
+                'orders_count': len(sale_this),
+                'quotations_count': SO.search_count([('state', '=', 'draft')]),
+                'to_invoice_count': SO.search_count([('invoice_status', '=', 'to invoice')]),
+            })
 
         # --- Purchases ---
-        po_this = PO.search([('date_order', '>=', first_day_month),
-                             ('state', 'in', ['purchase', 'done'])])
-        po_last = PO.search([('date_order', '>=', last_month_start),
-                             ('date_order', '<', first_day_month),
-                             ('state', 'in', ['purchase', 'done'])])
-        pur_this = sum(po_this.mapped('amount_total'))
-        pur_last = sum(po_last.mapped('amount_total'))
-        rfq = PO.search_count([('state', '=', 'draft')])
+        if 'purchase' in active_categories:
+            po_this = PO.search([('date_order', '>=', date_from),
+                                 ('date_order', '<=', date_to),
+                                 ('state', 'in', ['purchase', 'done'])])
+            po_last = PO.search([('date_order', '>=', last_month_start),
+                                 ('date_order', '<', date_from),
+                                 ('state', 'in', ['purchase', 'done'])])
+            pur_this = sum(po_this.mapped('amount_total'))
+            pur_last = sum(po_last.mapped('amount_total'))
+            result.update({
+                'purchase_total': pur_this,
+                'purchase_trend': ((pur_this - pur_last) / pur_last * 100) if pur_last else 0,
+                'rfq_count': PO.search_count([('state', '=', 'draft')]),
+            })
 
         # --- Accounting ---
-        unpaid = AM.search([('move_type', '=', 'out_invoice'),
-                            ('payment_state', 'in', ['not_paid', 'partial']),
-                            ('state', '=', 'posted')])
-        unpaid_total = sum(unpaid.mapped('amount_residual'))
-        overdue = AM.search_count([('move_type', '=', 'out_invoice'),
-                                   ('payment_state', 'in', ['not_paid', 'partial']),
-                                   ('state', '=', 'posted'),
-                                   ('invoice_date_due', '<', today)])
+        if 'accounting' in active_categories:
+            unpaid = AM.search([('move_type', '=', 'out_invoice'),
+                                ('payment_state', 'in', ['not_paid', 'partial']),
+                                ('state', '=', 'posted')])
+            result.update({
+                'unpaid_invoices': sum(unpaid.mapped('amount_residual')),
+                'unpaid_count': len(unpaid),
+                'overdue_count': AM.search_count([
+                    ('move_type', '=', 'out_invoice'),
+                    ('payment_state', 'in', ['not_paid', 'partial']),
+                    ('state', '=', 'posted'),
+                    ('invoice_date_due', '<', today)]),
+            })
 
         # --- Stock ---
-        deliveries = SP.search_count([('picking_type_code', '=', 'outgoing'),
-                                      ('state', 'in', ['assigned', 'confirmed'])])
-        receipts = SP.search_count([('picking_type_code', '=', 'incoming'),
-                                    ('state', 'in', ['assigned', 'confirmed'])])
-        late = SP.search_count([('state', 'in', ['assigned', 'confirmed']),
-                                ('scheduled_date', '<', fields.Datetime.now())])
+        if 'stock' in active_categories:
+            result.update({
+                'deliveries_pending': SP.search_count([
+                    ('picking_type_code', '=', 'outgoing'),
+                    ('state', 'in', ['assigned', 'confirmed'])]),
+                'receipts_pending': SP.search_count([
+                    ('picking_type_code', '=', 'incoming'),
+                    ('state', 'in', ['assigned', 'confirmed'])]),
+                'late_pickings': SP.search_count([
+                    ('state', 'in', ['assigned', 'confirmed']),
+                    ('scheduled_date', '<', fields.Datetime.now())]),
+            })
 
         # --- CRM ---
-        opps = CL.search([('type', '=', 'opportunity'), ('active', '=', True)])
-        pipeline_val = sum(opps.mapped('expected_revenue'))
-        hot_leads = 0
-        try:
-            hot_leads = CL.search_count([('lead_quality', '=', 'hot')])
-        except Exception:
-            pass
+        if 'crm' in active_categories:
+            opps = CL.search([('type', '=', 'opportunity'), ('active', '=', True)])
+            hot_leads = 0
+            try:
+                hot_leads = CL.search_count([('lead_quality', '=', 'hot')])
+            except Exception:
+                pass
+            result.update({
+                'pipeline_value': sum(opps.mapped('expected_revenue')),
+                'open_opportunities': len(opps),
+                'hot_leads': hot_leads,
+            })
 
-        return {
-            'revenue_this_month': rev_this,
-            'revenue_trend': ((rev_this - rev_last) / rev_last * 100) if rev_last else 0,
-            'orders_count': len(sale_this),
-            'quotations_count': quotations,
-            'to_invoice_count': to_invoice,
-            'purchase_total': pur_this,
-            'purchase_trend': ((pur_this - pur_last) / pur_last * 100) if pur_last else 0,
-            'rfq_count': rfq,
-            'unpaid_invoices': unpaid_total,
-            'unpaid_count': len(unpaid),
-            'overdue_count': overdue,
-            'deliveries_pending': deliveries,
-            'receipts_pending': receipts,
-            'late_pickings': late,
-            'pipeline_value': pipeline_val,
-            'open_opportunities': len(opps),
-            'hot_leads': hot_leads,
-        }
+        return result
 
     # ---------- Chart Data ----------
     @api.model
-    def _dashboard_charts(self, today, first_day_month):
-        return {
-            'monthly_revenue': self._chart_monthly_revenue(today),
-            'sales_by_type': self._chart_sales_by_type(),
-            'stock_overview': self._chart_stock_overview(),
-            'crm_pipeline': self._chart_crm_pipeline(),
-        }
+    def _dashboard_charts(self, today, date_from, date_to, active_categories):
+        charts = {}
+        if 'sale' in active_categories or 'accounting' in active_categories:
+            charts['monthly_revenue'] = self._chart_monthly_revenue(today)
+        else:
+            charts['monthly_revenue'] = {'labels': [], 'revenue': [], 'expenses': []}
+
+        if 'sale' in active_categories:
+            charts['sales_by_type'] = self._chart_sales_by_type()
+        else:
+            charts['sales_by_type'] = {'labels': ['Aucune donnée'], 'data': [0]}
+
+        if 'stock' in active_categories:
+            charts['stock_overview'] = self._chart_stock_overview()
+        else:
+            charts['stock_overview'] = {'labels': [], 'data': []}
+
+        if 'crm' in active_categories:
+            charts['crm_pipeline'] = self._chart_crm_pipeline()
+        else:
+            charts['crm_pipeline'] = {'labels': ['Aucune donnée'], 'data': [0]}
+
+        return charts
 
     @api.model
     def _chart_monthly_revenue(self, today):

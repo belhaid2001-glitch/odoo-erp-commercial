@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ==================== PROJET STOCK - FORMULAIRE ==================== -->
+    <record id="view_stock_project_form" model="ir.ui.view">
+        <field name="name">stock.project.form</field>
+        <field name="model">stock.project</field>
+        <field name="arch" type="xml">
+            <form string="Projet Stock">
+                <header>
+                    <button name="action_activate" string="▶ Activer"
+                            type="object" class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_check_stock" string="🔄 Vérifier stock"
+                            type="object" class="btn-secondary"
+                            invisible="state != 'active'"/>
+                    <button name="action_done" string="✅ Terminer"
+                            type="object" class="btn-success"
+                            invisible="state != 'active'"/>
+                    <button name="action_cancel" string="❌ Annuler"
+                            type="object"
+                            invisible="state in ('done', 'cancelled')"/>
+                    <button name="action_reset_draft" string="↩ Brouillon"
+                            type="object"
+                            invisible="state not in ('cancelled',)"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,active,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_pickings" type="object"
+                                class="oe_stat_button" icon="fa-truck">
+                            <div class="o_stat_info">
+                                <span class="o_stat_value"><field name="picking_count"/></span>
+                                <span class="o_stat_text">Opérations</span>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="code" readonly="1"/> - <field name="name" placeholder="Nom du projet..."/></h1>
+                    </div>
+                    <group>
+                        <group string="Informations">
+                            <field name="responsible_id" widget="many2one_avatar_user"/>
+                            <field name="partner_id"/>
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                        </group>
+                        <group string="KPIs du projet">
+                            <field name="total_products"/>
+                            <field name="total_value" widget="monetary"/>
+                            <field name="completion_rate" widget="progressbar"/>
+                            <field name="stock_status" widget="badge"
+                                   decoration-success="stock_status == 'ok'"
+                                   decoration-warning="stock_status == 'warning'"
+                                   decoration-danger="stock_status == 'critical'"/>
+                        </group>
+                    </group>
+                    <field name="description" placeholder="Description du projet..."/>
+                    <notebook>
+                        <page string="📦 Produits du projet" name="products">
+                            <field name="line_ids">
+                                <tree editable="bottom"
+                                      decoration-success="status == 'ok'"
+                                      decoration-warning="status == 'warning'"
+                                      decoration-danger="status == 'critical'">
+                                    <field name="product_id"/>
+                                    <field name="product_categ_id" optional="show"/>
+                                    <field name="uom_id" string="UdM"/>
+                                    <field name="qty_required" string="Requis"/>
+                                    <field name="qty_available" string="Disponible"/>
+                                    <field name="qty_reserved" string="Réservé"/>
+                                    <field name="qty_shortage" string="Manque"
+                                           decoration-danger="qty_shortage > 0"/>
+                                    <field name="unit_cost" string="Coût unit."/>
+                                    <field name="subtotal" string="Valeur" sum="Total"/>
+                                    <field name="status" widget="badge"/>
+                                    <field name="notes" optional="hide"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="📝 Notes" name="notes">
+                            <field name="notes" placeholder="Notes internes concernant le projet..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- ==================== PROJET STOCK - LISTE ==================== -->
+    <record id="view_stock_project_tree" model="ir.ui.view">
+        <field name="name">stock.project.tree</field>
+        <field name="model">stock.project</field>
+        <field name="arch" type="xml">
+            <tree decoration-muted="state == 'cancelled'"
+                  decoration-bf="state == 'active'">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="responsible_id" widget="many2one_avatar_user"/>
+                <field name="partner_id" optional="show"/>
+                <field name="total_products"/>
+                <field name="total_value" widget="monetary"/>
+                <field name="completion_rate" widget="progressbar"/>
+                <field name="stock_status" widget="badge"
+                       decoration-success="stock_status == 'ok'"
+                       decoration-warning="stock_status == 'warning'"
+                       decoration-danger="stock_status == 'critical'"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-success="state == 'active'"
+                       decoration-muted="state in ('done', 'cancelled')"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ==================== PROJET STOCK - KANBAN ==================== -->
+    <record id="view_stock_project_kanban" model="ir.ui.view">
+        <field name="name">stock.project.kanban</field>
+        <field name="model">stock.project</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_mobile">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="state"/>
+                <field name="responsible_id"/>
+                <field name="total_products"/>
+                <field name="completion_rate"/>
+                <field name="stock_status"/>
+                <field name="color"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                            <div class="oe_kanban_content">
+                                <div class="o_kanban_record_top">
+                                    <strong><field name="code"/> - <field name="name"/></strong>
+                                </div>
+                                <div class="o_kanban_record_body">
+                                    <field name="responsible_id" widget="many2one_avatar_user"/>
+                                    <div><strong><field name="total_products"/></strong> produits</div>
+                                    <field name="completion_rate" widget="progressbar"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ==================== PROJET STOCK - RECHERCHE ==================== -->
+    <record id="view_stock_project_search" model="ir.ui.view">
+        <field name="name">stock.project.search</field>
+        <field name="model">stock.project</field>
+        <field name="arch" type="xml">
+            <search string="Recherche projets stock">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="responsible_id"/>
+                <field name="partner_id"/>
+                <separator/>
+                <filter name="active_projects" string="Actifs" domain="[('state', '=', 'active')]"/>
+                <filter name="draft_projects" string="Brouillon" domain="[('state', '=', 'draft')]"/>
+                <filter name="critical_stock" string="Stock critique" domain="[('stock_status', '=', 'critical')]"/>
+                <filter name="warning_stock" string="Stock attention" domain="[('stock_status', 'in', ['warning', 'critical'])]"/>
+                <group expand="0" string="Grouper par">
+                    <filter name="group_state" string="État" context="{'group_by': 'state'}"/>
+                    <filter name="group_responsible" string="Responsable" context="{'group_by': 'responsible_id'}"/>
+                    <filter name="group_partner" string="Client" context="{'group_by': 'partner_id'}"/>
+                    <filter name="group_stock_status" string="État du stock" context="{'group_by': 'stock_status'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ==================== ACTION ==================== -->
+    <record id="action_stock_project" model="ir.actions.act_window">
+        <field name="name">Projets de Stock</field>
+        <field name="res_model">stock.project</field>
+        <field name="view_mode">tree,kanban,form</field>
+        <field name="search_view_id" ref="view_stock_project_search"/>
+        <field name="context">{'search_default_active_projects': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créez votre premier projet de stock
+            </p>
+            <p>Suivez le stock dédié à chaque projet/client et identifiez les manques en temps réel.</p>
+        </field>
+    </record>
+
+    <!-- ==================== AJOUT CHAMP PROJET SUR PICKING ==================== -->
+    <record id="view_stock_picking_form_project" model="ir.ui.view">
+        <field name="name">stock.picking.form.project</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='origin']" position="before">
+                <field name="stock_project_id" options="{'no_create': True}"
+                       placeholder="Associer à un projet..."/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

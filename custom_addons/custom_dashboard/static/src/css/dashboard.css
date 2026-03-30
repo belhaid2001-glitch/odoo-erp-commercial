@@ -93,6 +93,176 @@
     margin: 0 auto;
 }
 
+/* ===== POWER BI-STYLE FILTER BAR ===== */
+.filter-bar {
+    background: linear-gradient(180deg, #f8f9fc 0%, #ffffff 100%);
+    border-bottom: 1px solid #e3e6f0;
+    overflow: hidden;
+    transition: max-height 0.35s ease, opacity 0.3s ease, padding 0.35s ease;
+}
+
+.filter-bar-expanded {
+    max-height: 300px;
+    opacity: 1;
+    padding: 14px 24px;
+}
+
+.filter-bar-collapsed {
+    max-height: 0;
+    opacity: 0;
+    padding: 0 24px;
+}
+
+.filter-bar-inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: flex-start;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.filter-group-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #6c757d;
+}
+
+.filter-group-label i {
+    margin-right: 4px;
+    color: var(--db-primary);
+}
+
+.filter-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.filter-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1.5px solid #d1d3e2;
+    background: #ffffff;
+    color: #6c757d;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.filter-pill:hover {
+    border-color: var(--db-primary);
+    color: var(--db-primary);
+    background: rgba(78, 115, 223, 0.05);
+}
+
+.filter-pill.filter-pill-active {
+    background: var(--db-primary);
+    border-color: var(--db-primary);
+    color: #ffffff;
+    box-shadow: 0 2px 6px rgba(78, 115, 223, 0.3);
+}
+
+.filter-pill.filter-pill-cat.filter-pill-active {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.filter-pill i {
+    font-size: 11px;
+}
+
+/* Custom Date Inputs */
+.filter-custom-dates {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    margin-top: 4px;
+    animation: fadeInUp 0.2s ease;
+}
+
+.filter-date-group {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.filter-date-group label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #858796;
+}
+
+.filter-date-input {
+    padding: 5px 10px;
+    border: 1.5px solid #d1d3e2;
+    border-radius: 8px;
+    font-size: 12px;
+    color: var(--db-dark);
+    background: #fff;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.filter-date-input:focus {
+    border-color: var(--db-primary);
+    box-shadow: 0 0 0 2px rgba(78, 115, 223, 0.15);
+}
+
+.filter-apply-btn {
+    border-radius: 8px;
+    font-size: 12px;
+    padding: 5px 14px;
+    font-weight: 600;
+}
+
+/* Filter actions group */
+.filter-group-actions {
+    margin-left: auto;
+    align-self: flex-end;
+}
+
+.filter-reset-btn {
+    border-radius: 8px;
+    font-size: 12px;
+    padding: 5px 14px;
+    font-weight: 500;
+}
+
+.filter-reset-btn:hover {
+    background: var(--db-danger);
+    border-color: var(--db-danger);
+    color: white;
+}
+
+/* Responsive filter bar */
+@media (max-width: 768px) {
+    .filter-bar-inner {
+        flex-direction: column;
+        gap: 12px;
+    }
+    .filter-group-actions {
+        margin-left: 0;
+        align-self: flex-start;
+    }
+    .filter-custom-dates {
+        flex-wrap: wrap;
+    }
+}
+
 /* ===== KPI CARDS GRID ===== */
 .kpi-grid {
     display: grid;

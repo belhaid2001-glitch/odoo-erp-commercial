@@ -25,7 +25,9 @@ Tableaux de Bord - ERP Commercial
     ],
     'data': [
         'security/ir.model.access.csv',
+        'data/currency_mad_data.xml',
         'views/dashboard_views.xml',
+        'views/hide_standard_menus.xml',
         'report/dashboard_report_custom.xml',
         'views/menu_views.xml',
     ],

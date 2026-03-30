@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ==================== SUIVI PAIEMENTS - FORMULAIRE ==================== -->
+    <record id="view_account_payment_tracking_form" model="ir.ui.view">
+        <field name="name">account.payment.tracking.form</field>
+        <field name="model">account.payment.tracking</field>
+        <field name="arch" type="xml">
+            <form string="Suivi paiement">
+                <header>
+                    <button name="action_receive" string="✅ Reçu"
+                            type="object" class="btn-primary"
+                            invisible="state != 'pending'"/>
+                    <button name="action_validate" string="✔ Valider"
+                            type="object" class="btn-success"
+                            invisible="state != 'received'"/>
+                    <button name="action_reject" string="❌ Rejeter"
+                            type="object" class="btn-danger"
+                            invisible="state not in ('pending', 'received')"/>
+                    <button name="action_reset" string="↩ Remettre en attente"
+                            type="object"
+                            invisible="state not in ('validated', 'rejected')"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group string="Informations">
+                            <field name="name"/>
+                            <field name="partner_id"/>
+                            <field name="partner_type" widget="radio"/>
+                            <field name="move_id" domain="[('partner_id', '=', partner_id)]"/>
+                        </group>
+                        <group string="Paiement">
+                            <field name="amount"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="date"/>
+                            <field name="due_date"/>
+                            <field name="payment_method"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="journal_id"/>
+                            <field name="bank_reference" placeholder="Réf. virement, N° chèque..."/>
+                        </group>
+                    </group>
+                    <field name="notes" placeholder="Notes..."/>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- ==================== SUIVI PAIEMENTS - LISTE ==================== -->
+    <record id="view_account_payment_tracking_tree" model="ir.ui.view">
+        <field name="name">account.payment.tracking.tree</field>
+        <field name="model">account.payment.tracking</field>
+        <field name="arch" type="xml">
+            <tree decoration-success="state == 'validated'"
+                  decoration-danger="state == 'rejected'"
+                  decoration-muted="state == 'pending'">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="partner_type" widget="badge"/>
+                <field name="amount" sum="Total"/>
+                <field name="date"/>
+                <field name="due_date"/>
+                <field name="payment_method" widget="badge"/>
+                <field name="bank_reference" optional="show"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'pending'"
+                       decoration-warning="state == 'received'"
+                       decoration-success="state == 'validated'"
+                       decoration-danger="state == 'rejected'"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ==================== RECHERCHE ==================== -->
+    <record id="view_account_payment_tracking_search" model="ir.ui.view">
+        <field name="name">account.payment.tracking.search</field>
+        <field name="model">account.payment.tracking</field>
+        <field name="arch" type="xml">
+            <search string="Recherche paiements">
+                <field name="partner_id"/>
+                <field name="bank_reference"/>
+                <separator/>
+                <filter name="pending" string="En attente" domain="[('state', '=', 'pending')]"/>
+                <filter name="received" string="Reçus" domain="[('state', '=', 'received')]"/>
+                <filter name="validated" string="Validés" domain="[('state', '=', 'validated')]"/>
+                <filter name="rejected" string="Rejetés" domain="[('state', '=', 'rejected')]"/>
+                <separator/>
+                <filter name="customers" string="Clients" domain="[('partner_type', '=', 'customer')]"/>
+                <filter name="suppliers" string="Fournisseurs" domain="[('partner_type', '=', 'supplier')]"/>
+                <separator/>
+                <filter name="cheque" string="Chèques" domain="[('payment_method', '=', 'cheque')]"/>
+                <filter name="virement" string="Virements" domain="[('payment_method', '=', 'bank_transfer')]"/>
+                <filter name="cash" string="Espèces" domain="[('payment_method', '=', 'cash')]"/>
+                <filter name="lcn" string="LCN/Billets" domain="[('payment_method', 'in', ['lcn', 'billet'])]"/>
+                <group expand="0" string="Grouper par">
+                    <filter name="group_partner" string="Partenaire" context="{'group_by': 'partner_id'}"/>
+                    <filter name="group_state" string="État" context="{'group_by': 'state'}"/>
+                    <filter name="group_method" string="Mode de paiement" context="{'group_by': 'payment_method'}"/>
+                    <filter name="group_month" string="Mois" context="{'group_by': 'date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ==================== ACTIONS ==================== -->
+    <record id="action_account_payment_tracking" model="ir.actions.act_window">
+        <field name="name">Suivi des paiements</field>
+        <field name="res_model">account.payment.tracking</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_account_payment_tracking_search"/>
+    </record>
+
+    <record id="action_account_payment_tracking_customer" model="ir.actions.act_window">
+        <field name="name">Paiements clients</field>
+        <field name="res_model">account.payment.tracking</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('partner_type', '=', 'customer')]</field>
+        <field name="context">{'default_partner_type': 'customer'}</field>
+    </record>
+
+    <record id="action_account_payment_tracking_supplier" model="ir.actions.act_window">
+        <field name="name">Paiements fournisseurs</field>
+        <field name="res_model">account.payment.tracking</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('partner_type', '=', 'supplier')]</field>
+        <field name="context">{'default_partner_type': 'supplier'}</field>
+    </record>
+
+</odoo>

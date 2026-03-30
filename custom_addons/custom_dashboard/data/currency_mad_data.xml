@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ==================== DEVISE MAROCAINE (MAD / DH) ==================== -->
+
+        <!-- Activer la devise MAD si elle existe déjà -->
+        <function model="res.currency" name="write">
+            <value model="res.currency" search="[('name','=','MAD')]"/>
+            <value eval="{'active': True}"/>
+        </function>
+
+        <!-- Mettre MAD comme devise de la société principale -->
+        <record id="base.main_company" model="res.company">
+            <field name="currency_id" ref="base.MAD"/>
+        </record>
+
+        <!-- Désactiver USD comme devise par défaut (optionnel, la garder active pour les taux) -->
+
+    </data>
+</odoo>

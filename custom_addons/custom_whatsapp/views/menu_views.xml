@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Menu racine WhatsApp -->
+    <menuitem id="menu_whatsapp_root"
+              name="WhatsApp"
+              web_icon="custom_whatsapp,static/description/icon.png"
+              sequence="25"/>
+
+    <!-- Messages -->
+    <menuitem id="menu_whatsapp_messages"
+              name="📱 Messages"
+              parent="menu_whatsapp_root"
+              action="action_whatsapp_messages"
+              sequence="10"/>
+
+    <!-- Envoi rapide -->
+    <menuitem id="menu_whatsapp_send"
+              name="✉️ Nouveau message"
+              parent="menu_whatsapp_root"
+              action="action_whatsapp_send_wizard"
+              sequence="5"/>
+
+    <!-- Configuration -->
+    <menuitem id="menu_whatsapp_config"
+              name="Configuration"
+              parent="menu_whatsapp_root"
+              sequence="90"/>
+
+    <menuitem id="menu_whatsapp_templates"
+              name="Templates de messages"
+              parent="menu_whatsapp_config"
+              action="action_whatsapp_templates"
+              sequence="10"/>
+
+</odoo>

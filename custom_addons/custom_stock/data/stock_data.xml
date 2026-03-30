@@ -8,5 +8,25 @@
             <field name="prefix">QC/%(year)s/</field>
             <field name="padding">4</field>
         </record>
+
+        <!-- Séquence projet de stock -->
+        <record id="seq_stock_project" model="ir.sequence">
+            <field name="name">Projet de stock</field>
+            <field name="code">stock.project</field>
+            <field name="prefix">PROJ/%(year)s/</field>
+            <field name="padding">4</field>
+        </record>
+
+        <!-- Cron : Rafraîchir les données de réapprovisionnement intelligent -->
+        <record id="ir_cron_refresh_intelligent_stock" model="ir.cron">
+            <field name="name">Stock : Mise à jour réapprovisionnement intelligent</field>
+            <field name="model_id" ref="model_stock_intelligent_reorder"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_refresh_stock_data()</field>
+            <field name="interval_number">6</field>
+            <field name="interval_type">hours</field>
+            <field name="active" eval="True"/>
+            <field name="numbercall">-1</field>
+        </record>
     </data>
 </odoo>

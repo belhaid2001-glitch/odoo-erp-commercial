@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ========================================================== -->
+        <!--     12 RÉGIONS DU MAROC (res.country.state)                -->
+        <!-- ========================================================== -->
+
+        <record id="state_ma_tanger_tetouan" model="res.country.state">
+            <field name="name">Tanger-Tétouan-Al Hoceïma</field>
+            <field name="code">MA-01</field>
+            <field name="country_id" ref="base.ma"/>
+        </record>
+
+        <record id="state_ma_oriental" model="res.country.state">
+            <field name="name">Oriental</field>
+            <field name="code">MA-02</field>
+            <field name="country_id" ref="base.ma"/>
+        </record>
+
+        <record id="state_ma_fes_meknes" model="res.country.state">
+            <field name="name">Fès-Meknès</field>
+            <field name="code">MA-03</field>
+            <field name="country_id" ref="base.ma"/>
+        </record>
+
+        <record id="state_ma_rabat_sale" model="res.country.state">
+            <field name="name">Rabat-Salé-Kénitra</field>
+            <field name="code">MA-04</field>
+            <field name="country_id" ref="base.ma"/>
+        </record>
+
+        <record id="state_ma_beni_mellal" model="res.country.state">
+            <field name="name">Béni Mellal-Khénifra</field>
+            <field name="code">MA-05</field>
+            <field name="country_id" ref="base.ma"/>
+        </record>
+
+        <record id="state_ma_casablanca_settat" model="res.country.state">
+            <field name="name">Casablanca-Settat</field>
+            <field name="code">MA-06</field>
+            <field name="country_id" ref="base.ma"/>
+        </record>
+
+        <record id="state_ma_marrakech_safi" model="res.country.state">
+            <field name="name">Marrakech-Safi</field>
+            <field name="code">MA-07</field>
+            <field name="country_id" ref="base.ma"/>
+        </record>
+
+        <record id="state_ma_draa_tafilalet" model="res.country.state">
+            <field name="name">Drâa-Tafilalet</field>
+            <field name="code">MA-08</field>
+            <field name="country_id" ref="base.ma"/>
+        </record>
+
+        <record id="state_ma_souss_massa" model="res.country.state">
+            <field name="name">Souss-Massa</field>
+            <field name="code">MA-09</field>
+            <field name="country_id" ref="base.ma"/>
+        </record>
+
+        <record id="state_ma_guelmim_oued_noun" model="res.country.state">
+            <field name="name">Guelmim-Oued Noun</field>
+            <field name="code">MA-10</field>
+            <field name="country_id" ref="base.ma"/>
+        </record>
+
+        <record id="state_ma_laayoune_sakia" model="res.country.state">
+            <field name="name">Laâyoune-Sakia El Hamra</field>
+            <field name="code">MA-11</field>
+            <field name="country_id" ref="base.ma"/>
+        </record>
+
+        <record id="state_ma_dakhla_oued" model="res.country.state">
+            <field name="name">Dakhla-Oued Ed-Dahab</field>
+            <field name="code">MA-12</field>
+            <field name="country_id" ref="base.ma"/>
+        </record>
+
+        <!-- ========================================================== -->
+        <!--     VILLES PRINCIPALES DU MAROC (res.city.morocco)         -->
+        <!-- ========================================================== -->
+
+        <!-- === Tanger-Tétouan-Al Hoceïma === -->
+        <record id="city_tanger" model="res.city.morocco">
+            <field name="name">Tanger</field>
+            <field name="zip_code">90000</field>
+            <field name="state_id" ref="state_ma_tanger_tetouan"/>
+        </record>
+        <record id="city_tetouan" model="res.city.morocco">
+            <field name="name">Tétouan</field>
+            <field name="zip_code">93000</field>
+            <field name="state_id" ref="state_ma_tanger_tetouan"/>
+        </record>
+        <record id="city_al_hoceima" model="res.city.morocco">
+            <field name="name">Al Hoceïma</field>
+            <field name="zip_code">32000</field>
+            <field name="state_id" ref="state_ma_tanger_tetouan"/>
+        </record>
+        <record id="city_larache" model="res.city.morocco">
+            <field name="name">Larache</field>
+            <field name="zip_code">92000</field>
+            <field name="state_id" ref="state_ma_tanger_tetouan"/>
+        </record>
+        <record id="city_chefchaouen" model="res.city.morocco">
+            <field name="name">Chefchaouen</field>
+            <field name="zip_code">91000</field>
+            <field name="state_id" ref="state_ma_tanger_tetouan"/>
+        </record>
+        <record id="city_fnideq" model="res.city.morocco">
+            <field name="name">Fnideq</field>
+            <field name="zip_code">93100</field>
+            <field name="state_id" ref="state_ma_tanger_tetouan"/>
+        </record>
+
+        <!-- === Oriental === -->
+        <record id="city_oujda" model="res.city.morocco">
+            <field name="name">Oujda</field>
+            <field name="zip_code">60000</field>
+            <field name="state_id" ref="state_ma_oriental"/>
+        </record>
+        <record id="city_nador" model="res.city.morocco">
+            <field name="name">Nador</field>
+            <field name="zip_code">62000</field>
+            <field name="state_id" ref="state_ma_oriental"/>
+        </record>
+        <record id="city_berkane" model="res.city.morocco">
+            <field name="name">Berkane</field>
+            <field name="zip_code">63300</field>
+            <field name="state_id" ref="state_ma_oriental"/>
+        </record>
+        <record id="city_taourirt" model="res.city.morocco">
+            <field name="name">Taourirt</field>
+            <field name="zip_code">65200</field>
+            <field name="state_id" ref="state_ma_oriental"/>
+        </record>
+        <record id="city_jerada" model="res.city.morocco">
+            <field name="name">Jerada</field>
+            <field name="zip_code">61000</field>
+            <field name="state_id" ref="state_ma_oriental"/>
+        </record>
+
+        <!-- === Fès-Meknès === -->
+        <record id="city_fes" model="res.city.morocco">
+            <field name="name">Fès</field>
+            <field name="zip_code">30000</field>
+            <field name="state_id" ref="state_ma_fes_meknes"/>
+        </record>
+        <record id="city_meknes" model="res.city.morocco">
+            <field name="name">Meknès</field>
+            <field name="zip_code">50000</field>
+            <field name="state_id" ref="state_ma_fes_meknes"/>
+        </record>
+        <record id="city_taza" model="res.city.morocco">
+            <field name="name">Taza</field>
+            <field name="zip_code">35000</field>
+            <field name="state_id" ref="state_ma_fes_meknes"/>
+        </record>
+        <record id="city_ifrane" model="res.city.morocco">
+            <field name="name">Ifrane</field>
+            <field name="zip_code">53000</field>
+            <field name="state_id" ref="state_ma_fes_meknes"/>
+        </record>
+        <record id="city_sefrou" model="res.city.morocco">
+            <field name="name">Sefrou</field>
+            <field name="zip_code">31000</field>
+            <field name="state_id" ref="state_ma_fes_meknes"/>
+        </record>
+
+        <!-- === Rabat-Salé-Kénitra === -->
+        <record id="city_rabat" model="res.city.morocco">
+            <field name="name">Rabat</field>
+            <field name="zip_code">10000</field>
+            <field name="state_id" ref="state_ma_rabat_sale"/>
+        </record>
+        <record id="city_sale" model="res.city.morocco">
+            <field name="name">Salé</field>
+            <field name="zip_code">11000</field>
+            <field name="state_id" ref="state_ma_rabat_sale"/>
+        </record>
+        <record id="city_kenitra" model="res.city.morocco">
+            <field name="name">Kénitra</field>
+            <field name="zip_code">14000</field>
+            <field name="state_id" ref="state_ma_rabat_sale"/>
+        </record>
+        <record id="city_temara" model="res.city.morocco">
+            <field name="name">Témara</field>
+            <field name="zip_code">12000</field>
+            <field name="state_id" ref="state_ma_rabat_sale"/>
+        </record>
+        <record id="city_skhirate" model="res.city.morocco">
+            <field name="name">Skhirate</field>
+            <field name="zip_code">12050</field>
+            <field name="state_id" ref="state_ma_rabat_sale"/>
+        </record>
+
+        <!-- === Béni Mellal-Khénifra === -->
+        <record id="city_beni_mellal" model="res.city.morocco">
+            <field name="name">Béni Mellal</field>
+            <field name="zip_code">23000</field>
+            <field name="state_id" ref="state_ma_beni_mellal"/>
+        </record>
+        <record id="city_khenifra" model="res.city.morocco">
+            <field name="name">Khénifra</field>
+            <field name="zip_code">54000</field>
+            <field name="state_id" ref="state_ma_beni_mellal"/>
+        </record>
+        <record id="city_khouribga" model="res.city.morocco">
+            <field name="name">Khouribga</field>
+            <field name="zip_code">25000</field>
+            <field name="state_id" ref="state_ma_beni_mellal"/>
+        </record>
+        <record id="city_fquih_ben_salah" model="res.city.morocco">
+            <field name="name">Fquih Ben Salah</field>
+            <field name="zip_code">23200</field>
+            <field name="state_id" ref="state_ma_beni_mellal"/>
+        </record>
+
+        <!-- === Casablanca-Settat === -->
+        <record id="city_casablanca" model="res.city.morocco">
+            <field name="name">Casablanca</field>
+            <field name="zip_code">20000</field>
+            <field name="state_id" ref="state_ma_casablanca_settat"/>
+        </record>
+        <record id="city_mohammedia" model="res.city.morocco">
+            <field name="name">Mohammedia</field>
+            <field name="zip_code">20800</field>
+            <field name="state_id" ref="state_ma_casablanca_settat"/>
+        </record>
+        <record id="city_el_jadida" model="res.city.morocco">
+            <field name="name">El Jadida</field>
+            <field name="zip_code">24000</field>
+            <field name="state_id" ref="state_ma_casablanca_settat"/>
+        </record>
+        <record id="city_settat" model="res.city.morocco">
+            <field name="name">Settat</field>
+            <field name="zip_code">26000</field>
+            <field name="state_id" ref="state_ma_casablanca_settat"/>
+        </record>
+        <record id="city_berrechid" model="res.city.morocco">
+            <field name="name">Berrechid</field>
+            <field name="zip_code">26100</field>
+            <field name="state_id" ref="state_ma_casablanca_settat"/>
+        </record>
+        <record id="city_benslimane" model="res.city.morocco">
+            <field name="name">Benslimane</field>
+            <field name="zip_code">13000</field>
+            <field name="state_id" ref="state_ma_casablanca_settat"/>
+        </record>
+        <record id="city_ain_sebaa" model="res.city.morocco">
+            <field name="name">Aïn Sebaâ</field>
+            <field name="zip_code">20580</field>
+            <field name="state_id" ref="state_ma_casablanca_settat"/>
+        </record>
+
+        <!-- === Marrakech-Safi === -->
+        <record id="city_marrakech" model="res.city.morocco">
+            <field name="name">Marrakech</field>
+            <field name="zip_code">40000</field>
+            <field name="state_id" ref="state_ma_marrakech_safi"/>
+        </record>
+        <record id="city_safi" model="res.city.morocco">
+            <field name="name">Safi</field>
+            <field name="zip_code">46000</field>
+            <field name="state_id" ref="state_ma_marrakech_safi"/>
+        </record>
+        <record id="city_essaouira" model="res.city.morocco">
+            <field name="name">Essaouira</field>
+            <field name="zip_code">44000</field>
+            <field name="state_id" ref="state_ma_marrakech_safi"/>
+        </record>
+        <record id="city_el_kelaa" model="res.city.morocco">
+            <field name="name">El Kelâa des Sraghna</field>
+            <field name="zip_code">43000</field>
+            <field name="state_id" ref="state_ma_marrakech_safi"/>
+        </record>
+        <record id="city_youssoufia" model="res.city.morocco">
+            <field name="name">Youssoufia</field>
+            <field name="zip_code">46300</field>
+            <field name="state_id" ref="state_ma_marrakech_safi"/>
+        </record>
+
+        <!-- === Drâa-Tafilalet === -->
+        <record id="city_errachidia" model="res.city.morocco">
+            <field name="name">Errachidia</field>
+            <field name="zip_code">52000</field>
+            <field name="state_id" ref="state_ma_draa_tafilalet"/>
+        </record>
+        <record id="city_ouarzazate" model="res.city.morocco">
+            <field name="name">Ouarzazate</field>
+            <field name="zip_code">45000</field>
+            <field name="state_id" ref="state_ma_draa_tafilalet"/>
+        </record>
+        <record id="city_tinghir" model="res.city.morocco">
+            <field name="name">Tinghir</field>
+            <field name="zip_code">45800</field>
+            <field name="state_id" ref="state_ma_draa_tafilalet"/>
+        </record>
+        <record id="city_zagora" model="res.city.morocco">
+            <field name="name">Zagora</field>
+            <field name="zip_code">47900</field>
+            <field name="state_id" ref="state_ma_draa_tafilalet"/>
+        </record>
+        <record id="city_midelt" model="res.city.morocco">
+            <field name="name">Midelt</field>
+            <field name="zip_code">54350</field>
+            <field name="state_id" ref="state_ma_draa_tafilalet"/>
+        </record>
+
+        <!-- === Souss-Massa === -->
+        <record id="city_agadir" model="res.city.morocco">
+            <field name="name">Agadir</field>
+            <field name="zip_code">80000</field>
+            <field name="state_id" ref="state_ma_souss_massa"/>
+        </record>
+        <record id="city_inezgane" model="res.city.morocco">
+            <field name="name">Inezgane</field>
+            <field name="zip_code">80350</field>
+            <field name="state_id" ref="state_ma_souss_massa"/>
+        </record>
+        <record id="city_taroudant" model="res.city.morocco">
+            <field name="name">Taroudant</field>
+            <field name="zip_code">83000</field>
+            <field name="state_id" ref="state_ma_souss_massa"/>
+        </record>
+        <record id="city_tiznit" model="res.city.morocco">
+            <field name="name">Tiznit</field>
+            <field name="zip_code">85000</field>
+            <field name="state_id" ref="state_ma_souss_massa"/>
+        </record>
+
+        <!-- === Guelmim-Oued Noun === -->
+        <record id="city_guelmim" model="res.city.morocco">
+            <field name="name">Guelmim</field>
+            <field name="zip_code">81000</field>
+            <field name="state_id" ref="state_ma_guelmim_oued_noun"/>
+        </record>
+        <record id="city_tan_tan" model="res.city.morocco">
+            <field name="name">Tan-Tan</field>
+            <field name="zip_code">82000</field>
+            <field name="state_id" ref="state_ma_guelmim_oued_noun"/>
+        </record>
+        <record id="city_sidi_ifni" model="res.city.morocco">
+            <field name="name">Sidi Ifni</field>
+            <field name="zip_code">85200</field>
+            <field name="state_id" ref="state_ma_guelmim_oued_noun"/>
+        </record>
+
+        <!-- === Laâyoune-Sakia El Hamra === -->
+        <record id="city_laayoune" model="res.city.morocco">
+            <field name="name">Laâyoune</field>
+            <field name="zip_code">70000</field>
+            <field name="state_id" ref="state_ma_laayoune_sakia"/>
+        </record>
+        <record id="city_boujdour" model="res.city.morocco">
+            <field name="name">Boujdour</field>
+            <field name="zip_code">71000</field>
+            <field name="state_id" ref="state_ma_laayoune_sakia"/>
+        </record>
+        <record id="city_tarfaya" model="res.city.morocco">
+            <field name="name">Tarfaya</field>
+            <field name="zip_code">72000</field>
+            <field name="state_id" ref="state_ma_laayoune_sakia"/>
+        </record>
+
+        <!-- === Dakhla-Oued Ed-Dahab === -->
+        <record id="city_dakhla" model="res.city.morocco">
+            <field name="name">Dakhla</field>
+            <field name="zip_code">73000</field>
+            <field name="state_id" ref="state_ma_dakhla_oued"/>
+        </record>
+
+    </data>
+</odoo>

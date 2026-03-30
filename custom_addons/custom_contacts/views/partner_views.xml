@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <!-- ==================== RENAME ÉTAT → RÉGION/PROVINCE ==================== -->
+
+    <!-- Override state_id field label on the base partner form -->
+    <record id="view_partner_form_state_label" model="ir.ui.view">
+        <field name="name">res.partner.form.state.label.morocco</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <field name="state_id" position="attributes">
+                <attribute name="string">Région/Province</attribute>
+                <attribute name="placeholder">Sélectionner une région...</attribute>
+            </field>
+        </field>
+    </record>
+
     <!-- ==================== RES.PARTNER FORM EXTENSION ==================== -->
 
     <record id="view_partner_form_inherit_custom" model="ir.ui.view">
@@ -31,16 +47,50 @@
                 </button>
             </div>
 
+            <!-- Ville Maroc helper - avant le champ street -->
+            <field name="street" position="before">
+                <field name="morocco_city_id"
+                       string="🏙️ Ville (Maroc)"
+                       placeholder="Tapez le nom de la ville..."
+                       options="{'no_create': True}"
+                       help="Sélectionnez une ville pour remplir automatiquement la région, le code postal et le pays."
+                       context="{'default_country_id': country_id}"/>
+            </field>
+
+            <!-- Améliorer les placeholders des champs adresse -->
+            <field name="street" position="attributes">
+                <attribute name="placeholder">Ex: 123 Bd Zerktouni</attribute>
+                <attribute name="string">Adresse</attribute>
+            </field>
+            <field name="street2" position="attributes">
+                <attribute name="placeholder">Quartier, Résidence, N° appt...</attribute>
+                <attribute name="string">Complément d'adresse</attribute>
+            </field>
+            <field name="city" position="attributes">
+                <attribute name="placeholder">Ex: Casablanca</attribute>
+            </field>
+            <field name="zip" position="attributes">
+                <attribute name="placeholder">Ex: 20000</attribute>
+            </field>
+
             <!-- Champs après le VAT -->
             <field name="vat" position="after">
                 <field name="ice" placeholder="Ex: 001234567000089"
-                       help="Identifiant Commun de l'Entreprise (15 chiffres)"/>
+                       help="Identifiant Commun de l'Entreprise (15 chiffres) — Obligatoire sur les factures"/>
                 <field name="rc" placeholder="Ex: 123456"
                        help="Numéro du Registre de Commerce"/>
                 <field name="if_code" placeholder="Ex: 12345678"
-                       help="Identifiant Fiscal"/>
+                       help="Identifiant Fiscal — Obligatoire pour la déclaration TVA"/>
                 <field name="cnss" placeholder="Ex: 1234567"
                        help="Numéro CNSS de l'entreprise"/>
+            </field>
+
+            <!-- Améliorer les placeholders des champs contact -->
+            <field name="phone" position="attributes">
+                <attribute name="placeholder">Ex: 0522 123 456</attribute>
+            </field>
+            <field name="mobile" position="attributes">
+                <attribute name="placeholder">Ex: 0661 234 567</attribute>
             </field>
 
             <!-- Classification et communication dans l'onglet interne -->

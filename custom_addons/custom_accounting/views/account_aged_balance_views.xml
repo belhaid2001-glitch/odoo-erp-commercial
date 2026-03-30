@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ==================== BALANCE ÂGÉE - VUES ==================== -->
+    <record id="view_account_aged_balance_tree" model="ir.ui.view">
+        <field name="name">account.aged.balance.tree</field>
+        <field name="model">account.aged.balance.custom</field>
+        <field name="arch" type="xml">
+            <tree decoration-danger="period_4 > 0">
+                <field name="partner_id"/>
+                <field name="total_due" sum="Total" string="Total dû"/>
+                <field name="current" sum="Total" string="Non échu"
+                       decoration-success="current > 0"/>
+                <field name="period_1" sum="Total" string="0-30j"
+                       decoration-info="period_1 > 0"/>
+                <field name="period_2" sum="Total" string="31-60j"
+                       decoration-warning="period_2 > 0"/>
+                <field name="period_3" sum="Total" string="61-90j"
+                       decoration-danger="period_3 > 0"/>
+                <field name="period_4" sum="Total" string="+90j"
+                       decoration-danger="period_4 > 0"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_account_aged_balance_pivot" model="ir.ui.view">
+        <field name="name">account.aged.balance.pivot</field>
+        <field name="model">account.aged.balance.custom</field>
+        <field name="arch" type="xml">
+            <pivot string="Balance âgée">
+                <field name="partner_id" type="row"/>
+                <field name="total_due" type="measure"/>
+                <field name="current" type="measure"/>
+                <field name="period_1" type="measure"/>
+                <field name="period_2" type="measure"/>
+                <field name="period_3" type="measure"/>
+                <field name="period_4" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_account_aged_balance_graph" model="ir.ui.view">
+        <field name="name">account.aged.balance.graph</field>
+        <field name="model">account.aged.balance.custom</field>
+        <field name="arch" type="xml">
+            <graph string="Balance âgée" type="bar" stacked="True">
+                <field name="partner_id"/>
+                <field name="current" type="measure"/>
+                <field name="period_1" type="measure"/>
+                <field name="period_2" type="measure"/>
+                <field name="period_3" type="measure"/>
+                <field name="period_4" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="action_account_aged_balance" model="ir.actions.act_window">
+        <field name="name">Balance âgée</field>
+        <field name="res_model">account.aged.balance.custom</field>
+        <field name="view_mode">tree,pivot,graph</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aucune créance en cours
+            </p>
+            <p>La balance âgée affiche les créances clients par tranche d'ancienneté.</p>
+        </field>
+    </record>
+
+</odoo>

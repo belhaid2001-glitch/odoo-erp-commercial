@@ -5,3 +5,9 @@ access_stock_quality_team_user,stock.quality.team.user,model_stock_quality_team,
 access_stock_quality_team_manager,stock.quality.team.manager,model_stock_quality_team,stock.group_stock_manager,1,1,1,1
 access_stock_valuation_report_user,stock.valuation.report.user,model_stock_valuation_report,stock.group_stock_user,1,0,0,0
 access_stock_valuation_report_manager,stock.valuation.report.manager,model_stock_valuation_report,stock.group_stock_manager,1,0,0,0
+access_stock_project_user,stock.project.user,model_stock_project,stock.group_stock_user,1,1,1,0
+access_stock_project_manager,stock.project.manager,model_stock_project,stock.group_stock_manager,1,1,1,1
+access_stock_project_line_user,stock.project.line.user,model_stock_project_line,stock.group_stock_user,1,1,1,0
+access_stock_project_line_manager,stock.project.line.manager,model_stock_project_line,stock.group_stock_manager,1,1,1,1
+access_stock_intelligent_reorder_user,stock.intelligent.reorder.user,model_stock_intelligent_reorder,stock.group_stock_user,1,1,1,0
+access_stock_intelligent_reorder_manager,stock.intelligent.reorder.manager,model_stock_intelligent_reorder,stock.group_stock_manager,1,1,1,1

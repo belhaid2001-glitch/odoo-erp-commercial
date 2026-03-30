@@ -1,6 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Menu Chèques -->
+    <!-- ==================== SUIVI DES PAIEMENTS ==================== -->
+    <menuitem id="menu_account_payment_tracking_root"
+              name="💰 Suivi paiements"
+              parent="account.menu_finance"
+              sequence="4"/>
+
+    <menuitem id="menu_account_payment_tracking_all"
+              name="Tous les paiements"
+              parent="menu_account_payment_tracking_root"
+              action="action_account_payment_tracking"
+              sequence="10"/>
+
+    <menuitem id="menu_account_payment_tracking_customer"
+              name="Paiements clients"
+              parent="menu_account_payment_tracking_root"
+              action="action_account_payment_tracking_customer"
+              sequence="20"/>
+
+    <menuitem id="menu_account_payment_tracking_supplier"
+              name="Paiements fournisseurs"
+              parent="menu_account_payment_tracking_root"
+              action="action_account_payment_tracking_supplier"
+              sequence="30"/>
+
+    <!-- ==================== CHÈQUES ==================== -->
     <menuitem id="menu_account_cheque_root"
               name="Chèques"
               parent="account.menu_finance"
@@ -24,7 +48,7 @@
               action="action_account_cheque"
               sequence="30"/>
 
-    <!-- Menu Analytique -->
+    <!-- ==================== ANALYTIQUE ==================== -->
     <menuitem id="menu_account_analytic_custom_root"
               name="Analytique"
               parent="account.menu_finance"
@@ -36,7 +60,7 @@
               action="action_account_analytic_tag_custom"
               sequence="10"/>
 
-    <!-- ============ RAPPORTS ============ -->
+    <!-- ==================== RAPPORTS ==================== -->
     <menuitem id="menu_account_reports_custom"
               name="📊 Rapports"
               parent="account.menu_finance"
@@ -53,4 +77,29 @@
               parent="menu_account_reports_custom"
               action="custom_accounting.action_report_cheque"
               sequence="20"/>
+
+    <menuitem id="menu_account_tax_report"
+              name="📋 Rapport TVA"
+              parent="menu_account_reports_custom"
+              action="action_account_tax_report"
+              sequence="30"/>
+
+    <menuitem id="menu_account_aged_balance"
+              name="📊 Balance âgée"
+              parent="menu_account_reports_custom"
+              action="action_account_aged_balance"
+              sequence="40"/>
+
+    <!-- ==================== CONFIGURATION COMPTA ==================== -->
+    <menuitem id="menu_account_config_custom"
+              name="⚙️ Configuration"
+              parent="account.menu_finance"
+              sequence="99"
+              groups="account.group_account_manager"/>
+
+    <menuitem id="menu_account_fiscal_year"
+              name="Exercices fiscaux"
+              parent="menu_account_config_custom"
+              action="action_account_fiscal_year"
+              sequence="10"/>
 </odoo>

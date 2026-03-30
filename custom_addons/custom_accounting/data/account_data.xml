@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data noupdate="1">
+        <!-- Séquence suivi paiements -->
+        <record id="seq_account_payment_tracking" model="ir.sequence">
+            <field name="name">Suivi paiement</field>
+            <field name="code">account.payment.tracking</field>
+            <field name="prefix">PAY/%(year)s/</field>
+            <field name="padding">4</field>
+        </record>
+
         <!-- Cron relance automatique -->
         <record id="ir_cron_payment_reminder" model="ir.cron">
             <field name="name">Relance automatique des factures en retard</field>

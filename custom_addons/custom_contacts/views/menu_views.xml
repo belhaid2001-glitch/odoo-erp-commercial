@@ -21,6 +21,13 @@
               action="action_contact_segment"
               sequence="10"/>
 
+    <!-- ============ IMPORT ============ -->
+    <menuitem id="menu_contacts_import"
+              name="📥 Importer des contacts (CSV)"
+              parent="contacts.menu_contacts"
+              action="custom_contacts.action_contact_import_wizard"
+              sequence="5"/>
+
     <!-- ============ RAPPORTS ============ -->
     <menuitem id="menu_contacts_reports_custom"
               name="📊 Rapports"

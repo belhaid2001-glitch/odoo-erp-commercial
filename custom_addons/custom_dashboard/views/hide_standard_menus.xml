@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        =================================================================
+        MASQUER LES MENUS STANDARD ODOO
+        =================================================================
+        Les menus standard sont restreints au groupe technique (mode debug).
+        Les utilisateurs normaux ne voient que nos modules personnalisés.
+        Les administrateurs en mode développeur peuvent toujours y accéder.
+    -->
+
+    <!-- Ventes standard → caché (on a custom_sale) -->
+    <record id="sale.sale_menu_root" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_no_one')])]"/>
+    </record>
+
+    <!-- Achats standard → caché (on a custom_purchase) -->
+    <record id="purchase.menu_purchase_root" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_no_one')])]"/>
+    </record>
+
+    <!-- Inventaire/Stock standard → caché (on a custom_stock) -->
+    <record id="stock.menu_stock_root" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_no_one')])]"/>
+    </record>
+
+    <!-- Comptabilité/Facturation standard → caché (on a custom_accounting) -->
+    <record id="account.menu_finance" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_no_one')])]"/>
+    </record>
+
+    <!-- CRM standard → caché (on a custom_crm) -->
+    <record id="crm.crm_menu_root" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_no_one')])]"/>
+    </record>
+
+    <!-- Contacts standard → caché (on a custom_contacts) -->
+    <record id="contacts.menu_contacts" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_no_one')])]"/>
+    </record>
+
+    <!-- Employés / RH standard → caché (on a custom_hr) -->
+    <record id="hr.menu_hr_root" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_no_one')])]"/>
+    </record>
+
+    <!-- Discussion (mail) → caché pour nettoyer l'interface -->
+    <record id="mail.menu_root_discuss" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_no_one')])]"/>
+    </record>
+
+    <!--
+        NOTE: Le menu Paramètres (base.menu_administration) reste visible
+        pour les administrateurs qui en ont besoin.
+        Le menu Apps est filtré par author='ERP Commercial' dans dashboard_views.xml.
+    -->
+
+</odoo>

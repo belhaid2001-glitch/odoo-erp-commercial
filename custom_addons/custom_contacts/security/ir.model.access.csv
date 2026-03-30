@@ -1,2 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_contact_segment_user,contact.segment.user,model_contact_segment,base.group_user,1,1,1,1
+access_res_city_morocco_user,res.city.morocco.user,model_res_city_morocco,base.group_user,1,0,0,0
+access_res_city_morocco_admin,res.city.morocco.admin,model_res_city_morocco,base.group_system,1,1,1,1
+access_contact_import_wizard_user,contact.import.wizard.user,model_contact_import_wizard,base.group_user,1,1,1,1

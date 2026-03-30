@@ -3,3 +3,11 @@ access_account_cheque_user,account.cheque.user,model_account_cheque,account.grou
 access_account_cheque_manager,account.cheque.manager,model_account_cheque,account.group_account_manager,1,1,1,1
 access_account_analytic_tag_custom_user,account.analytic.tag.custom.user,model_account_analytic_tag_custom,account.group_account_invoice,1,0,0,0
 access_account_analytic_tag_custom_manager,account.analytic.tag.custom.manager,model_account_analytic_tag_custom,account.group_account_manager,1,1,1,1
+access_account_fiscal_year_user,account.fiscal.year.user,model_account_fiscal_year_custom,account.group_account_invoice,1,0,0,0
+access_account_fiscal_year_manager,account.fiscal.year.manager,model_account_fiscal_year_custom,account.group_account_manager,1,1,1,1
+access_account_payment_tracking_user,account.payment.tracking.user,model_account_payment_tracking,account.group_account_invoice,1,1,1,0
+access_account_payment_tracking_manager,account.payment.tracking.manager,model_account_payment_tracking,account.group_account_manager,1,1,1,1
+access_account_tax_report_user,account.tax.report.user,model_account_tax_report_custom,account.group_account_invoice,1,0,0,0
+access_account_tax_report_manager,account.tax.report.manager,model_account_tax_report_custom,account.group_account_manager,1,0,0,0
+access_account_aged_balance_user,account.aged.balance.user,model_account_aged_balance_custom,account.group_account_invoice,1,0,0,0
+access_account_aged_balance_manager,account.aged.balance.manager,model_account_aged_balance_custom,account.group_account_manager,1,0,0,0

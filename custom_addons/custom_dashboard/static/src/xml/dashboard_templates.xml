@@ -23,9 +23,85 @@
                         <span class="dashboard-date">
                             <i class="fa fa-calendar"/> <t t-esc="state.data.today"/>
                         </span>
+                        <button class="btn btn-sm btn-outline-light" t-on-click="toggleFilterBar"
+                                title="Afficher/Masquer les filtres">
+                            <i class="fa fa-sliders"/> Filtres
+                        </button>
                         <button class="btn btn-sm btn-outline-light" t-on-click="refresh">
                             <i class="fa fa-refresh"/> Actualiser
                         </button>
+                    </div>
+                </div>
+
+                <!-- ===== POWER BI-STYLE FILTER BAR ===== -->
+                <div t-attf-class="filter-bar {{ state.filterBarExpanded ? 'filter-bar-expanded' : 'filter-bar-collapsed' }}">
+                    <div class="filter-bar-inner">
+
+                        <!-- Period Filter -->
+                        <div class="filter-group">
+                            <div class="filter-group-label">
+                                <i class="fa fa-clock-o"/> Période
+                            </div>
+                            <div class="filter-pills">
+                                <t t-foreach="periodOptions" t-as="opt" t-key="opt.value">
+                                    <button t-attf-class="filter-pill {{ state.filters.period === opt.value ? 'filter-pill-active' : '' }}"
+                                            t-on-click="() => this.setPeriod(opt.value)">
+                                        <i t-attf-class="fa {{ opt.icon }}"/>
+                                        <t t-esc="opt.label"/>
+                                    </button>
+                                </t>
+                            </div>
+                            <!-- Custom date inputs -->
+                            <div t-if="state.showCustomDates" class="filter-custom-dates">
+                                <div class="filter-date-group">
+                                    <label>Du</label>
+                                    <input type="date" class="filter-date-input"
+                                           t-att-value="state.filters.date_from"
+                                           t-on-change="setDateFrom"/>
+                                </div>
+                                <div class="filter-date-group">
+                                    <label>Au</label>
+                                    <input type="date" class="filter-date-input"
+                                           t-att-value="state.filters.date_to"
+                                           t-on-change="setDateTo"/>
+                                </div>
+                                <button class="btn btn-sm btn-primary filter-apply-btn"
+                                        t-on-click="applyCustomDates">
+                                    <i class="fa fa-check"/> Appliquer
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Category Filter -->
+                        <div class="filter-group">
+                            <div class="filter-group-label">
+                                <i class="fa fa-th-large"/> Catégories
+                            </div>
+                            <div class="filter-pills">
+                                <button class="filter-pill filter-pill-all"
+                                        t-attf-class="filter-pill filter-pill-all {{ state.filters.categories.length === 6 ? 'filter-pill-active' : '' }}"
+                                        t-on-click="selectAllCategories">
+                                    <i class="fa fa-th"/> Tout
+                                </button>
+                                <t t-foreach="categoryOptions" t-as="cat" t-key="cat.value">
+                                    <button t-attf-class="filter-pill filter-pill-cat {{ isCategoryActive(cat.value) ? 'filter-pill-active' : '' }}"
+                                            t-att-style="isCategoryActive(cat.value) ? 'border-color:' + cat.color + ';color:' + cat.color + ';background:' + cat.color + '15' : ''"
+                                            t-on-click="() => this.toggleCategory(cat.value)">
+                                        <i t-attf-class="fa {{ cat.icon }}"/>
+                                        <t t-esc="cat.label"/>
+                                    </button>
+                                </t>
+                            </div>
+                        </div>
+
+                        <!-- Reset -->
+                        <div class="filter-group filter-group-actions">
+                            <button class="btn btn-sm btn-outline-secondary filter-reset-btn"
+                                    t-on-click="resetFilters">
+                                <i class="fa fa-times"/> Réinitialiser
+                            </button>
+                        </div>
+
                     </div>
                 </div>
 

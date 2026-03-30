@@ -23,6 +23,8 @@ Gestion des Contacts - ERP Commercial
     ],
     'data': [
         'security/ir.model.access.csv',
+        'data/morocco_regions_cities.xml',
+        'wizard/contact_import_wizard_views.xml',
         'views/partner_views.xml',
         'data/contact_data.xml',
         'report/contacts_report_custom.xml',

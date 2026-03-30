@@ -14,7 +14,34 @@ export class DashboardMain extends Component {
         this.state = useState({
             data: null,
             loading: true,
+            // --- Power BI-style Filters ---
+            filters: {
+                period: 'this_month',
+                date_from: '',
+                date_to: '',
+                categories: ['sale', 'purchase', 'stock', 'accounting', 'crm', 'hr'],
+            },
+            showCustomDates: false,
+            filterBarExpanded: true,
         });
+
+        this.periodOptions = [
+            { value: 'today', label: "Aujourd'hui", icon: 'fa-clock-o' },
+            { value: 'this_week', label: 'Cette semaine', icon: 'fa-calendar-o' },
+            { value: 'this_month', label: 'Ce mois', icon: 'fa-calendar' },
+            { value: 'this_quarter', label: 'Ce trimestre', icon: 'fa-calendar-check-o' },
+            { value: 'this_year', label: 'Cette année', icon: 'fa-calendar-plus-o' },
+            { value: 'custom', label: 'Personnalisé', icon: 'fa-sliders' },
+        ];
+
+        this.categoryOptions = [
+            { value: 'sale', label: 'Ventes', icon: 'fa-line-chart', color: '#1cc88a' },
+            { value: 'purchase', label: 'Achats', icon: 'fa-truck', color: '#36b9cc' },
+            { value: 'stock', label: 'Stock', icon: 'fa-cubes', color: '#e74a3b' },
+            { value: 'accounting', label: 'Comptabilité', icon: 'fa-money', color: '#f6c23e' },
+            { value: 'crm', label: 'CRM', icon: 'fa-bullseye', color: '#8b5cf6' },
+            { value: 'hr', label: 'RH', icon: 'fa-users', color: '#4e73df' },
+        ];
 
         this.revenueChartRef = useRef("revenueChart");
         this.categoryChartRef = useRef("categoryChart");
@@ -36,11 +63,82 @@ export class DashboardMain extends Component {
         });
     }
 
+    // ==================== FILTERS ====================
+    setPeriod(period) {
+        this.state.filters.period = period;
+        this.state.showCustomDates = (period === 'custom');
+        if (period !== 'custom') {
+            this.applyFilters();
+        }
+    }
+
+    setDateFrom(ev) {
+        this.state.filters.date_from = ev.target.value;
+    }
+
+    setDateTo(ev) {
+        this.state.filters.date_to = ev.target.value;
+    }
+
+    applyCustomDates() {
+        if (this.state.filters.date_from && this.state.filters.date_to) {
+            this.applyFilters();
+        }
+    }
+
+    toggleCategory(category) {
+        const cats = this.state.filters.categories;
+        const idx = cats.indexOf(category);
+        if (idx >= 0) {
+            if (cats.length > 1) {
+                cats.splice(idx, 1);
+            }
+        } else {
+            cats.push(category);
+        }
+        this.applyFilters();
+    }
+
+    selectAllCategories() {
+        this.state.filters.categories = ['sale', 'purchase', 'stock', 'accounting', 'crm', 'hr'];
+        this.applyFilters();
+    }
+
+    isCategoryActive(category) {
+        return this.state.filters.categories.includes(category);
+    }
+
+    toggleFilterBar() {
+        this.state.filterBarExpanded = !this.state.filterBarExpanded;
+    }
+
+    async applyFilters() {
+        this.state.loading = true;
+        this.destroyCharts();
+        await this.loadData();
+        setTimeout(() => this.renderAllCharts(), 100);
+    }
+
+    resetFilters() {
+        this.state.filters.period = 'this_month';
+        this.state.filters.date_from = '';
+        this.state.filters.date_to = '';
+        this.state.filters.categories = ['sale', 'purchase', 'stock', 'accounting', 'crm', 'hr'];
+        this.state.showCustomDates = false;
+        this.applyFilters();
+    }
+
     // ==================== DATA ====================
     async loadData() {
         try {
+            const filters = {
+                period: this.state.filters.period,
+                date_from: this.state.filters.date_from,
+                date_to: this.state.filters.date_to,
+                categories: this.state.filters.categories,
+            };
             const data = await this.orm.call(
-                "dashboard.kpi", "get_full_dashboard_data", []
+                "dashboard.kpi", "get_full_dashboard_data", [filters]
             );
             this.state.data = data;
             this.state.loading = false;

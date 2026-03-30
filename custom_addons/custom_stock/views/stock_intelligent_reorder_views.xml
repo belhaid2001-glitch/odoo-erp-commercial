@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ==================== RÉAPPROVISIONNEMENT INTELLIGENT - FORMULAIRE ==================== -->
+    <record id="view_stock_intelligent_reorder_form" model="ir.ui.view">
+        <field name="name">stock.intelligent.reorder.form</field>
+        <field name="model">stock.intelligent.reorder</field>
+        <field name="arch" type="xml">
+            <form string="Règle de réapprovisionnement">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="product_id" placeholder="Sélectionnez un produit..."/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Configuration">
+                            <field name="product_categ_id"/>
+                            <field name="warehouse_id"/>
+                            <field name="location_id"/>
+                            <field name="supplier_id"/>
+                            <field name="lead_time"/>
+                            <field name="last_purchase_price"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Seuils &amp; Stock">
+                            <field name="qty_min"/>
+                            <field name="qty_max"/>
+                            <field name="qty_available"/>
+                            <field name="qty_to_order"
+                                   decoration-danger="qty_to_order > 0"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="📊 Analyse intelligente">
+                            <field name="avg_daily_consumption"/>
+                            <field name="days_of_stock"
+                                   decoration-danger="days_of_stock &lt; 7"
+                                   decoration-warning="days_of_stock &lt; 30"/>
+                            <field name="estimated_stockout_date"
+                                   decoration-danger="estimated_stockout_date"/>
+                            <field name="trend"/>
+                        </group>
+                        <group string="État">
+                            <field name="priority" widget="priority"/>
+                            <field name="state" widget="badge"
+                                   decoration-success="state == 'ok'"
+                                   decoration-warning="state == 'warning'"
+                                   decoration-danger="state in ('critical', 'stockout')"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="notes" placeholder="Notes..."/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- ==================== RÉAPPROVISIONNEMENT INTELLIGENT - LISTE ==================== -->
+    <record id="view_stock_intelligent_reorder_tree" model="ir.ui.view">
+        <field name="name">stock.intelligent.reorder.tree</field>
+        <field name="model">stock.intelligent.reorder</field>
+        <field name="arch" type="xml">
+            <tree decoration-danger="state in ('critical', 'stockout')"
+                  decoration-warning="state == 'warning'"
+                  decoration-success="state == 'ok'">
+                <field name="priority" widget="priority"/>
+                <field name="product_id"/>
+                <field name="product_categ_id" optional="show"/>
+                <field name="qty_min" string="Min"/>
+                <field name="qty_max" string="Max" optional="show"/>
+                <field name="qty_available" string="Stock actuel"
+                       decoration-danger="qty_available &lt; qty_min"/>
+                <field name="qty_to_order" string="À commander"
+                       decoration-danger="qty_to_order > 0"/>
+                <field name="avg_daily_consumption" string="Conso/jour" optional="show"/>
+                <field name="days_of_stock" string="Jours restants"
+                       decoration-danger="days_of_stock &lt; 7"
+                       decoration-warning="days_of_stock &lt; 30"/>
+                <field name="trend" optional="show"/>
+                <field name="supplier_id" optional="show"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'ok'"
+                       decoration-warning="state == 'warning'"
+                       decoration-danger="state in ('critical', 'stockout')"/>
+                <button name="action_create_purchase_order"
+                        string="Commander" type="object"
+                        icon="fa-shopping-cart" class="text-primary"
+                        invisible="qty_to_order &lt;= 0"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ==================== RECHERCHE ==================== -->
+    <record id="view_stock_intelligent_reorder_search" model="ir.ui.view">
+        <field name="name">stock.intelligent.reorder.search</field>
+        <field name="model">stock.intelligent.reorder</field>
+        <field name="arch" type="xml">
+            <search string="Recherche réapprovisionnement">
+                <field name="product_id"/>
+                <field name="supplier_id"/>
+                <field name="product_categ_id"/>
+                <separator/>
+                <filter name="critical" string="🔴 Critique" domain="[('state', 'in', ['critical', 'stockout'])]"/>
+                <filter name="warning" string="⚠️ Attention" domain="[('state', '=', 'warning')]"/>
+                <filter name="to_order" string="À commander" domain="[('qty_to_order', '>', 0)]"/>
+                <filter name="low_stock_days" string="&lt; 7 jours" domain="[('days_of_stock', '&lt;', 7), ('days_of_stock', '>', 0)]"/>
+                <separator/>
+                <filter name="trend_up" string="↗ Hausse" domain="[('trend', '=', 'up')]"/>
+                <filter name="trend_down" string="↘ Baisse" domain="[('trend', '=', 'down')]"/>
+                <group expand="0" string="Grouper par">
+                    <filter name="group_state" string="État" context="{'group_by': 'state'}"/>
+                    <filter name="group_category" string="Catégorie" context="{'group_by': 'product_categ_id'}"/>
+                    <filter name="group_supplier" string="Fournisseur" context="{'group_by': 'supplier_id'}"/>
+                    <filter name="group_trend" string="Tendance" context="{'group_by': 'trend'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ==================== ACTIONS ==================== -->
+    <record id="action_stock_intelligent_reorder" model="ir.actions.act_window">
+        <field name="name">Réapprovisionnement intelligent</field>
+        <field name="res_model">stock.intelligent.reorder</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_stock_intelligent_reorder_search"/>
+        <field name="context">{'search_default_to_order': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Configurez vos règles de réapprovisionnement
+            </p>
+            <p>Le système analyse automatiquement la consommation et vous alerte avant les ruptures.</p>
+        </field>
+    </record>
+
+    <record id="action_stock_critical_reorder" model="ir.actions.act_window">
+        <field name="name">Alertes stock critique</field>
+        <field name="res_model">stock.intelligent.reorder</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('state', 'in', ['critical', 'stockout'])]</field>
+    </record>
+
+</odoo>
