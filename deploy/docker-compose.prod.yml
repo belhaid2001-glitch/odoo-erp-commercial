@@ -1,0 +1,85 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: odoo_erp_db
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=odoo
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-odoo_secret_2026}
+    volumes:
+      - odoo_db_data:/var/lib/postgresql/data
+    restart: always
+    # Optimisation mémoire pour Azure B1s (1 Go RAM)
+    command: >
+      postgres
+      -c shared_buffers=128MB
+      -c effective_cache_size=256MB
+      -c work_mem=4MB
+      -c maintenance_work_mem=64MB
+      -c max_connections=50
+    deploy:
+      resources:
+        limits:
+          memory: 384M
+    networks:
+      - odoo_net
+
+  odoo:
+    image: odoo:17.0
+    container_name: odoo_erp_app
+    depends_on:
+      - db
+    environment:
+      - HOST=db
+      - USER=odoo
+      - PASSWORD=${DB_PASSWORD:-odoo_secret_2026}
+    volumes:
+      - odoo_web_data:/var/lib/odoo
+      - ./config:/etc/odoo
+      - ./custom_addons:/mnt/extra-addons
+    restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    networks:
+      - odoo_net
+
+  nginx:
+    image: nginx:alpine
+    container_name: odoo_nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./deploy/certbot/conf:/etc/letsencrypt:ro
+      - ./deploy/certbot/www:/var/www/certbot:ro
+    depends_on:
+      - odoo
+    restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 64M
+    networks:
+      - odoo_net
+
+  # Optionnel : renouvellement auto des certificats SSL
+  certbot:
+    image: certbot/certbot
+    container_name: odoo_certbot
+    volumes:
+      - ./deploy/certbot/conf:/etc/letsencrypt
+      - ./deploy/certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    networks:
+      - odoo_net
+
+volumes:
+  odoo_db_data:
+  odoo_web_data:
+
+networks:
+  odoo_net:
+    driver: bridge
