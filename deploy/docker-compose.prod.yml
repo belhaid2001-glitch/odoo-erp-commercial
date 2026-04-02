@@ -35,8 +35,8 @@ services:
       - PASSWORD=${DB_PASSWORD:-odoo_secret_2026}
     volumes:
       - odoo_web_data:/var/lib/odoo
-      - ./config:/etc/odoo
-      - ./custom_addons:/mnt/extra-addons
+      - ../config:/etc/odoo
+      - ../custom_addons:/mnt/extra-addons
     restart: always
     deploy:
       resources:
@@ -52,9 +52,9 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./deploy/nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./deploy/certbot/conf:/etc/letsencrypt:ro
-      - ./deploy/certbot/www:/var/www/certbot:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./certbot/conf:/etc/letsencrypt:ro
+      - ./certbot/www:/var/www/certbot:ro
     depends_on:
       - odoo
     restart: always
@@ -70,8 +70,8 @@ services:
     image: certbot/certbot
     container_name: odoo_certbot
     volumes:
-      - ./deploy/certbot/conf:/etc/letsencrypt
-      - ./deploy/certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
     networks:
       - odoo_net
