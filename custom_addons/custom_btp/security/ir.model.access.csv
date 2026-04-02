@@ -53,3 +53,8 @@ access_btp_reunion_compagnon,btp.reunion compagnon,model_btp_reunion,custom_btp.
 access_btp_decision_directeur,btp.decision directeur,model_btp_decision,custom_btp.group_btp_directeur,1,1,1,1
 access_btp_decision_chef,btp.decision chef,model_btp_decision,custom_btp.group_btp_chef_chantier,1,1,1,0
 access_btp_decision_compagnon,btp.decision compagnon,model_btp_decision,custom_btp.group_btp_compagnon,1,0,0,0
+access_btp_situation_wizard_directeur,btp.situation.wizard directeur,model_btp_situation_wizard,custom_btp.group_btp_directeur,1,1,1,1
+access_btp_situation_wizard_chef,btp.situation.wizard chef,model_btp_situation_wizard,custom_btp.group_btp_chef_chantier,1,1,1,0
+access_btp_cnss_wizard_directeur,btp.cnss.wizard directeur,model_btp_cnss_wizard,custom_btp.group_btp_directeur,1,1,1,1
+access_btp_cnss_wizard_chef,btp.cnss.wizard chef,model_btp_cnss_wizard,custom_btp.group_btp_chef_chantier,1,1,1,0
+access_btp_cloture_wizard_directeur,btp.cloture.wizard directeur,model_btp_cloture_wizard,custom_btp.group_btp_directeur,1,1,1,1
