@@ -159,7 +159,7 @@ class MohasibChantier(models.Model):
     )
     alerte_depassement = fields.Text(
         string='Alertes dépassement',
-        compute='_compute_kpi',
+        compute='_compute_alertes',
     )
 
     # ──────────────────── Lien comptable ────────────────────
@@ -229,11 +229,7 @@ class MohasibChantier(models.Model):
             rec.reste_a_facturer = max(0, rec.montant_marche - total_facture)
             rec.reste_a_encaisser = total_facture - rec.total_encaisse
 
-    @api.depends('montant_marche_ht', 'depense_totale',
-                 'budget_total', 'budget_main_oeuvre', 'budget_materiaux',
-                 'budget_sous_traitance', 'budget_materiel', 'budget_divers',
-                 'depense_main_oeuvre', 'depense_materiaux',
-                 'depense_sous_traitance', 'depense_materiel', 'depense_divers')
+    @api.depends('montant_marche_ht', 'depense_totale', 'budget_total')
     def _compute_kpi(self):
         for rec in self:
             # Taux d'avancement
@@ -249,7 +245,12 @@ class MohasibChantier(models.Model):
             else:
                 rec.taux_marge = 0
 
-            # Alertes dépassement par catégorie
+    @api.depends('budget_main_oeuvre', 'budget_materiaux',
+                 'budget_sous_traitance', 'budget_materiel', 'budget_divers',
+                 'depense_main_oeuvre', 'depense_materiaux',
+                 'depense_sous_traitance', 'depense_materiel', 'depense_divers')
+    def _compute_alertes(self):
+        for rec in self:
             alertes = []
             checks = [
                 ('Main d\'œuvre', rec.depense_main_oeuvre, rec.budget_main_oeuvre),

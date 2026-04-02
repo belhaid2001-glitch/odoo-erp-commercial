@@ -5,36 +5,25 @@
     'category': 'Accounting',
     'summary': 'Agent IA expert-comptable spécialisé BTP Maroc avec saisie en langage naturel',
     'description': """
-Mohasib (محاسب) — Assistant Comptable IA pour le BTP Marocain
-==============================================================
+Mohasib - Assistant Comptable IA pour le BTP Marocain
 
 Agent intelligent qui comprend le langage naturel du directeur BTP
-et traduit automatiquement en écritures comptables PCM.
+et traduit automatiquement en ecritures comptables PCM.
 
-**Module 1 — Saisie guidée en langage naturel**
-* "J'ai acheté 200 sacs de ciment à 48 DH pour Hay Riad, payé cash"
-  → Écriture 6132/5161 avec affectation analytique chantier
+Module 1 - Saisie guidee en langage naturel: le directeur tape
+une phrase et Mohasib cree l'ecriture comptable correspondante.
 
-**Module 2 — Suivi par chantier**
-* Budget, dépenses, encaissements, marge en temps réel
-* "Comment va le chantier Casablanca ?" → Rapport instantané
+Module 2 - Suivi par chantier: budget, depenses, encaissements.
 
-**Module 3 — Fiscalité marocaine BTP**
-* TVA 20%/10%/7%, IS, retenues à la source, CNSS
-* Alertes automatiques avant échéances DGI
+Module 3 - Fiscalite marocaine BTP: TVA, IS, retenues a la source.
 
-**Module 4 — Paie des ouvriers BTP**
-* SMIG BTP, heures sup, CNSS, AMO, IR barème progressif
-* Bulletins de paie et bordereaux CNSS
+Module 4 - Paie des ouvriers BTP: SMIG, CNSS, AMO, IR.
 
-**Module 5 — Alertes intelligentes**
-* Trésorerie, fiscal, chantier, légal, CNSS
+Module 5 - Alertes intelligentes.
 
-**Module 6 — Rapports & états financiers**
-* Bilan, CPC, ESG, liasse fiscale DGI
+Module 6 - Rapports et etats financiers.
 
-**Module 7 — Gestion documentaire BTP**
-* Devis, factures DGI, situations de travaux, retenues
+Module 7 - Gestion documentaire BTP.
     """,
     'author': 'ERP Commercial',
     'depends': [
