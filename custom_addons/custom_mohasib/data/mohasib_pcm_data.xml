@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!--
+        ══════════════════════════════════════════════════════
+        Plan Comptable Marocain (PCM) — Comptes principaux BTP
+        Catégories de base pour le fonctionnement de Mohasib.
+        Ces comptes seront créés si non existants.
+        ══════════════════════════════════════════════════════
+        -->
+
+        <!-- ==================== CLASSE 3 : COMPTES DE TRÉSORERIE / TIERS ==================== -->
+
+        <!-- TVA récupérable sur charges -->
+        <record id="pcm_34552" model="account.account">
+            <field name="code">34552</field>
+            <field name="name">TVA récupérable sur charges</field>
+            <field name="account_type">asset_current</field>
+            <field name="reconcile" eval="False"/>
+        </record>
+
+        <!-- État — Retenues à la source -->
+        <record id="pcm_4457" model="account.account">
+            <field name="code">4457</field>
+            <field name="name">État - Retenues à la source</field>
+            <field name="account_type">liability_current</field>
+            <field name="reconcile" eval="True"/>
+        </record>
+
+        <!-- TVA facturée (collectée) -->
+        <record id="pcm_4455" model="account.account">
+            <field name="code">4455</field>
+            <field name="name">TVA facturée</field>
+            <field name="account_type">liability_current</field>
+            <field name="reconcile" eval="False"/>
+        </record>
+
+        <!-- Fournisseurs -->
+        <record id="pcm_4411" model="account.account">
+            <field name="code">4411</field>
+            <field name="name">Fournisseurs</field>
+            <field name="account_type">liability_payable</field>
+            <field name="reconcile" eval="True"/>
+        </record>
+
+        <!-- ==================== CLASSE 5 : COMPTES DE TRÉSORERIE ==================== -->
+
+        <!-- Banque -->
+        <record id="pcm_5141" model="account.account">
+            <field name="code">5141</field>
+            <field name="name">Banque (compte courant)</field>
+            <field name="account_type">asset_cash</field>
+            <field name="reconcile" eval="True"/>
+        </record>
+
+        <!-- Caisse -->
+        <record id="pcm_5161" model="account.account">
+            <field name="code">5161</field>
+            <field name="name">Caisse</field>
+            <field name="account_type">asset_cash</field>
+            <field name="reconcile" eval="False"/>
+        </record>
+
+        <!-- ==================== CLASSE 6 : COMPTES DE CHARGES ==================== -->
+
+        <!-- Achats de matières premières (matériaux BTP) -->
+        <record id="pcm_6121" model="account.account">
+            <field name="code">6121</field>
+            <field name="name">Achats de matières premières</field>
+            <field name="account_type">expense</field>
+            <field name="reconcile" eval="False"/>
+        </record>
+
+        <!-- Achats non stockés (carburant) -->
+        <record id="pcm_6125" model="account.account">
+            <field name="code">6125</field>
+            <field name="name">Achats non stockés de matières et fournitures</field>
+            <field name="account_type">expense</field>
+            <field name="reconcile" eval="False"/>
+        </record>
+
+        <!-- Locations (engins, matériel) -->
+        <record id="pcm_6132" model="account.account">
+            <field name="code">6132</field>
+            <field name="name">Locations de matériel et outillage</field>
+            <field name="account_type">expense</field>
+            <field name="reconcile" eval="False"/>
+        </record>
+
+        <!-- Sous-traitance / Entretien -->
+        <record id="pcm_6134" model="account.account">
+            <field name="code">6134</field>
+            <field name="name">Entretien et réparations - Sous-traitance</field>
+            <field name="account_type">expense</field>
+            <field name="reconcile" eval="False"/>
+        </record>
+
+        <!-- Eau -->
+        <record id="pcm_61251" model="account.account">
+            <field name="code">61251</field>
+            <field name="name">Eau</field>
+            <field name="account_type">expense</field>
+            <field name="reconcile" eval="False"/>
+        </record>
+
+        <!-- Électricité -->
+        <record id="pcm_61252" model="account.account">
+            <field name="code">61252</field>
+            <field name="name">Électricité</field>
+            <field name="account_type">expense</field>
+            <field name="reconcile" eval="False"/>
+        </record>
+
+        <!-- Rémunérations du personnel -->
+        <record id="pcm_6171" model="account.account">
+            <field name="code">6171</field>
+            <field name="name">Rémunérations du personnel</field>
+            <field name="account_type">expense</field>
+            <field name="reconcile" eval="False"/>
+        </record>
+
+        <!-- Frais divers de gestion -->
+        <record id="pcm_6185" model="account.account">
+            <field name="code">6185</field>
+            <field name="name">Frais divers de gestion courante</field>
+            <field name="account_type">expense</field>
+            <field name="reconcile" eval="False"/>
+        </record>
+
+        <!-- ==================== CLASSE 7 : COMPTES DE PRODUITS ==================== -->
+
+        <!-- Ventes de marchandises / Produits BTP -->
+        <record id="pcm_7111" model="account.account">
+            <field name="code">7111</field>
+            <field name="name">Ventes de marchandises</field>
+            <field name="account_type">income</field>
+            <field name="reconcile" eval="False"/>
+        </record>
+
+    </data>
+</odoo>

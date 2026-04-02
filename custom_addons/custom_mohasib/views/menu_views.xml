@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- ══════════════════ MENU PRINCIPAL MOHASIB ══════════════════ -->
+    <menuitem id="menu_mohasib_root"
+              name="🤖 Mohasib"
+              web_icon="custom_mohasib,static/description/icon.png"
+              sequence="5"/>
+
+    <!-- Saisie guidée (lien rapide en haut) -->
+    <menuitem id="menu_mohasib_saisie"
+              name="💬 Saisie guidée"
+              parent="menu_mohasib_root"
+              action="action_mohasib_saisie_wizard"
+              sequence="1"/>
+
+    <!-- Sous-menu : Chantiers -->
+    <menuitem id="menu_mohasib_chantiers"
+              name="🏗️ Chantiers"
+              parent="menu_mohasib_root"
+              action="action_mohasib_chantier"
+              sequence="10"/>
+
+    <!-- Sous-menu : Transactions -->
+    <menuitem id="menu_mohasib_transactions"
+              name="📊 Transactions"
+              parent="menu_mohasib_root"
+              action="action_mohasib_transaction"
+              sequence="20"/>
+
+    <!-- Sous-menu : Conversations -->
+    <menuitem id="menu_mohasib_conversations"
+              name="💬 Historique conversations"
+              parent="menu_mohasib_root"
+              action="action_mohasib_conversation"
+              sequence="30"/>
+
+</odoo>

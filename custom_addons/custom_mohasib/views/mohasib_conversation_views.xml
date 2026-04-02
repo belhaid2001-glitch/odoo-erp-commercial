@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- ══════════════════ CONVERSATION FORM ══════════════════ -->
+    <record id="view_mohasib_conversation_form" model="ir.ui.view">
+        <field name="name">mohasib.conversation.form</field>
+        <field name="model">mohasib.conversation</field>
+        <field name="arch" type="xml">
+            <form string="Conversation Mohasib">
+                <header>
+                    <button name="action_close" string="Clôturer" type="object"
+                            class="btn-warning"
+                            invisible="state != 'active'"/>
+                    <button name="action_reopen" string="Réouvrir" type="object"
+                            invisible="state != 'closed'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="user_id"/>
+                            <field name="chantier_id"/>
+                            <field name="create_date" string="Date"/>
+                        </group>
+                        <group>
+                            <field name="nb_messages"/>
+                            <field name="nb_transactions"/>
+                            <field name="montant_total"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="💬 Messages" name="messages">
+                            <field name="message_ids" nolabel="1">
+                                <tree create="0" edit="0"
+                                      decoration-info="role == 'user'"
+                                      decoration-success="role == 'assistant'"
+                                      decoration-muted="role == 'system'">
+                                    <field name="create_date" string="Heure"/>
+                                    <field name="role"/>
+                                    <field name="content"/>
+                                    <field name="transaction_id"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="📊 Transactions créées" name="transactions">
+                            <field name="transaction_ids" nolabel="1">
+                                <tree create="0">
+                                    <field name="name"/>
+                                    <field name="date"/>
+                                    <field name="type_transaction"/>
+                                    <field name="montant" sum="Total"/>
+                                    <field name="state" widget="badge"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ══════════════════ CONVERSATION TREE ══════════════════ -->
+    <record id="view_mohasib_conversation_tree" model="ir.ui.view">
+        <field name="name">mohasib.conversation.tree</field>
+        <field name="model">mohasib.conversation</field>
+        <field name="arch" type="xml">
+            <tree string="Conversations Mohasib"
+                  decoration-success="state == 'active'"
+                  decoration-muted="state == 'closed'">
+                <field name="name"/>
+                <field name="user_id"/>
+                <field name="chantier_id"/>
+                <field name="nb_messages"/>
+                <field name="nb_transactions"/>
+                <field name="montant_total" sum="Total"/>
+                <field name="create_date"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'active'"
+                       decoration-muted="state == 'closed'"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ══════════════════ ACTION ══════════════════ -->
+    <record id="action_mohasib_conversation" model="ir.actions.act_window">
+        <field name="name">Conversations</field>
+        <field name="res_model">mohasib.conversation</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aucune conversation
+            </p>
+            <p>Lancez une saisie guidée pour démarrer votre première conversation avec Mohasib.</p>
+        </field>
+    </record>
+
+</odoo>

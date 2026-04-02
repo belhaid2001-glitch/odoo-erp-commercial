@@ -1,0 +1,11 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_mohasib_chantier_user,mohasib.chantier.user,model_mohasib_chantier,base.group_user,1,1,1,0
+access_mohasib_chantier_manager,mohasib.chantier.manager,model_mohasib_chantier,account.group_account_manager,1,1,1,1
+access_mohasib_transaction_user,mohasib.transaction.user,model_mohasib_transaction,base.group_user,1,1,1,0
+access_mohasib_transaction_manager,mohasib.transaction.manager,model_mohasib_transaction,account.group_account_manager,1,1,1,1
+access_mohasib_conversation_user,mohasib.conversation.user,model_mohasib_conversation,base.group_user,1,1,1,0
+access_mohasib_conversation_manager,mohasib.conversation.manager,model_mohasib_conversation,account.group_account_manager,1,1,1,1
+access_mohasib_message_user,mohasib.message.user,model_mohasib_message,base.group_user,1,1,1,0
+access_mohasib_saisie_wizard_user,mohasib.saisie.wizard.user,model_mohasib_saisie_wizard,base.group_user,1,1,1,1
+access_mohasib_depense_line_user,mohasib.depense.line.user,model_mohasib_depense_line,base.group_user,1,1,1,0
+access_mohasib_depense_line_manager,mohasib.depense.line.manager,model_mohasib_depense_line,account.group_account_manager,1,1,1,1

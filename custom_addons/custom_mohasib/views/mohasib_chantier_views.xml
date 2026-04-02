@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- ══════════════════ FORM VIEW ══════════════════ -->
+    <record id="view_mohasib_chantier_form" model="ir.ui.view">
+        <field name="name">mohasib.chantier.form</field>
+        <field name="model">mohasib.chantier</field>
+        <field name="arch" type="xml">
+            <form string="Chantier BTP">
+                <header>
+                    <button name="action_start" string="Démarrer" type="object"
+                            class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_done" string="Terminer" type="object"
+                            class="btn-success"
+                            invisible="state != 'in_progress'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,in_progress,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Nom du chantier"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="🏗️ Informations générales">
+                            <field name="code"/>
+                            <field name="responsable_id"/>
+                            <field name="client_id"/>
+                            <field name="adresse"/>
+                            <field name="date_debut"/>
+                            <field name="date_fin_prevue"/>
+                            <field name="analytic_account_id"/>
+                        </group>
+                        <group string="💰 Budget prévisionnel (DH)">
+                            <field name="budget_main_oeuvre"/>
+                            <field name="budget_materiaux"/>
+                            <field name="budget_sous_traitance"/>
+                            <field name="budget_materiel"/>
+                            <field name="budget_divers"/>
+                            <field name="budget_total" class="oe_subtotal_footer_separator"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="📊 Suivi financier" name="suivi">
+                            <group>
+                                <group string="Dépenses">
+                                    <field name="total_depenses"/>
+                                    <field name="taux_consommation" widget="progressbar"/>
+                                </group>
+                                <group string="Encaissements &amp; Marge">
+                                    <field name="total_encaissements"/>
+                                    <field name="marge"/>
+                                    <field name="taux_marge" widget="progressbar"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="📝 Dépenses détaillées" name="depenses">
+                            <field name="depense_line_ids">
+                                <tree editable="bottom">
+                                    <field name="date"/>
+                                    <field name="categorie"/>
+                                    <field name="description"/>
+                                    <field name="montant" sum="Total"/>
+                                    <field name="transaction_id" optional="show"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="📄 Notes" name="notes">
+                            <field name="notes" placeholder="Notes internes sur le chantier..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- ══════════════════ TREE VIEW ══════════════════ -->
+    <record id="view_mohasib_chantier_tree" model="ir.ui.view">
+        <field name="name">mohasib.chantier.tree</field>
+        <field name="model">mohasib.chantier</field>
+        <field name="arch" type="xml">
+            <tree string="Chantiers BTP"
+                  decoration-success="state == 'in_progress'"
+                  decoration-muted="state == 'done'">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="client_id"/>
+                <field name="responsable_id"/>
+                <field name="budget_total" sum="Total budget"/>
+                <field name="total_depenses" sum="Total dépenses"/>
+                <field name="total_encaissements" sum="Total encaissements"/>
+                <field name="marge" sum="Marge totale"/>
+                <field name="taux_consommation" widget="progressbar"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-success="state == 'in_progress'"
+                       decoration-muted="state == 'done'"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ══════════════════ SEARCH VIEW ══════════════════ -->
+    <record id="view_mohasib_chantier_search" model="ir.ui.view">
+        <field name="name">mohasib.chantier.search</field>
+        <field name="model">mohasib.chantier</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher un chantier">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="client_id"/>
+                <field name="responsable_id"/>
+                <filter name="filter_active" string="En cours"
+                        domain="[('state', '=', 'in_progress')]"/>
+                <filter name="filter_draft" string="Brouillon"
+                        domain="[('state', '=', 'draft')]"/>
+                <filter name="filter_done" string="Terminés"
+                        domain="[('state', '=', 'done')]"/>
+                <separator/>
+                <group expand="0" string="Regrouper par">
+                    <filter name="group_state" string="État"
+                            context="{'group_by': 'state'}"/>
+                    <filter name="group_client" string="Client"
+                            context="{'group_by': 'client_id'}"/>
+                    <filter name="group_responsable" string="Responsable"
+                            context="{'group_by': 'responsable_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ══════════════════ ACTION ══════════════════ -->
+    <record id="action_mohasib_chantier" model="ir.actions.act_window">
+        <field name="name">Chantiers</field>
+        <field name="res_model">mohasib.chantier</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_mohasib_chantier_search"/>
+        <field name="context">{'search_default_filter_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créez votre premier chantier BTP
+            </p>
+            <p>
+                Gérez vos chantiers, budgets et dépenses directement depuis Mohasib.
+            </p>
+        </field>
+    </record>
+
+</odoo>

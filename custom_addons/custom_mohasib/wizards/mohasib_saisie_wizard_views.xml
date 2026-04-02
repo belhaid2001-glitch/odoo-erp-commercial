@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- ══════════════════ WIZARD FORM ══════════════════ -->
+    <record id="view_mohasib_saisie_wizard_form" model="ir.ui.view">
+        <field name="name">mohasib.saisie.wizard.form</field>
+        <field name="model">mohasib.saisie.wizard</field>
+        <field name="arch" type="xml">
+            <form string="🤖 Mohasib — Saisie guidée">
+                <div class="mohasib-wizard">
+
+                    <!-- Sélection du chantier par défaut -->
+                    <group class="mohasib-header">
+                        <field name="chantier_id"
+                               placeholder="Chantier par défaut (optionnel)"/>
+                        <field name="state" invisible="1"/>
+                        <field name="conversation_id" invisible="1"/>
+                    </group>
+
+                    <!-- Historique de la conversation -->
+                    <div class="mohasib-chat-container">
+                        <field name="chat_history_html" nolabel="1"/>
+                    </div>
+
+                    <!-- Réponse courante de Mohasib -->
+                    <div class="mohasib-response-container"
+                         invisible="not response_html">
+                        <field name="response_html" nolabel="1"/>
+                    </div>
+
+                    <!-- Zone de saisie (mode INPUT) -->
+                    <group invisible="state != 'input'" class="mohasib-input-zone">
+                        <field name="user_input" nolabel="1"
+                               placeholder="Ex: J'ai acheté 200 sacs de ciment à 48 DH pour chantier Hay Riad, payé cash..."
+                               class="mohasib-input"/>
+                    </group>
+
+                    <!-- Zone de correction/aperçu (mode PREVIEW) -->
+                    <group invisible="state != 'preview'" class="mohasib-preview-zone">
+                        <group string="📋 Vérifiez et corrigez si nécessaire">
+                            <field name="type_transaction"/>
+                            <field name="montant"/>
+                            <field name="article"/>
+                            <field name="quantite"/>
+                            <field name="prix_unitaire"/>
+                            <field name="mode_paiement"/>
+                            <field name="chantier_parsed_id"/>
+                            <field name="partner_id"/>
+                            <field name="date_transaction"/>
+                        </group>
+                    </group>
+
+                    <field name="parsed_json" invisible="1"/>
+                </div>
+
+                <footer>
+                    <!-- Boutons mode INPUT -->
+                    <button name="action_send" string="📤 Envoyer"
+                            type="object" class="btn-primary"
+                            invisible="state != 'input'"/>
+
+                    <!-- Boutons mode PREVIEW -->
+                    <button name="action_confirm" string="✅ Confirmer et Comptabiliser"
+                            type="object" class="btn-success"
+                            invisible="state != 'preview'"/>
+                    <button name="action_cancel_entry" string="❌ Annuler"
+                            type="object" class="btn-danger"
+                            invisible="state != 'preview'"/>
+
+                    <!-- Toujours visible -->
+                    <button name="action_new_conversation" string="🔄 Nouvelle conversation"
+                            type="object" class="btn-secondary"/>
+                    <button string="Fermer" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- ══════════════════ ACTION POUR OUVRIR LE WIZARD ══════════════════ -->
+    <record id="action_mohasib_saisie_wizard" model="ir.actions.act_window">
+        <field name="name">💬 Saisie guidée Mohasib</field>
+        <field name="res_model">mohasib.saisie.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{}</field>
+    </record>
+
+</odoo>
