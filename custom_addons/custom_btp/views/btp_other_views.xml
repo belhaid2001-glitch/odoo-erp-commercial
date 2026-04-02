@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!-- Vues Réception                                                -->
+    <!-- ============================================================ -->
+    <record id="view_btp_reception_tree" model="ir.ui.view">
+        <field name="name">btp.reception.tree</field>
+        <field name="model">btp.reception</field>
+        <field name="arch" type="xml">
+            <tree string="Réceptions">
+                <field name="name"/>
+                <field name="chantier_id"/>
+                <field name="type"/>
+                <field name="date"/>
+                <field name="delai_garantie"/>
+                <field name="date_fin_garantie"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_btp_reception_form" model="ir.ui.view">
+        <field name="name">btp.reception.form</field>
+        <field name="model">btp.reception</field>
+        <field name="arch" type="xml">
+            <form string="Réception">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="chantier_id"/>
+                            <field name="type"/>
+                            <field name="date"/>
+                            <field name="lieu"/>
+                        </group>
+                        <group>
+                            <field name="delai_garantie"/>
+                            <field name="date_fin_garantie"/>
+                            <field name="pv_file" filename="pv_filename"/>
+                            <field name="pv_filename" invisible="1"/>
+                        </group>
+                    </group>
+                    <field name="observations" placeholder="Observations..."/>
+                    <notebook>
+                        <page string="Réserves">
+                            <field name="reserve_ids">
+                                <tree editable="bottom">
+                                    <field name="description"/>
+                                    <field name="responsable_id"/>
+                                    <field name="date_limite"/>
+                                    <field name="state" widget="badge"
+                                           decoration-danger="state == 'ouverte'"
+                                           decoration-success="state == 'levee'"/>
+                                    <field name="date_levee"/>
+                                    <button name="action_lever" string="Lever" type="object" icon="fa-check"
+                                            invisible="state != 'ouverte'"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Signataires">
+                            <field name="signataire_ids">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="phone"/>
+                                    <field name="email"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_btp_reception" model="ir.actions.act_window">
+        <field name="name">Réceptions</field>
+        <field name="res_model">btp.reception</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Vues Document                                                 -->
+    <!-- ============================================================ -->
+    <record id="view_btp_document_tree" model="ir.ui.view">
+        <field name="name">btp.document.tree</field>
+        <field name="model">btp.document</field>
+        <field name="arch" type="xml">
+            <tree string="Documents BTP" decoration-danger="alerte_expiration">
+                <field name="name"/>
+                <field name="chantier_id"/>
+                <field name="type_document"/>
+                <field name="date_emission"/>
+                <field name="date_expiration"/>
+                <field name="obligatoire"/>
+                <field name="alerte_expiration"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_btp_document_form" model="ir.ui.view">
+        <field name="name">btp.document.form</field>
+        <field name="model">btp.document</field>
+        <field name="arch" type="xml">
+            <form string="Document BTP">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="chantier_id"/>
+                            <field name="type_document"/>
+                            <field name="obligatoire"/>
+                        </group>
+                        <group>
+                            <field name="date_emission"/>
+                            <field name="date_expiration"/>
+                            <field name="alerte_expiration" widget="boolean" decoration-danger="alerte_expiration"/>
+                            <field name="fichier" filename="filename"/>
+                            <field name="filename" invisible="1"/>
+                        </group>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_btp_document" model="ir.actions.act_window">
+        <field name="name">Documents</field>
+        <field name="res_model">btp.document</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Vues Sous-traitant                                            -->
+    <!-- ============================================================ -->
+    <record id="view_btp_sous_traitant_tree" model="ir.ui.view">
+        <field name="name">btp.sous.traitant.tree</field>
+        <field name="model">btp.sous.traitant</field>
+        <field name="arch" type="xml">
+            <tree string="Sous-traitants" decoration-danger="not documents_conformes">
+                <field name="name"/>
+                <field name="specialite"/>
+                <field name="numero_ice"/>
+                <field name="numero_cnss"/>
+                <field name="montant_contrat"/>
+                <field name="documents_conformes"/>
+                <field name="state" widget="badge"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_btp_sous_traitant_form" model="ir.ui.view">
+        <field name="name">btp.sous.traitant.form</field>
+        <field name="model">btp.sous.traitant</field>
+        <field name="arch" type="xml">
+            <form string="Sous-traitant">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Identification">
+                            <field name="partner_id"/>
+                            <field name="specialite"/>
+                            <field name="agrement"/>
+                            <field name="state"/>
+                        </group>
+                        <group string="Financier">
+                            <field name="montant_contrat"/>
+                            <field name="documents_conformes" widget="boolean"/>
+                        </group>
+                    </group>
+                    <group string="Documents légaux marocains">
+                        <group>
+                            <field name="numero_rc"/>
+                            <field name="numero_patente"/>
+                            <field name="numero_if"/>
+                        </group>
+                        <group>
+                            <field name="numero_ice"/>
+                            <field name="numero_cnss"/>
+                        </group>
+                    </group>
+                    <group string="Validité">
+                        <field name="attestation_fiscale_valide"/>
+                        <field name="assurance_rc_valide"/>
+                    </group>
+                    <field name="chantier_ids" widget="many2many_tags"/>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_btp_sous_traitant" model="ir.actions.act_window">
+        <field name="name">Sous-traitants</field>
+        <field name="res_model">btp.sous.traitant</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Vues Réunion                                                  -->
+    <!-- ============================================================ -->
+    <record id="view_btp_reunion_tree" model="ir.ui.view">
+        <field name="name">btp.reunion.tree</field>
+        <field name="model">btp.reunion</field>
+        <field name="arch" type="xml">
+            <tree string="Réunions">
+                <field name="date"/>
+                <field name="type"/>
+                <field name="chantier_id"/>
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_btp_reunion_form" model="ir.ui.view">
+        <field name="name">btp.reunion.form</field>
+        <field name="model">btp.reunion</field>
+        <field name="arch" type="xml">
+            <form string="Réunion">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="chantier_id"/>
+                            <field name="type"/>
+                            <field name="date"/>
+                        </group>
+                        <group>
+                            <field name="participant_ids" widget="many2many_tags"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Ordre du jour">
+                            <field name="ordre_jour"/>
+                        </page>
+                        <page string="Compte rendu">
+                            <field name="compte_rendu"/>
+                        </page>
+                        <page string="Décisions">
+                            <field name="decision_ids">
+                                <tree editable="bottom">
+                                    <field name="description"/>
+                                    <field name="responsable_id"/>
+                                    <field name="date_echeance"/>
+                                    <field name="state" widget="badge"
+                                           decoration-warning="state == 'en_cours'"
+                                           decoration-success="state == 'fait'"
+                                           decoration-danger="state == 'retard'"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_btp_reunion" model="ir.actions.act_window">
+        <field name="name">Réunions</field>
+        <field name="res_model">btp.reunion</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Vues Météo                                                    -->
+    <!-- ============================================================ -->
+    <record id="view_btp_meteo_tree" model="ir.ui.view">
+        <field name="name">btp.meteo.tree</field>
+        <field name="model">btp.meteo</field>
+        <field name="arch" type="xml">
+            <tree string="Météo" editable="bottom">
+                <field name="date"/>
+                <field name="chantier_id"/>
+                <field name="intemperie"/>
+                <field name="impact_travaux"/>
+                <field name="description"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_btp_meteo" model="ir.actions.act_window">
+        <field name="name">Météo / Intempéries</field>
+        <field name="res_model">btp.meteo</field>
+        <field name="view_mode">tree</field>
+    </record>
+
+</odoo>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================================ -->
+    <!-- Catégorie du module BTP                                       -->
+    <!-- ============================================================ -->
+    <record id="module_category_btp" model="ir.module.category">
+        <field name="name">BTP - Gestion Chantiers</field>
+        <field name="sequence">50</field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Groupes de sécurité                                           -->
+    <!-- ============================================================ -->
+
+    <!-- Compagnon : lecture pointage, création pointage propre uniquement -->
+    <record id="group_btp_compagnon" model="res.groups">
+        <field name="name">BTP - Compagnon</field>
+        <field name="category_id" ref="module_category_btp"/>
+        <field name="comment">Accès basique : consultation et création de pointages personnels uniquement.</field>
+    </record>
+
+    <!-- Chef de chantier : CRUD sur ses chantiers, pointages, approvisionnements, situations -->
+    <record id="group_btp_chef_chantier" model="res.groups">
+        <field name="name">BTP - Chef de chantier</field>
+        <field name="category_id" ref="module_category_btp"/>
+        <field name="implied_ids" eval="[(4, ref('group_btp_compagnon'))]"/>
+        <field name="comment">Accès étendu : gestion de ses propres chantiers, pointages, approvisionnements et situations. Pas d'accès financier complet.</field>
+    </record>
+
+    <!-- Directeur : accès total CRUD sur tous les modèles -->
+    <record id="group_btp_directeur" model="res.groups">
+        <field name="name">BTP - Directeur</field>
+        <field name="category_id" ref="module_category_btp"/>
+        <field name="implied_ids" eval="[(4, ref('group_btp_chef_chantier'))]"/>
+        <field name="comment">Accès complet : tous les droits sur tous les modèles BTP.</field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Règles d'enregistrement (Record Rules)                        -->
+    <!-- ============================================================ -->
+
+    <!-- Chef de chantier : ne voit que ses chantiers (responsable_id = user) -->
+    <record id="rule_btp_chantier_chef" model="ir.rule">
+        <field name="name">Chantier : Chef ne voit que ses chantiers</field>
+        <field name="model_id" ref="model_btp_chantier"/>
+        <field name="domain_force">[('responsable_id','=',user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_btp_chef_chantier'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Directeur : voit tous les chantiers -->
+    <record id="rule_btp_chantier_directeur" model="ir.rule">
+        <field name="name">Chantier : Directeur voit tout</field>
+        <field name="model_id" ref="model_btp_chantier"/>
+        <field name="domain_force">[(1,'=',1)]</field>
+        <field name="groups" eval="[(4, ref('group_btp_directeur'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <!-- Compagnon : lecture pointage uniquement lié à son employé -->
+    <record id="rule_btp_pointage_compagnon" model="ir.rule">
+        <field name="name">Pointage : Compagnon ne voit que ses pointages</field>
+        <field name="model_id" ref="model_btp_pointage"/>
+        <field name="domain_force">[('ressource_id.employee_id.user_id','=',user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_btp_compagnon'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+</odoo>

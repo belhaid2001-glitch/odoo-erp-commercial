@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!-- Vue Form Chantier                                             -->
+    <!-- ============================================================ -->
+    <record id="view_btp_chantier_form" model="ir.ui.view">
+        <field name="name">btp.chantier.form</field>
+        <field name="model">btp.chantier</field>
+        <field name="arch" type="xml">
+            <form string="Chantier BTP">
+                <header>
+                    <button name="action_appel_offres" string="Appel d'offres" type="object"
+                            class="btn-primary" invisible="state != 'etude'"/>
+                    <button name="action_attribuer" string="Attribuer" type="object"
+                            class="btn-primary" invisible="state != 'appel_offres'"/>
+                    <button name="action_ordre_service" string="Ordre de service" type="object"
+                            class="btn-primary" invisible="state != 'attribue'"/>
+                    <button name="action_demarrer" string="Démarrer" type="object"
+                            class="btn-primary" invisible="state != 'ordre_service'"/>
+                    <button name="action_arreter" string="Arrêter" type="object"
+                            class="btn-warning" invisible="state not in ('en_cours', 'reprise')"/>
+                    <button name="action_reprendre" string="Reprendre" type="object"
+                            class="btn-primary" invisible="state != 'arret'"/>
+                    <button name="action_reception_provisoire" string="Réception provisoire" type="object"
+                            class="btn-primary" invisible="state not in ('en_cours', 'reprise')"/>
+                    <button name="action_levee_reserves" string="Levée des réserves" type="object"
+                            class="btn-primary" invisible="state != 'reception_prov'"/>
+                    <button name="action_reception_definitive" string="Réception définitive" type="object"
+                            class="btn-primary" invisible="state != 'levee_reserves'"/>
+                    <button name="action_cloturer" string="Clôturer" type="object"
+                            class="btn-danger" invisible="state != 'reception_def'"/>
+                    <button name="calculer_revision_prix" string="📊 Révision des prix" type="object"
+                            class="btn-secondary" invisible="type_marche != 'public'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="etude,appel_offres,attribue,ordre_service,en_cours,reception_prov,reception_def,cloture"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_lots" type="object" class="oe_stat_button" icon="fa-cubes">
+                            <field name="lot_count" string="Lots" widget="statinfo"/>
+                        </button>
+                        <button name="action_view_situations" type="object" class="oe_stat_button" icon="fa-file-text-o">
+                            <field name="situation_count" string="Situations" widget="statinfo"/>
+                        </button>
+                        <button name="action_view_documents" type="object" class="oe_stat_button" icon="fa-folder-open">
+                            <field name="document_count" string="Documents" widget="statinfo"/>
+                        </button>
+                        <button name="action_view_receptions" type="object" class="oe_stat_button" icon="fa-check-square-o">
+                            <field name="reception_count" string="Réceptions" widget="statinfo"/>
+                        </button>
+                        <button name="action_view_reunions" type="object" class="oe_stat_button" icon="fa-users">
+                            <field name="reunion_count" string="Réunions" widget="statinfo"/>
+                        </button>
+                        <button name="action_view_engins" type="object" class="oe_stat_button" icon="fa-truck">
+                            <field name="engin_count" string="Engins" widget="statinfo"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Nom du chantier"/></h1>
+                        <field name="reference" readonly="1"/>
+                    </div>
+                    <group>
+                        <group string="Informations générales">
+                            <field name="type_marche"/>
+                            <field name="numero_marche" invisible="type_marche == 'prive'"/>
+                            <field name="responsable_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="Localisation">
+                            <field name="adresse_chantier"/>
+                            <field name="ville"/>
+                            <field name="coordonnees_gps"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Intervenants" name="intervenants">
+                            <group>
+                                <group>
+                                    <field name="maitre_ouvrage_id"/>
+                                    <field name="maitre_oeuvre_id"/>
+                                </group>
+                                <group>
+                                    <field name="architecte_id"/>
+                                    <field name="bureau_controle_id"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Planning" name="planning">
+                            <group>
+                                <group string="Prévisionnel">
+                                    <field name="date_debut_prev"/>
+                                    <field name="date_fin_prev"/>
+                                    <field name="duree_prev_jours"/>
+                                </group>
+                                <group string="Réel">
+                                    <field name="date_debut_reel"/>
+                                    <field name="date_fin_reel"/>
+                                    <field name="retard_jours" decoration-danger="retard_jours > 0"/>
+                                    <field name="taux_avancement" widget="progressbar"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Financier" name="financier">
+                            <group>
+                                <group string="Montants">
+                                    <field name="montant_contrat"/>
+                                    <field name="montant_avenant"/>
+                                    <field name="montant_total"/>
+                                </group>
+                                <group string="Retenue et pénalités">
+                                    <field name="taux_retenue_garantie"/>
+                                    <field name="montant_retenue"/>
+                                    <field name="penalite_retard"/>
+                                </group>
+                            </group>
+                            <group string="Cautions" invisible="type_marche == 'prive'">
+                                <field name="caution_provisoire"/>
+                                <field name="caution_definitive"/>
+                            </group>
+                            <group string="Révision des prix" invisible="type_marche != 'public'">
+                                <field name="indice_bt_base"/>
+                                <field name="indice_bt_actuel"/>
+                            </group>
+                        </page>
+                        <page string="Lots" name="lots">
+                            <field name="lot_ids">
+                                <tree editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="responsable_id"/>
+                                    <field name="budget_prevu"/>
+                                    <field name="cout_reel"/>
+                                    <field name="ecart"/>
+                                    <field name="taux_consommation" widget="progressbar"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Situations" name="situations">
+                            <field name="situation_ids">
+                                <tree>
+                                    <field name="numero"/>
+                                    <field name="date_debut_periode"/>
+                                    <field name="date_fin_periode"/>
+                                    <field name="montant_periode"/>
+                                    <field name="montant_cumule"/>
+                                    <field name="taux_avancement" widget="progressbar"/>
+                                    <field name="state" widget="badge"
+                                           decoration-info="state == 'brouillon'"
+                                           decoration-success="state == 'paye'"
+                                           decoration-warning="state == 'valide'"
+                                           decoration-primary="state == 'facture'"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Documents" name="documents">
+                            <field name="document_ids">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="type_document"/>
+                                    <field name="date_emission"/>
+                                    <field name="date_expiration"/>
+                                    <field name="obligatoire"/>
+                                    <field name="alerte_expiration" widget="boolean" decoration-danger="alerte_expiration"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Réceptions" name="receptions">
+                            <field name="reception_ids">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="type"/>
+                                    <field name="date"/>
+                                    <field name="delai_garantie"/>
+                                    <field name="date_fin_garantie"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Sous-traitants" name="sous_traitants">
+                            <field name="sous_traitant_ids">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="specialite"/>
+                                    <field name="montant_contrat"/>
+                                    <field name="documents_conformes" widget="boolean"/>
+                                    <field name="state" widget="badge"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Réunions" name="reunions">
+                            <field name="reunion_ids">
+                                <tree>
+                                    <field name="date"/>
+                                    <field name="type"/>
+                                    <field name="name"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Météo / Intempéries" name="meteo">
+                            <field name="meteo_ids">
+                                <tree editable="bottom">
+                                    <field name="date"/>
+                                    <field name="intemperie"/>
+                                    <field name="impact_travaux"/>
+                                    <field name="description"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Approvisionnements" name="approvisionnements">
+                            <field name="approvisionnement_ids">
+                                <tree>
+                                    <field name="product_id"/>
+                                    <field name="quantite_demandee"/>
+                                    <field name="quantite_livree"/>
+                                    <field name="date_besoin"/>
+                                    <field name="state" widget="badge"/>
+                                    <field name="urgence" widget="boolean"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                    <field name="description" placeholder="Notes et description du chantier..."/>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Vue Tree Chantier                                             -->
+    <!-- ============================================================ -->
+    <record id="view_btp_chantier_tree" model="ir.ui.view">
+        <field name="name">btp.chantier.tree</field>
+        <field name="model">btp.chantier</field>
+        <field name="arch" type="xml">
+            <tree string="Chantiers BTP" decoration-danger="retard_jours > 30" decoration-warning="retard_jours > 0 and retard_jours &lt;= 30">
+                <field name="reference"/>
+                <field name="name"/>
+                <field name="ville"/>
+                <field name="type_marche"/>
+                <field name="maitre_ouvrage_id"/>
+                <field name="responsable_id"/>
+                <field name="date_debut_reel"/>
+                <field name="date_fin_prev"/>
+                <field name="montant_total"/>
+                <field name="taux_avancement" widget="progressbar"/>
+                <field name="retard_jours"/>
+                <field name="state" widget="badge"
+                       decoration-info="state in ('etude', 'appel_offres')"
+                       decoration-warning="state in ('attribue', 'ordre_service')"
+                       decoration-success="state in ('en_cours', 'reprise')"
+                       decoration-danger="state == 'arret'"
+                       decoration-primary="state in ('reception_prov', 'levee_reserves', 'reception_def', 'cloture')"/>
+                <field name="currency_id" column_invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Vue Kanban Chantier                                           -->
+    <!-- ============================================================ -->
+    <record id="view_btp_chantier_kanban" model="ir.ui.view">
+        <field name="name">btp.chantier.kanban</field>
+        <field name="model">btp.chantier</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_small_column">
+                <field name="name"/>
+                <field name="reference"/>
+                <field name="ville"/>
+                <field name="montant_total"/>
+                <field name="taux_avancement"/>
+                <field name="retard_jours"/>
+                <field name="state"/>
+                <field name="responsable_id"/>
+                <field name="color"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_card oe_kanban_global_click #{record.retard_jours.raw_value > 0 ? 'oe_kanban_color_' + (record.retard_jours.raw_value > 30 ? '9' : '3') : ''}">
+                            <div class="oe_kanban_content">
+                                <div class="o_kanban_record_top mb-0">
+                                    <div class="o_kanban_record_headings">
+                                        <strong class="o_kanban_record_title">
+                                            <field name="name"/>
+                                        </strong>
+                                    </div>
+                                </div>
+                                <div class="o_kanban_record_body">
+                                    <field name="reference"/> - <field name="ville"/>
+                                    <br/>
+                                    <strong>Montant : <field name="montant_total" widget="monetary"/></strong>
+                                    <br/>
+                                    Avancement : <field name="taux_avancement" widget="progressbar"/>
+                                    <t t-if="record.retard_jours.raw_value > 0">
+                                        <br/><span class="text-danger">⚠ Retard : <field name="retard_jours"/> jours</span>
+                                    </t>
+                                </div>
+                                <div class="o_kanban_record_bottom">
+                                    <div class="oe_kanban_bottom_left">
+                                        <field name="activity_ids" widget="kanban_activity"/>
+                                    </div>
+                                    <div class="oe_kanban_bottom_right">
+                                        <field name="responsable_id" widget="many2one_avatar_user"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Vue Search Chantier                                           -->
+    <!-- ============================================================ -->
+    <record id="view_btp_chantier_search" model="ir.ui.view">
+        <field name="name">btp.chantier.search</field>
+        <field name="model">btp.chantier</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher un chantier">
+                <field name="name"/>
+                <field name="reference"/>
+                <field name="ville"/>
+                <field name="maitre_ouvrage_id"/>
+                <field name="responsable_id"/>
+                <separator/>
+                <filter string="En cours" name="en_cours" domain="[('state','in',['en_cours','reprise'])]"/>
+                <filter string="En retard" name="en_retard" domain="[('retard_jours','>',0)]"/>
+                <filter string="Étude" name="etude" domain="[('state','=','etude')]"/>
+                <filter string="Clôturé" name="cloture" domain="[('state','=','cloture')]"/>
+                <separator/>
+                <filter string="Marché privé" name="prive" domain="[('type_marche','=','prive')]"/>
+                <filter string="Marché public" name="public" domain="[('type_marche','=','public')]"/>
+                <separator/>
+                <group expand="0" string="Grouper par">
+                    <filter string="État" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Ville" name="group_ville" context="{'group_by': 'ville'}"/>
+                    <filter string="Type de marché" name="group_type" context="{'group_by': 'type_marche'}"/>
+                    <filter string="Responsable" name="group_responsable" context="{'group_by': 'responsable_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Action Chantier                                               -->
+    <!-- ============================================================ -->
+    <record id="action_btp_chantier" model="ir.actions.act_window">
+        <field name="name">Chantiers</field>
+        <field name="res_model">btp.chantier</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="search_view_id" ref="view_btp_chantier_search"/>
+        <field name="context">{'search_default_en_cours': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créez votre premier chantier BTP
+            </p>
+            <p>Gérez l'ensemble de vos chantiers BTP au Maroc : suivi d'avancement, situations, documents, etc.</p>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!-- Wizard Génération Situation                                    -->
+    <!-- ============================================================ -->
+    <record id="view_btp_situation_wizard_form" model="ir.ui.view">
+        <field name="name">btp.situation.wizard.form</field>
+        <field name="model">btp.situation.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Générer une Situation">
+                <group>
+                    <group>
+                        <field name="chantier_id" readonly="1"/>
+                        <field name="date_debut"/>
+                        <field name="date_fin"/>
+                    </group>
+                    <group>
+                        <field name="taux_tva"/>
+                        <field name="reprendre_cumuls"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_generer" string="Générer la Situation" type="object" class="btn-primary"/>
+                    <button string="Annuler" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_situation_wizard" model="ir.actions.act_window">
+        <field name="name">Générer Situation</field>
+        <field name="res_model">btp.situation.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Wizard Export CNSS DUE                                        -->
+    <!-- ============================================================ -->
+    <record id="view_btp_cnss_wizard_form" model="ir.ui.view">
+        <field name="name">btp.cnss.wizard.form</field>
+        <field name="model">btp.cnss.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Export CNSS — Bordereau DUE">
+                <group invisible="state != 'config'">
+                    <group>
+                        <field name="chantier_id" readonly="1"/>
+                        <field name="mois"/>
+                        <field name="annee"/>
+                    </group>
+                    <group>
+                        <field name="nb_jours"/>
+                    </group>
+                </group>
+                <group invisible="state != 'done'">
+                    <div class="alert alert-success" role="alert">
+                        <strong>Fichier DUE généré avec succès !</strong>
+                        <p>Cliquez sur le lien ci-dessous pour télécharger.</p>
+                    </div>
+                    <field name="file_data" filename="file_name"/>
+                    <field name="file_name" invisible="1"/>
+                </group>
+                <field name="state" invisible="1"/>
+                <footer>
+                    <button name="action_generer_due" string="Générer le fichier DUE"
+                            type="object" class="btn-primary"
+                            invisible="state != 'config'"/>
+                    <button string="Fermer" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_cnss_wizard" model="ir.actions.act_window">
+        <field name="name">Export CNSS</field>
+        <field name="res_model">btp.cnss.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Wizard Clôture Chantier                                       -->
+    <!-- ============================================================ -->
+    <record id="view_btp_cloture_wizard_form" model="ir.ui.view">
+        <field name="name">btp.cloture.wizard.form</field>
+        <field name="model">btp.cloture.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Clôture du Chantier">
+                <group>
+                    <group>
+                        <field name="chantier_id" readonly="1"/>
+                        <field name="date_cloture"/>
+                    </group>
+                </group>
+                <separator string="Vérifications"/>
+                <group>
+                    <div class="row">
+                        <div class="col-6">
+                            <field name="documents_complets" widget="boolean_toggle" readonly="1"/>
+                            <field name="reserves_levees" widget="boolean_toggle" readonly="1"/>
+                            <field name="reception_definitive" widget="boolean_toggle" readonly="1"/>
+                            <field name="situations_validees" widget="boolean_toggle" readonly="1"/>
+                        </div>
+                        <div class="col-6">
+                            <field name="retenue_restituable" readonly="1"/>
+                        </div>
+                    </div>
+                </group>
+                <group>
+                    <field name="notes_verification" readonly="1" nolabel="1" 
+                           widget="text" class="bg-light p-2"/>
+                </group>
+                <group>
+                    <field name="restituer_retenue"/>
+                    <field name="forcer_cloture"
+                           groups="custom_btp.group_btp_directeur"/>
+                </group>
+                <footer>
+                    <button name="action_cloturer" string="Clôturer le Chantier"
+                            type="object" class="btn-danger" confirm="Êtes-vous sûr de vouloir clôturer ce chantier ? Cette action est irréversible."/>
+                    <button string="Annuler" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_cloture_wizard" model="ir.actions.act_window">
+        <field name="name">Clôture Chantier</field>
+        <field name="res_model">btp.cloture.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

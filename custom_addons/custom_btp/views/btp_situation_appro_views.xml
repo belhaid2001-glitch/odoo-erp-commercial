@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!-- Vues Situation                                                -->
+    <!-- ============================================================ -->
+    <record id="view_btp_situation_tree" model="ir.ui.view">
+        <field name="name">btp.situation.tree</field>
+        <field name="model">btp.situation</field>
+        <field name="arch" type="xml">
+            <tree string="Situations de travaux">
+                <field name="numero"/>
+                <field name="chantier_id"/>
+                <field name="date_debut_periode"/>
+                <field name="date_fin_periode"/>
+                <field name="montant_periode"/>
+                <field name="montant_cumule"/>
+                <field name="montant_retenue_garantie"/>
+                <field name="montant_tva"/>
+                <field name="montant_net"/>
+                <field name="taux_avancement" widget="progressbar"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'brouillon'"
+                       decoration-warning="state == 'valide'"
+                       decoration-primary="state == 'facture'"
+                       decoration-success="state == 'paye'"/>
+                <field name="currency_id" column_invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_btp_situation_form" model="ir.ui.view">
+        <field name="name">btp.situation.form</field>
+        <field name="model">btp.situation</field>
+        <field name="arch" type="xml">
+            <form string="Situation de travaux">
+                <header>
+                    <button name="action_valider" string="Valider" type="object" class="btn-primary"
+                            invisible="state != 'brouillon'"/>
+                    <button name="action_generer_facture" string="Générer facture" type="object" class="btn-success"
+                            invisible="state != 'valide'"/>
+                    <button name="action_marquer_paye" string="Marquer payé" type="object" class="btn-primary"
+                            invisible="state != 'facture'"/>
+                    <button name="action_remettre_brouillon" string="Remettre en brouillon" type="object"
+                            invisible="state not in ('valide',)"/>
+                    <field name="state" widget="statusbar" statusbar_visible="brouillon,valide,facture,paye"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="numero" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Référence">
+                            <field name="chantier_id"/>
+                            <field name="taux_tva"/>
+                            <field name="move_id" readonly="1"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="Période">
+                            <field name="date_debut_periode"/>
+                            <field name="date_fin_periode"/>
+                            <field name="montant_cumule_precedent"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Lignes de situation">
+                            <field name="line_ids">
+                                <tree editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="lot_id"/>
+                                    <field name="designation"/>
+                                    <field name="unite"/>
+                                    <field name="quantite_marche"/>
+                                    <field name="prix_unitaire"/>
+                                    <field name="quantite_precedente"/>
+                                    <field name="quantite_periode"/>
+                                    <field name="quantite_cumule"/>
+                                    <field name="montant_periode"/>
+                                    <field name="montant_cumule"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Récapitulatif">
+                            <group>
+                                <group string="Montants">
+                                    <field name="montant_periode"/>
+                                    <field name="montant_cumule"/>
+                                    <field name="taux_avancement" widget="progressbar"/>
+                                </group>
+                                <group string="Déductions et TVA">
+                                    <field name="montant_retenue_garantie"/>
+                                    <field name="montant_tva"/>
+                                    <field name="montant_net"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_btp_situation" model="ir.actions.act_window">
+        <field name="name">Situations</field>
+        <field name="res_model">btp.situation</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Vues Approvisionnement                                        -->
+    <!-- ============================================================ -->
+    <record id="view_btp_approvisionnement_tree" model="ir.ui.view">
+        <field name="name">btp.approvisionnement.tree</field>
+        <field name="model">btp.approvisionnement</field>
+        <field name="arch" type="xml">
+            <tree string="Approvisionnements" decoration-danger="urgence">
+                <field name="chantier_id"/>
+                <field name="lot_id"/>
+                <field name="product_id"/>
+                <field name="quantite_demandee"/>
+                <field name="quantite_livree"/>
+                <field name="date_besoin"/>
+                <field name="purchase_order_id"/>
+                <field name="urgence"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'demande'"
+                       decoration-warning="state == 'commande'"
+                       decoration-primary="state == 'partiel'"
+                       decoration-success="state == 'livre'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_btp_approvisionnement_form" model="ir.ui.view">
+        <field name="name">btp.approvisionnement.form</field>
+        <field name="model">btp.approvisionnement</field>
+        <field name="arch" type="xml">
+            <form string="Approvisionnement">
+                <header>
+                    <button name="action_creer_commande" string="Créer commande fournisseur" type="object"
+                            class="btn-primary" invisible="state != 'demande'"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="chantier_id"/>
+                            <field name="lot_id" domain="[('chantier_id', '=', chantier_id)]"/>
+                            <field name="product_id"/>
+                            <field name="urgence"/>
+                        </group>
+                        <group>
+                            <field name="quantite_demandee"/>
+                            <field name="quantite_livree"/>
+                            <field name="state"/>
+                            <field name="purchase_order_id" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="date_besoin"/>
+                            <field name="date_commande"/>
+                        </group>
+                        <group>
+                            <field name="date_livraison_prevue"/>
+                            <field name="date_livraison_reelle"/>
+                        </group>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_btp_approvisionnement" model="ir.actions.act_window">
+        <field name="name">Approvisionnements</field>
+        <field name="res_model">btp.approvisionnement</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+</odoo>

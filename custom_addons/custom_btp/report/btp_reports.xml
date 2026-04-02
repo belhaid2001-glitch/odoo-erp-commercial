@@ -1,0 +1,443 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!-- Rapport Situation de Travaux — Format standard marocain       -->
+    <!-- ============================================================ -->
+    <record id="action_report_situation" model="ir.actions.report">
+        <field name="name">Situation de Travaux</field>
+        <field name="model">btp.situation</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">custom_btp.report_situation_template</field>
+        <field name="report_file">custom_btp.report_situation_template</field>
+        <field name="binding_model_id" ref="model_btp_situation"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_situation_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2 class="text-center">SITUATION DE TRAVAUX</h2>
+                        <h4 class="text-center">
+                            N° <span t-field="doc.numero"/> — 
+                            Du <span t-field="doc.date_debut_periode"/> au <span t-field="doc.date_fin_periode"/>
+                        </h4>
+                        <br/>
+
+                        <!-- Informations chantier -->
+                        <div class="row">
+                            <div class="col-6">
+                                <strong>Chantier :</strong> <span t-field="doc.chantier_id.name"/><br/>
+                                <strong>Référence :</strong> <span t-field="doc.chantier_id.reference"/><br/>
+                                <strong>Maître d'ouvrage :</strong> <span t-field="doc.chantier_id.maitre_ouvrage_id.name"/><br/>
+                                <strong>Adresse :</strong> <span t-field="doc.chantier_id.adresse_chantier"/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Type de marché :</strong> <span t-field="doc.chantier_id.type_marche"/><br/>
+                                <strong>N° Marché :</strong> <span t-field="doc.chantier_id.numero_marche"/><br/>
+                                <strong>Montant du marché :</strong> <span t-field="doc.chantier_id.montant_total" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/><br/>
+                                <strong>Taux TVA :</strong> <span t-field="doc.taux_tva"/>%
+                            </div>
+                        </div>
+                        <br/>
+
+                        <!-- Tableau des lignes -->
+                        <table class="table table-sm table-bordered">
+                            <thead>
+                                <tr class="bg-primary text-white">
+                                    <th>Lot</th>
+                                    <th>Désignation</th>
+                                    <th>Unité</th>
+                                    <th class="text-end">Qté Marché</th>
+                                    <th class="text-end">P.U. (DH)</th>
+                                    <th class="text-end">Qté Préc.</th>
+                                    <th class="text-end">Qté Période</th>
+                                    <th class="text-end">Qté Cumul</th>
+                                    <th class="text-end">Montant Période</th>
+                                    <th class="text-end">Montant Cumul</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="doc.line_ids" t-as="line">
+                                    <tr>
+                                        <td><span t-field="line.lot_id.name"/></td>
+                                        <td><span t-field="line.designation"/></td>
+                                        <td><span t-field="line.unite"/></td>
+                                        <td class="text-end"><span t-field="line.quantite_marche" t-options='{"widget": "float", "precision": 2}'/></td>
+                                        <td class="text-end"><span t-field="line.prix_unitaire" t-options='{"widget": "float", "precision": 2}'/></td>
+                                        <td class="text-end"><span t-field="line.quantite_precedente" t-options='{"widget": "float", "precision": 2}'/></td>
+                                        <td class="text-end"><span t-field="line.quantite_periode" t-options='{"widget": "float", "precision": 2}'/></td>
+                                        <td class="text-end"><span t-field="line.quantite_cumule" t-options='{"widget": "float", "precision": 2}'/></td>
+                                        <td class="text-end"><span t-field="line.montant_periode" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></td>
+                                        <td class="text-end"><span t-field="line.montant_cumule" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <!-- Récapitulatif -->
+                        <div class="row mt-4">
+                            <div class="col-6"/>
+                            <div class="col-6">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td><strong>Montant cumulé précédent :</strong></td>
+                                        <td class="text-end"><span t-field="doc.montant_cumule_precedent" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Montant de la période :</strong></td>
+                                        <td class="text-end"><span t-field="doc.montant_periode" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Montant cumulé :</strong></td>
+                                        <td class="text-end"><span t-field="doc.montant_cumule" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Retenue de garantie (<span t-field="doc.chantier_id.taux_retenue_garantie"/>%) :</strong></td>
+                                        <td class="text-end">- <span t-field="doc.montant_retenue_garantie" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>TVA (<span t-field="doc.taux_tva"/>%) :</strong></td>
+                                        <td class="text-end"><span t-field="doc.montant_tva" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></td>
+                                    </tr>
+                                    <tr class="border-top border-2">
+                                        <td><strong>NET À PAYER :</strong></td>
+                                        <td class="text-end"><strong><span t-field="doc.montant_net" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Taux d'avancement :</strong></td>
+                                        <td class="text-end"><span t-field="doc.taux_avancement"/> %</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Signatures -->
+                        <div class="row mt-5">
+                            <div class="col-4 text-center">
+                                <strong>L'Entrepreneur</strong><br/><br/><br/>
+                                ________________________
+                            </div>
+                            <div class="col-4 text-center">
+                                <strong>Le Maître d'Œuvre</strong><br/><br/><br/>
+                                ________________________
+                            </div>
+                            <div class="col-4 text-center">
+                                <strong>Le Maître d'Ouvrage</strong><br/><br/><br/>
+                                ________________________
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <!-- ============================================================ -->
+    <!-- Rapport PV de Réception                                       -->
+    <!-- ============================================================ -->
+    <record id="action_report_reception" model="ir.actions.report">
+        <field name="name">PV de Réception</field>
+        <field name="model">btp.reception</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">custom_btp.report_reception_template</field>
+        <field name="report_file">custom_btp.report_reception_template</field>
+        <field name="binding_model_id" ref="model_btp_reception"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_reception_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2 class="text-center">
+                            PROCÈS-VERBAL DE RÉCEPTION
+                            <t t-if="doc.type == 'provisoire'">PROVISOIRE</t>
+                            <t t-if="doc.type == 'definitive'">DÉFINITIVE</t>
+                        </h2>
+                        <h4 class="text-center">N° <span t-field="doc.name"/></h4>
+                        <br/>
+
+                        <div class="row">
+                            <div class="col-6">
+                                <strong>Chantier :</strong> <span t-field="doc.chantier_id.name"/><br/>
+                                <strong>Référence :</strong> <span t-field="doc.chantier_id.reference"/><br/>
+                                <strong>Adresse :</strong> <span t-field="doc.chantier_id.adresse_chantier"/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Date :</strong> <span t-field="doc.date"/><br/>
+                                <strong>Lieu :</strong> <span t-field="doc.lieu"/><br/>
+                                <strong>Délai de garantie :</strong> <span t-field="doc.delai_garantie"/> mois<br/>
+                                <strong>Fin de garantie :</strong> <span t-field="doc.date_fin_garantie"/>
+                            </div>
+                        </div>
+                        <br/>
+
+                        <p><strong>Observations :</strong></p>
+                        <p><span t-field="doc.observations"/></p>
+
+                        <!-- Réserves -->
+                        <t t-if="doc.reserve_ids">
+                            <h5>Réserves</h5>
+                            <table class="table table-sm table-bordered">
+                                <thead>
+                                    <tr class="bg-warning">
+                                        <th>Description</th>
+                                        <th>Responsable</th>
+                                        <th>Date limite</th>
+                                        <th>État</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="doc.reserve_ids" t-as="reserve">
+                                        <tr>
+                                            <td><span t-field="reserve.description"/></td>
+                                            <td><span t-field="reserve.responsable_id"/></td>
+                                            <td><span t-field="reserve.date_limite"/></td>
+                                            <td><span t-field="reserve.state"/></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </t>
+
+                        <!-- Signataires -->
+                        <h5 class="mt-4">Signataires</h5>
+                        <div class="row">
+                            <t t-foreach="doc.signataire_ids" t-as="sig">
+                                <div class="col-4 text-center mb-4">
+                                    <strong><span t-field="sig.name"/></strong><br/><br/><br/>
+                                    ________________________
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <!-- ============================================================ -->
+    <!-- Rapport Registre du Personnel Chantier (obligatoire Maroc)     -->
+    <!-- ============================================================ -->
+    <record id="action_report_registre_personnel" model="ir.actions.report">
+        <field name="name">Registre du Personnel</field>
+        <field name="model">btp.chantier</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">custom_btp.report_registre_personnel_template</field>
+        <field name="report_file">custom_btp.report_registre_personnel_template</field>
+        <field name="binding_model_id" ref="model_btp_chantier"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_registre_personnel_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2 class="text-center">REGISTRE DU PERSONNEL DE CHANTIER</h2>
+                        <h4 class="text-center">
+                            <span t-field="doc.name"/> — <span t-field="doc.reference"/>
+                        </h4>
+                        <p class="text-center text-muted">
+                            Document obligatoire — Inspection du Travail — Maroc
+                        </p>
+                        <br/>
+
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <strong>Adresse :</strong> <span t-field="doc.adresse_chantier"/><br/>
+                                <strong>Ville :</strong> <span t-field="doc.ville"/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Maître d'ouvrage :</strong> <span t-field="doc.maitre_ouvrage_id.name"/><br/>
+                                <strong>Date d'édition :</strong> <span t-esc="context_today().strftime('%d/%m/%Y')"/>
+                            </div>
+                        </div>
+
+                        <table class="table table-sm table-bordered">
+                            <thead>
+                                <tr class="bg-primary text-white">
+                                    <th>N°</th>
+                                    <th>Nom complet</th>
+                                    <th>N° CIN</th>
+                                    <th>N° CNSS</th>
+                                    <th>Qualification</th>
+                                    <th>Spécialité</th>
+                                    <th>Type contrat</th>
+                                    <th>Taux horaire</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="doc.ressource_ids" t-as="res">
+                                    <tr>
+                                        <td><t t-esc="res_index + 1"/></td>
+                                        <td><span t-field="res.name"/></td>
+                                        <td><span t-field="res.numero_cin"/></td>
+                                        <td><span t-field="res.numero_cnss"/></td>
+                                        <td><span t-field="res.qualification"/></td>
+                                        <td><span t-field="res.specialite"/></td>
+                                        <td><span t-field="res.type_contrat"/></td>
+                                        <td class="text-end"><span t-field="res.taux_horaire"/> DH</td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <div class="row mt-5">
+                            <div class="col-6 text-center">
+                                <strong>Le Responsable de chantier</strong><br/><br/><br/>
+                                ________________________
+                            </div>
+                            <div class="col-6 text-center">
+                                <strong>Le Directeur</strong><br/><br/><br/>
+                                ________________________
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <!-- ============================================================ -->
+    <!-- Rapport Fiche Pointage Hebdomadaire                           -->
+    <!-- ============================================================ -->
+    <record id="action_report_pointage_hebdo" model="ir.actions.report">
+        <field name="name">Fiche Pointage Hebdomadaire</field>
+        <field name="model">btp.chantier</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">custom_btp.report_pointage_hebdo_template</field>
+        <field name="report_file">custom_btp.report_pointage_hebdo_template</field>
+        <field name="binding_model_id" ref="model_btp_chantier"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_pointage_hebdo_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2 class="text-center">FICHE DE POINTAGE HEBDOMADAIRE</h2>
+                        <h4 class="text-center">
+                            Chantier : <span t-field="doc.name"/>
+                        </h4>
+                        <br/>
+
+                        <table class="table table-sm table-bordered">
+                            <thead>
+                                <tr class="bg-primary text-white">
+                                    <th>Date</th>
+                                    <th>Ressource</th>
+                                    <th>Tâche</th>
+                                    <th class="text-end">H. normales</th>
+                                    <th class="text-end">H. sup +25%</th>
+                                    <th class="text-end">H. sup +50%</th>
+                                    <th class="text-end">H. sup +100%</th>
+                                    <th class="text-end">Montant (DH)</th>
+                                    <th>Validé</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="doc.pointage_ids.sorted(key=lambda p: (p.date, p.ressource_id.name))" t-as="p">
+                                    <tr>
+                                        <td><span t-field="p.date"/></td>
+                                        <td><span t-field="p.ressource_id.name"/></td>
+                                        <td><span t-field="p.tache_id.name"/></td>
+                                        <td class="text-end"><span t-field="p.heures_normales"/></td>
+                                        <td class="text-end"><span t-field="p.heures_sup_25"/></td>
+                                        <td class="text-end"><span t-field="p.heures_sup_50"/></td>
+                                        <td class="text-end"><span t-field="p.heures_sup_100"/></td>
+                                        <td class="text-end"><span t-field="p.montant_journee" t-options='{"widget": "float", "precision": 2}'/></td>
+                                        <td><t t-if="p.valide">✓</t></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <div class="row mt-3">
+                            <div class="col-6">
+                                <strong>Total heures normales :</strong>
+                                <span t-esc="sum(doc.pointage_ids.mapped('heures_normales'))"/> h
+                            </div>
+                            <div class="col-6 text-end">
+                                <strong>Total montant :</strong>
+                                <span t-esc="'%.2f' % sum(doc.pointage_ids.mapped('montant_journee'))"/> DH
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <!-- ============================================================ -->
+    <!-- Rapport Attachement / Décompte quantitatif                    -->
+    <!-- ============================================================ -->
+    <record id="action_report_decompte" model="ir.actions.report">
+        <field name="name">Décompte Quantitatif</field>
+        <field name="model">btp.situation</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">custom_btp.report_decompte_template</field>
+        <field name="report_file">custom_btp.report_decompte_template</field>
+        <field name="binding_model_id" ref="model_btp_situation"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_decompte_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2 class="text-center">ATTACHEMENT — DÉCOMPTE QUANTITATIF</h2>
+                        <h4 class="text-center">
+                            Situation N° <span t-field="doc.numero"/>
+                        </h4>
+                        <p class="text-center">
+                            Chantier : <span t-field="doc.chantier_id.name"/> — 
+                            Période du <span t-field="doc.date_debut_periode"/> au <span t-field="doc.date_fin_periode"/>
+                        </p>
+                        <br/>
+
+                        <table class="table table-sm table-bordered">
+                            <thead>
+                                <tr class="bg-secondary text-white">
+                                    <th>N°</th>
+                                    <th>Désignation des ouvrages</th>
+                                    <th>Unité</th>
+                                    <th class="text-end">Quantité marché</th>
+                                    <th class="text-end">Prix unitaire</th>
+                                    <th class="text-end">Quantité exécutée</th>
+                                    <th class="text-end">Montant</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="doc.line_ids" t-as="line">
+                                    <tr>
+                                        <td><t t-esc="line_index + 1"/></td>
+                                        <td><span t-field="line.designation"/></td>
+                                        <td><span t-field="line.unite"/></td>
+                                        <td class="text-end"><span t-field="line.quantite_marche"/></td>
+                                        <td class="text-end"><span t-field="line.prix_unitaire"/> DH</td>
+                                        <td class="text-end"><span t-field="line.quantite_periode"/></td>
+                                        <td class="text-end"><span t-field="line.montant_periode" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                            <tfoot>
+                                <tr class="fw-bold">
+                                    <td colspan="6" class="text-end">TOTAL :</td>
+                                    <td class="text-end"><span t-field="doc.montant_periode" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

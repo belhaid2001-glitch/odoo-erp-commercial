@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+    <!-- ============================================================ -->
+    <!-- Partenaires démo                                              -->
+    <!-- ============================================================ -->
+    <record id="partner_maitre_ouvrage_casa" model="res.partner">
+        <field name="name">SCI Al Mansour Casablanca</field>
+        <field name="city">Casablanca</field>
+        <field name="phone">+212 522 123456</field>
+    </record>
+    <record id="partner_maitre_ouvrage_rabat" model="res.partner">
+        <field name="name">Promoteur TGCC Rabat</field>
+        <field name="city">Rabat</field>
+        <field name="phone">+212 537 654321</field>
+    </record>
+    <record id="partner_architecte" model="res.partner">
+        <field name="name">Cabinet d'Architecture Bennani</field>
+        <field name="city">Casablanca</field>
+    </record>
+    <record id="partner_bureau_controle" model="res.partner">
+        <field name="name">Bureau Veritas Maroc</field>
+        <field name="city">Casablanca</field>
+    </record>
+    <record id="partner_sous_traitant_elec" model="res.partner">
+        <field name="name">ELECT-PRO Maroc SARL</field>
+        <field name="city">Casablanca</field>
+    </record>
+    <record id="partner_sous_traitant_plomb" model="res.partner">
+        <field name="name">Plomberie Atlas</field>
+        <field name="city">Rabat</field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Chantier 1 : Villa à Casablanca                               -->
+    <!-- ============================================================ -->
+    <record id="chantier_villa_casa" model="btp.chantier">
+        <field name="name">Villa R+1 Ain Diab - Casablanca</field>
+        <field name="adresse_chantier">Lot 234, Ain Diab, Casablanca</field>
+        <field name="ville">Casablanca</field>
+        <field name="coordonnees_gps">33.5883,-7.6688</field>
+        <field name="maitre_ouvrage_id" ref="partner_maitre_ouvrage_casa"/>
+        <field name="architecte_id" ref="partner_architecte"/>
+        <field name="bureau_controle_id" ref="partner_bureau_controle"/>
+        <field name="date_debut_prev">2025-03-01</field>
+        <field name="date_fin_prev">2025-12-31</field>
+        <field name="date_debut_reel">2025-03-15</field>
+        <field name="montant_contrat">2500000.00</field>
+        <field name="montant_avenant">150000.00</field>
+        <field name="taux_retenue_garantie">5</field>
+        <field name="type_marche">prive</field>
+        <field name="state">en_cours</field>
+    </record>
+
+    <!-- Lots du chantier Villa Casa -->
+    <record id="lot_villa_gros_oeuvre" model="btp.lot">
+        <field name="name">Lot 1 - Gros Œuvre</field>
+        <field name="chantier_id" ref="chantier_villa_casa"/>
+        <field name="budget_prevu">1200000.00</field>
+        <field name="sequence">1</field>
+    </record>
+    <record id="lot_villa_electricite" model="btp.lot">
+        <field name="name">Lot 2 - Électricité</field>
+        <field name="chantier_id" ref="chantier_villa_casa"/>
+        <field name="budget_prevu">300000.00</field>
+        <field name="sequence">2</field>
+    </record>
+    <record id="lot_villa_plomberie" model="btp.lot">
+        <field name="name">Lot 3 - Plomberie</field>
+        <field name="chantier_id" ref="chantier_villa_casa"/>
+        <field name="budget_prevu">250000.00</field>
+        <field name="sequence">3</field>
+    </record>
+    <record id="lot_villa_finitions" model="btp.lot">
+        <field name="name">Lot 4 - Finitions</field>
+        <field name="chantier_id" ref="chantier_villa_casa"/>
+        <field name="budget_prevu">500000.00</field>
+        <field name="sequence">4</field>
+    </record>
+
+    <!-- Tâches du Gros Œuvre -->
+    <record id="tache_villa_fondations" model="btp.tache">
+        <field name="name">Fondations et terrassement</field>
+        <field name="lot_id" ref="lot_villa_gros_oeuvre"/>
+        <field name="date_debut">2025-03-15</field>
+        <field name="date_fin">2025-04-30</field>
+        <field name="duree_prevue">45</field>
+        <field name="state">termine</field>
+        <field name="avancement">100</field>
+        <field name="priorite">critique</field>
+    </record>
+    <record id="tache_villa_structure" model="btp.tache">
+        <field name="name">Structure béton armé RDC</field>
+        <field name="lot_id" ref="lot_villa_gros_oeuvre"/>
+        <field name="date_debut">2025-05-01</field>
+        <field name="date_fin">2025-06-30</field>
+        <field name="duree_prevue">60</field>
+        <field name="state">en_cours</field>
+        <field name="avancement">65</field>
+        <field name="priorite">critique</field>
+    </record>
+    <record id="tache_villa_maconnerie" model="btp.tache">
+        <field name="name">Maçonnerie et élévation</field>
+        <field name="lot_id" ref="lot_villa_gros_oeuvre"/>
+        <field name="date_debut">2025-07-01</field>
+        <field name="date_fin">2025-08-31</field>
+        <field name="duree_prevue">60</field>
+        <field name="state">planifie</field>
+        <field name="avancement">0</field>
+    </record>
+
+    <!-- Tâches Électricité -->
+    <record id="tache_villa_elec_gaine" model="btp.tache">
+        <field name="name">Passage des gaines électriques</field>
+        <field name="lot_id" ref="lot_villa_electricite"/>
+        <field name="date_debut">2025-06-01</field>
+        <field name="date_fin">2025-07-15</field>
+        <field name="duree_prevue">45</field>
+        <field name="state">planifie</field>
+        <field name="avancement">0</field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Chantier 2 : Immeuble R+4 à Rabat                            -->
+    <!-- ============================================================ -->
+    <record id="chantier_immeuble_rabat" model="btp.chantier">
+        <field name="name">Immeuble R+4 Hay Riad - Rabat</field>
+        <field name="adresse_chantier">Avenue Mohammed VI, Hay Riad, Rabat</field>
+        <field name="ville">Rabat</field>
+        <field name="coordonnees_gps">33.9600,-6.8498</field>
+        <field name="maitre_ouvrage_id" ref="partner_maitre_ouvrage_rabat"/>
+        <field name="architecte_id" ref="partner_architecte"/>
+        <field name="bureau_controle_id" ref="partner_bureau_controle"/>
+        <field name="date_debut_prev">2025-01-15</field>
+        <field name="date_fin_prev">2026-06-30</field>
+        <field name="date_debut_reel">2025-02-01</field>
+        <field name="montant_contrat">8500000.00</field>
+        <field name="montant_avenant">500000.00</field>
+        <field name="taux_retenue_garantie">10</field>
+        <field name="type_marche">public</field>
+        <field name="numero_marche">MP-2025-0234</field>
+        <field name="caution_provisoire">85000.00</field>
+        <field name="caution_definitive">255000.00</field>
+        <field name="indice_bt_base">850.0</field>
+        <field name="indice_bt_actuel">872.5</field>
+        <field name="state">en_cours</field>
+    </record>
+
+    <!-- Lots du chantier Immeuble Rabat -->
+    <record id="lot_immeuble_terrassement" model="btp.lot">
+        <field name="name">Lot 1 - Terrassement et fondations</field>
+        <field name="chantier_id" ref="chantier_immeuble_rabat"/>
+        <field name="budget_prevu">1500000.00</field>
+        <field name="sequence">1</field>
+    </record>
+    <record id="lot_immeuble_gros_oeuvre" model="btp.lot">
+        <field name="name">Lot 2 - Gros Œuvre</field>
+        <field name="chantier_id" ref="chantier_immeuble_rabat"/>
+        <field name="budget_prevu">3500000.00</field>
+        <field name="sequence">2</field>
+    </record>
+    <record id="lot_immeuble_electricite" model="btp.lot">
+        <field name="name">Lot 3 - Électricité</field>
+        <field name="chantier_id" ref="chantier_immeuble_rabat"/>
+        <field name="budget_prevu">800000.00</field>
+        <field name="sequence">3</field>
+    </record>
+    <record id="lot_immeuble_plomberie" model="btp.lot">
+        <field name="name">Lot 4 - Plomberie / Sanitaire</field>
+        <field name="chantier_id" ref="chantier_immeuble_rabat"/>
+        <field name="budget_prevu">600000.00</field>
+        <field name="sequence">4</field>
+    </record>
+    <record id="lot_immeuble_etancheite" model="btp.lot">
+        <field name="name">Lot 5 - Étanchéité</field>
+        <field name="chantier_id" ref="chantier_immeuble_rabat"/>
+        <field name="budget_prevu">400000.00</field>
+        <field name="sequence">5</field>
+    </record>
+
+    <!-- Tâches Immeuble Rabat -->
+    <record id="tache_immeuble_fouilles" model="btp.tache">
+        <field name="name">Fouilles et terrassement général</field>
+        <field name="lot_id" ref="lot_immeuble_terrassement"/>
+        <field name="date_debut">2025-02-01</field>
+        <field name="date_fin">2025-03-15</field>
+        <field name="duree_prevue">42</field>
+        <field name="state">termine</field>
+        <field name="avancement">100</field>
+    </record>
+    <record id="tache_immeuble_fondations" model="btp.tache">
+        <field name="name">Fondations profondes (pieux)</field>
+        <field name="lot_id" ref="lot_immeuble_terrassement"/>
+        <field name="date_debut">2025-03-16</field>
+        <field name="date_fin">2025-05-15</field>
+        <field name="duree_prevue">60</field>
+        <field name="state">termine</field>
+        <field name="avancement">100</field>
+    </record>
+    <record id="tache_immeuble_rdc" model="btp.tache">
+        <field name="name">Plancher RDC</field>
+        <field name="lot_id" ref="lot_immeuble_gros_oeuvre"/>
+        <field name="date_debut">2025-05-16</field>
+        <field name="date_fin">2025-06-30</field>
+        <field name="duree_prevue">45</field>
+        <field name="state">en_cours</field>
+        <field name="avancement">40</field>
+        <field name="priorite">critique</field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Engins démo                                                   -->
+    <!-- ============================================================ -->
+    <record id="engin_pelle" model="btp.engin">
+        <field name="name">Pelle hydraulique CAT 320</field>
+        <field name="type_engin">pelle</field>
+        <field name="immatriculation">A-234567</field>
+        <field name="compteur_heures">4500</field>
+        <field name="consommation_gasoil_heure">22</field>
+        <field name="cout_heure">350</field>
+        <field name="chantier_id" ref="chantier_immeuble_rabat"/>
+        <field name="state">en_service</field>
+        <field name="assurance_date_fin">2026-03-31</field>
+        <field name="visite_technique_date_fin">2025-12-31</field>
+    </record>
+    <record id="engin_grue" model="btp.engin">
+        <field name="name">Grue à tour Liebherr 150 EC-B</field>
+        <field name="type_engin">grue</field>
+        <field name="immatriculation">B-567890</field>
+        <field name="compteur_heures">2200</field>
+        <field name="consommation_gasoil_heure">15</field>
+        <field name="cout_heure">500</field>
+        <field name="chantier_id" ref="chantier_immeuble_rabat"/>
+        <field name="state">en_service</field>
+        <field name="assurance_date_fin">2026-06-30</field>
+        <field name="visite_technique_date_fin">2026-01-31</field>
+    </record>
+    <record id="engin_betonniere" model="btp.engin">
+        <field name="name">Bétonnière 500L</field>
+        <field name="type_engin">betonniere</field>
+        <field name="immatriculation">C-112233</field>
+        <field name="compteur_heures">800</field>
+        <field name="consommation_gasoil_heure">5</field>
+        <field name="cout_heure">100</field>
+        <field name="chantier_id" ref="chantier_villa_casa"/>
+        <field name="state">en_service</field>
+    </record>
+    <record id="engin_camion" model="btp.engin">
+        <field name="name">Camion benne MAN 12T</field>
+        <field name="type_engin">camion</field>
+        <field name="immatriculation">D-445566</field>
+        <field name="compteur_heures">12000</field>
+        <field name="consommation_gasoil_heure">18</field>
+        <field name="cout_heure">250</field>
+        <field name="state">disponible</field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Sous-traitants démo                                           -->
+    <!-- ============================================================ -->
+    <record id="soustraitant_elec" model="btp.sous.traitant">
+        <field name="partner_id" ref="partner_sous_traitant_elec"/>
+        <field name="specialite">Électricité bâtiment</field>
+        <field name="numero_rc">RC-CASA-123456</field>
+        <field name="numero_patente">PT-78901234</field>
+        <field name="numero_if">IF-56789012</field>
+        <field name="numero_ice">ICE-001234567000089</field>
+        <field name="numero_cnss">CNSS-1234567</field>
+        <field name="attestation_fiscale_valide">2026-12-31</field>
+        <field name="assurance_rc_valide">2026-06-30</field>
+        <field name="montant_contrat">300000.00</field>
+        <field name="state">actif</field>
+    </record>
+    <record id="soustraitant_plomb" model="btp.sous.traitant">
+        <field name="partner_id" ref="partner_sous_traitant_plomb"/>
+        <field name="specialite">Plomberie et sanitaire</field>
+        <field name="numero_rc">RC-RABAT-654321</field>
+        <field name="numero_patente">PT-43210987</field>
+        <field name="numero_if">IF-98765432</field>
+        <field name="numero_ice">ICE-009876543000012</field>
+        <field name="numero_cnss">CNSS-7654321</field>
+        <field name="attestation_fiscale_valide">2026-09-30</field>
+        <field name="assurance_rc_valide">2026-03-31</field>
+        <field name="montant_contrat">250000.00</field>
+        <field name="state">actif</field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Situation démo - Villa Casablanca                             -->
+    <!-- ============================================================ -->
+    <record id="situation_villa_1" model="btp.situation">
+        <field name="chantier_id" ref="chantier_villa_casa"/>
+        <field name="date_debut_periode">2025-03-15</field>
+        <field name="date_fin_periode">2025-04-30</field>
+        <field name="montant_cumule_precedent">0</field>
+        <field name="taux_tva">20</field>
+        <field name="state">valide</field>
+    </record>
+
+    <record id="situation_line_villa_1_1" model="btp.situation.line">
+        <field name="situation_id" ref="situation_villa_1"/>
+        <field name="lot_id" ref="lot_villa_gros_oeuvre"/>
+        <field name="designation">Terrassement général</field>
+        <field name="unite">m3</field>
+        <field name="quantite_marche">500</field>
+        <field name="prix_unitaire">120</field>
+        <field name="quantite_precedente">0</field>
+        <field name="quantite_periode">350</field>
+    </record>
+    <record id="situation_line_villa_1_2" model="btp.situation.line">
+        <field name="situation_id" ref="situation_villa_1"/>
+        <field name="lot_id" ref="lot_villa_gros_oeuvre"/>
+        <field name="designation">Béton fondations</field>
+        <field name="unite">m3</field>
+        <field name="quantite_marche">150</field>
+        <field name="prix_unitaire">1200</field>
+        <field name="quantite_precedente">0</field>
+        <field name="quantite_periode">120</field>
+    </record>
+    <record id="situation_line_villa_1_3" model="btp.situation.line">
+        <field name="situation_id" ref="situation_villa_1"/>
+        <field name="lot_id" ref="lot_villa_gros_oeuvre"/>
+        <field name="designation">Acier HA</field>
+        <field name="unite">kg</field>
+        <field name="quantite_marche">8000</field>
+        <field name="prix_unitaire">15</field>
+        <field name="quantite_precedente">0</field>
+        <field name="quantite_periode">5000</field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Documents démo                                                -->
+    <!-- ============================================================ -->
+    <record id="doc_villa_permis" model="btp.document">
+        <field name="chantier_id" ref="chantier_villa_casa"/>
+        <field name="name">Permis de construire N°2025-1234</field>
+        <field name="type_document">permis_construire</field>
+        <field name="date_emission">2025-01-15</field>
+        <field name="date_expiration">2027-01-15</field>
+        <field name="obligatoire" eval="True"/>
+    </record>
+    <record id="doc_villa_assurance" model="btp.document">
+        <field name="chantier_id" ref="chantier_villa_casa"/>
+        <field name="name">Attestation assurance RC</field>
+        <field name="type_document">attestation_assurance</field>
+        <field name="date_emission">2025-02-01</field>
+        <field name="date_expiration">2026-02-01</field>
+        <field name="obligatoire" eval="True"/>
+    </record>
+    <record id="doc_villa_declaration" model="btp.document">
+        <field name="chantier_id" ref="chantier_villa_casa"/>
+        <field name="name">Déclaration d'ouverture de chantier</field>
+        <field name="type_document">declaration_ouverture_chantier</field>
+        <field name="date_emission">2025-03-01</field>
+        <field name="obligatoire" eval="True"/>
+    </record>
+    <record id="doc_immeuble_permis" model="btp.document">
+        <field name="chantier_id" ref="chantier_immeuble_rabat"/>
+        <field name="name">Permis de construire N°2024-5678</field>
+        <field name="type_document">permis_construire</field>
+        <field name="date_emission">2024-11-01</field>
+        <field name="date_expiration">2026-11-01</field>
+        <field name="obligatoire" eval="True"/>
+    </record>
+    <record id="doc_immeuble_os" model="btp.document">
+        <field name="chantier_id" ref="chantier_immeuble_rabat"/>
+        <field name="name">Ordre de service de commencement</field>
+        <field name="type_document">os_commencement</field>
+        <field name="date_emission">2025-01-15</field>
+        <field name="obligatoire" eval="True"/>
+    </record>
+
+    </data>
+</odoo>

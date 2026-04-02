@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!-- Rapport Bordereau CNSS — Format DUE (Déclaration Unique)      -->
+    <!-- Positions fixes conformes au cahier des charges CNSS Maroc     -->
+    <!-- ============================================================ -->
+    <record id="action_report_cnss_due" model="ir.actions.report">
+        <field name="name">Bordereau CNSS (DUE)</field>
+        <field name="model">btp.chantier</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">custom_btp.report_cnss_due_template</field>
+        <field name="report_file">custom_btp.report_cnss_due_template</field>
+        <field name="binding_model_id" ref="model_btp_chantier"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_cnss_due_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <style>
+                            .cnss-table td, .cnss-table th {
+                                font-family: "Courier New", monospace;
+                                font-size: 10px;
+                                padding: 2px 4px;
+                            }
+                            .cnss-header {
+                                font-family: Arial, sans-serif;
+                            }
+                        </style>
+
+                        <div class="cnss-header text-center">
+                            <h3>CAISSE NATIONALE DE SÉCURITÉ SOCIALE</h3>
+                            <h4>BORDEREAU DE DÉCLARATION DES SALARIÉS</h4>
+                            <p class="text-muted">Format DUE — Déclaration Unique de l'Employeur</p>
+                        </div>
+                        <br/>
+
+                        <div class="row cnss-header">
+                            <div class="col-6">
+                                <strong>Employeur :</strong> <span t-esc="doc.company_id.name"/><br/>
+                                <strong>N° Affiliation CNSS :</strong> <span t-esc="doc.company_id.company_registry or '________'"/><br/>
+                                <strong>Chantier :</strong> <span t-field="doc.name"/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Mois de déclaration :</strong> <span t-esc="context_today().strftime('%m/%Y')"/><br/>
+                                <strong>Ville :</strong> <span t-field="doc.ville"/><br/>
+                                <strong>Effectif :</strong> <span t-esc="len(doc.ressource_ids)"/>
+                            </div>
+                        </div>
+                        <br/>
+
+                        <table class="table table-sm table-bordered cnss-table">
+                            <thead>
+                                <tr class="bg-dark text-white">
+                                    <th style="width: 5%;">N°</th>
+                                    <th style="width: 12%;">N° CNSS (8 car.)</th>
+                                    <th style="width: 12%;">N° CIN (8 car.)</th>
+                                    <th style="width: 25%;">Nom et Prénom</th>
+                                    <th style="width: 8%;">Jours (2c)</th>
+                                    <th style="width: 13%;">Salaire brut (9c)</th>
+                                    <th style="width: 13%;">Cotis. salarié</th>
+                                    <th style="width: 12%;">Qualification</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-set="total_jours" t-value="0"/>
+                                <t t-set="total_salaire" t-value="0"/>
+                                <t t-set="total_cotisation" t-value="0"/>
+                                <t t-foreach="doc.ressource_ids" t-as="res">
+                                    <t t-set="nb_jours" t-value="26"/>
+                                    <t t-set="salaire_brut" t-value="res.taux_horaire * 8 * nb_jours"/>
+                                    <t t-set="cotisation" t-value="salaire_brut * 0.0448"/>
+                                    <t t-set="total_jours" t-value="total_jours + nb_jours"/>
+                                    <t t-set="total_salaire" t-value="total_salaire + salaire_brut"/>
+                                    <t t-set="total_cotisation" t-value="total_cotisation + cotisation"/>
+                                    <tr>
+                                        <td><t t-esc="res_index + 1"/></td>
+                                        <td><code t-esc="(res.numero_cnss or '').ljust(8)[:8]"/></td>
+                                        <td><code t-esc="(res.numero_cin or '').ljust(8)[:8]"/></td>
+                                        <td><span t-field="res.name"/></td>
+                                        <td class="text-end"><code t-esc="str(nb_jours).rjust(2)"/></td>
+                                        <td class="text-end"><code t-esc="('%.2f' % salaire_brut).rjust(9)"/></td>
+                                        <td class="text-end"><t t-esc="'%.2f' % cotisation"/> DH</td>
+                                        <td><span t-field="res.qualification"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                            <tfoot>
+                                <tr class="fw-bold bg-light">
+                                    <td colspan="4" class="text-end">TOTAUX :</td>
+                                    <td class="text-end"><t t-esc="int(total_jours)"/></td>
+                                    <td class="text-end"><t t-esc="'%.2f' % total_salaire"/> DH</td>
+                                    <td class="text-end"><t t-esc="'%.2f' % total_cotisation"/> DH</td>
+                                    <td/>
+                                </tr>
+                                <tr class="fw-bold">
+                                    <td colspan="4" class="text-end">Cotisation patronale (21.09%) :</td>
+                                    <td colspan="3" class="text-end"><t t-esc="'%.2f' % (total_salaire * 0.2109)"/> DH</td>
+                                    <td/>
+                                </tr>
+                                <tr class="fw-bold bg-warning">
+                                    <td colspan="4" class="text-end">TOTAL À VERSER À LA CNSS :</td>
+                                    <td colspan="3" class="text-end"><t t-esc="'%.2f' % (total_cotisation + total_salaire * 0.2109)"/> DH</td>
+                                    <td/>
+                                </tr>
+                            </tfoot>
+                        </table>
+
+                        <div class="row mt-5">
+                            <div class="col-6 text-center">
+                                <strong>Cachet et signature de l'employeur</strong><br/><br/><br/>
+                                ________________________
+                            </div>
+                            <div class="col-6 text-center">
+                                <strong>Date :</strong> <span t-esc="context_today().strftime('%d/%m/%Y')"/>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

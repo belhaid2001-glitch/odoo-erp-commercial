@@ -1,0 +1,150 @@
+/* ============================================================
+   custom_btp — Styles CSS Backend
+   ============================================================ */
+
+/* ── Kanban Chantier — couleurs par état ───────────────────── */
+.o_kanban_record .btp_badge_etude {
+    background-color: #6c757d;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+}
+
+.o_kanban_record .btp_badge_preparation {
+    background-color: #17a2b8;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+}
+
+.o_kanban_record .btp_badge_en_cours {
+    background-color: #28a745;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+}
+
+.o_kanban_record .btp_badge_suspendu {
+    background-color: #ffc107;
+    color: #333;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+}
+
+.o_kanban_record .btp_badge_arret {
+    background-color: #dc3545;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+}
+
+/* ── Dashboard cards ──────────────────────────────────────── */
+.btp_dashboard_card {
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    margin-bottom: 16px;
+    transition: transform 0.2s;
+}
+
+.btp_dashboard_card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* ── Alertes ──────────────────────────────────────────────── */
+.btp_alerte_danger {
+    background-color: #f8d7da;
+    border-left: 4px solid #dc3545;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    border-radius: 0 4px 4px 0;
+}
+
+.btp_alerte_warning {
+    background-color: #fff3cd;
+    border-left: 4px solid #ffc107;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    border-radius: 0 4px 4px 0;
+}
+
+.btp_alerte_info {
+    background-color: #d1ecf1;
+    border-left: 4px solid #17a2b8;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    border-radius: 0 4px 4px 0;
+}
+
+/* ── Situation table ──────────────────────────────────────── */
+.btp_situation_table th {
+    background-color: #2c3e50;
+    color: white;
+    font-size: 12px;
+    text-align: center;
+}
+
+.btp_situation_table td {
+    font-size: 12px;
+}
+
+.btp_situation_total {
+    font-weight: bold;
+    background-color: #ecf0f1;
+}
+
+/* ── Engin state badges ───────────────────────────────────── */
+.btp_engin_disponible {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.btp_engin_en_service {
+    color: #17a2b8;
+    font-weight: bold;
+}
+
+.btp_engin_panne {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+/* ── Progress bar BTP ─────────────────────────────────────── */
+.btp_progress {
+    height: 20px;
+    border-radius: 10px;
+    background-color: #e9ecef;
+    overflow: hidden;
+}
+
+.btp_progress_bar {
+    height: 100%;
+    border-radius: 10px;
+    background: linear-gradient(90deg, #28a745, #20c997);
+    transition: width 0.6s ease;
+    text-align: center;
+    color: white;
+    font-size: 11px;
+    line-height: 20px;
+}
+
+.btp_progress_bar.danger {
+    background: linear-gradient(90deg, #dc3545, #e74c3c);
+}
+
+.btp_progress_bar.warning {
+    background: linear-gradient(90deg, #ffc107, #f39c12);
+}
+
+/* ── Print styles ─────────────────────────────────────────── */
+@media print {
+    .btp_no_print {
+        display: none !important;
+    }
+}

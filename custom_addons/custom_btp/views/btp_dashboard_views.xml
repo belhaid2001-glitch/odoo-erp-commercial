@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!-- Dashboard BTP - Vue QWeb avec KPI                             -->
+    <!-- ============================================================ -->
+    <record id="action_btp_dashboard" model="ir.actions.act_window">
+        <field name="name">Tableau de bord BTP</field>
+        <field name="res_model">btp.chantier</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="context">{'search_default_en_cours': 1}</field>
+    </record>
+
+</odoo>

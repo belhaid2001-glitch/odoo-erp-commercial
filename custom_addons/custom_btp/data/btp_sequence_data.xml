@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================================ -->
+    <!-- Séquences BTP                                                 -->
+    <!-- ============================================================ -->
+
+    <!-- Séquence Chantier : CHT/YYYY/ -->
+    <record id="seq_btp_chantier" model="ir.sequence">
+        <field name="name">Chantier BTP</field>
+        <field name="code">btp.chantier</field>
+        <field name="prefix">CHT/%(year)s/</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <!-- Séquence Situation : SIT/YYYY/ -->
+    <record id="seq_btp_situation" model="ir.sequence">
+        <field name="name">Situation BTP</field>
+        <field name="code">btp.situation</field>
+        <field name="prefix">SIT/%(year)s/</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <!-- Séquence Réception : REC/YYYY/ -->
+    <record id="seq_btp_reception" model="ir.sequence">
+        <field name="name">Réception BTP</field>
+        <field name="code">btp.reception</field>
+        <field name="prefix">REC/%(year)s/</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+</odoo>

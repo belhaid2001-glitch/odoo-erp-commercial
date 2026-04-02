@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================================ -->
+    <!-- Jours fériés marocains 2024-2026                              -->
+    <!-- ============================================================ -->
+
+    <!-- ============ 2024 ============ -->
+    <record id="ferie_2024_nouvel_an" model="resource.calendar.leaves">
+        <field name="name">Nouvel An 2024</field>
+        <field name="date_from">2024-01-01 00:00:00</field>
+        <field name="date_to">2024-01-01 23:59:59</field>
+    </record>
+    <record id="ferie_2024_manifeste" model="resource.calendar.leaves">
+        <field name="name">Fête du Manifeste de l'Indépendance 2024</field>
+        <field name="date_from">2024-01-11 00:00:00</field>
+        <field name="date_to">2024-01-11 23:59:59</field>
+    </record>
+    <record id="ferie_2024_travail" model="resource.calendar.leaves">
+        <field name="name">Fête du Travail 2024</field>
+        <field name="date_from">2024-05-01 00:00:00</field>
+        <field name="date_to">2024-05-01 23:59:59</field>
+    </record>
+    <record id="ferie_2024_trone" model="resource.calendar.leaves">
+        <field name="name">Fête du Trône 2024</field>
+        <field name="date_from">2024-07-30 00:00:00</field>
+        <field name="date_to">2024-07-30 23:59:59</field>
+    </record>
+    <record id="ferie_2024_oued_eddahab" model="resource.calendar.leaves">
+        <field name="name">Journée Oued Eddahab 2024</field>
+        <field name="date_from">2024-08-14 00:00:00</field>
+        <field name="date_to">2024-08-14 23:59:59</field>
+    </record>
+    <record id="ferie_2024_revolution" model="resource.calendar.leaves">
+        <field name="name">Anniversaire Révolution du Roi et du Peuple 2024</field>
+        <field name="date_from">2024-08-20 00:00:00</field>
+        <field name="date_to">2024-08-20 23:59:59</field>
+    </record>
+    <record id="ferie_2024_jeunesse" model="resource.calendar.leaves">
+        <field name="name">Fête de la Jeunesse 2024</field>
+        <field name="date_from">2024-08-21 00:00:00</field>
+        <field name="date_to">2024-08-21 23:59:59</field>
+    </record>
+    <record id="ferie_2024_marche_verte" model="resource.calendar.leaves">
+        <field name="name">Marche Verte 2024</field>
+        <field name="date_from">2024-11-06 00:00:00</field>
+        <field name="date_to">2024-11-06 23:59:59</field>
+    </record>
+    <record id="ferie_2024_independance" model="resource.calendar.leaves">
+        <field name="name">Fête de l'Indépendance 2024</field>
+        <field name="date_from">2024-11-18 00:00:00</field>
+        <field name="date_to">2024-11-18 23:59:59</field>
+    </record>
+    <!-- Fêtes religieuses 2024 (dates approximatives) -->
+    <record id="ferie_2024_aid_fitr" model="resource.calendar.leaves">
+        <field name="name">Aïd Al Fitr 2024</field>
+        <field name="date_from">2024-04-10 00:00:00</field>
+        <field name="date_to">2024-04-11 23:59:59</field>
+    </record>
+    <record id="ferie_2024_aid_adha" model="resource.calendar.leaves">
+        <field name="name">Aïd Al Adha 2024</field>
+        <field name="date_from">2024-06-17 00:00:00</field>
+        <field name="date_to">2024-06-18 23:59:59</field>
+    </record>
+    <record id="ferie_2024_moharram" model="resource.calendar.leaves">
+        <field name="name">1er Moharram 2024</field>
+        <field name="date_from">2024-07-08 00:00:00</field>
+        <field name="date_to">2024-07-08 23:59:59</field>
+    </record>
+    <record id="ferie_2024_mawlid" model="resource.calendar.leaves">
+        <field name="name">Mawlid Ennabaoui 2024</field>
+        <field name="date_from">2024-09-16 00:00:00</field>
+        <field name="date_to">2024-09-17 23:59:59</field>
+    </record>
+
+    <!-- ============ 2025 ============ -->
+    <record id="ferie_2025_nouvel_an" model="resource.calendar.leaves">
+        <field name="name">Nouvel An 2025</field>
+        <field name="date_from">2025-01-01 00:00:00</field>
+        <field name="date_to">2025-01-01 23:59:59</field>
+    </record>
+    <record id="ferie_2025_manifeste" model="resource.calendar.leaves">
+        <field name="name">Fête du Manifeste de l'Indépendance 2025</field>
+        <field name="date_from">2025-01-11 00:00:00</field>
+        <field name="date_to">2025-01-11 23:59:59</field>
+    </record>
+    <record id="ferie_2025_travail" model="resource.calendar.leaves">
+        <field name="name">Fête du Travail 2025</field>
+        <field name="date_from">2025-05-01 00:00:00</field>
+        <field name="date_to">2025-05-01 23:59:59</field>
+    </record>
+    <record id="ferie_2025_trone" model="resource.calendar.leaves">
+        <field name="name">Fête du Trône 2025</field>
+        <field name="date_from">2025-07-30 00:00:00</field>
+        <field name="date_to">2025-07-30 23:59:59</field>
+    </record>
+    <record id="ferie_2025_oued_eddahab" model="resource.calendar.leaves">
+        <field name="name">Journée Oued Eddahab 2025</field>
+        <field name="date_from">2025-08-14 00:00:00</field>
+        <field name="date_to">2025-08-14 23:59:59</field>
+    </record>
+    <record id="ferie_2025_revolution" model="resource.calendar.leaves">
+        <field name="name">Anniversaire Révolution du Roi et du Peuple 2025</field>
+        <field name="date_from">2025-08-20 00:00:00</field>
+        <field name="date_to">2025-08-20 23:59:59</field>
+    </record>
+    <record id="ferie_2025_jeunesse" model="resource.calendar.leaves">
+        <field name="name">Fête de la Jeunesse 2025</field>
+        <field name="date_from">2025-08-21 00:00:00</field>
+        <field name="date_to">2025-08-21 23:59:59</field>
+    </record>
+    <record id="ferie_2025_marche_verte" model="resource.calendar.leaves">
+        <field name="name">Marche Verte 2025</field>
+        <field name="date_from">2025-11-06 00:00:00</field>
+        <field name="date_to">2025-11-06 23:59:59</field>
+    </record>
+    <record id="ferie_2025_independance" model="resource.calendar.leaves">
+        <field name="name">Fête de l'Indépendance 2025</field>
+        <field name="date_from">2025-11-18 00:00:00</field>
+        <field name="date_to">2025-11-18 23:59:59</field>
+    </record>
+    <!-- Fêtes religieuses 2025 (dates approximatives) -->
+    <record id="ferie_2025_aid_fitr" model="resource.calendar.leaves">
+        <field name="name">Aïd Al Fitr 2025</field>
+        <field name="date_from">2025-03-30 00:00:00</field>
+        <field name="date_to">2025-03-31 23:59:59</field>
+    </record>
+    <record id="ferie_2025_aid_adha" model="resource.calendar.leaves">
+        <field name="name">Aïd Al Adha 2025</field>
+        <field name="date_from">2025-06-07 00:00:00</field>
+        <field name="date_to">2025-06-08 23:59:59</field>
+    </record>
+    <record id="ferie_2025_moharram" model="resource.calendar.leaves">
+        <field name="name">1er Moharram 2025</field>
+        <field name="date_from">2025-06-27 00:00:00</field>
+        <field name="date_to">2025-06-27 23:59:59</field>
+    </record>
+    <record id="ferie_2025_mawlid" model="resource.calendar.leaves">
+        <field name="name">Mawlid Ennabaoui 2025</field>
+        <field name="date_from">2025-09-05 00:00:00</field>
+        <field name="date_to">2025-09-06 23:59:59</field>
+    </record>
+
+    <!-- ============ 2026 ============ -->
+    <record id="ferie_2026_nouvel_an" model="resource.calendar.leaves">
+        <field name="name">Nouvel An 2026</field>
+        <field name="date_from">2026-01-01 00:00:00</field>
+        <field name="date_to">2026-01-01 23:59:59</field>
+    </record>
+    <record id="ferie_2026_manifeste" model="resource.calendar.leaves">
+        <field name="name">Fête du Manifeste de l'Indépendance 2026</field>
+        <field name="date_from">2026-01-11 00:00:00</field>
+        <field name="date_to">2026-01-11 23:59:59</field>
+    </record>
+    <record id="ferie_2026_travail" model="resource.calendar.leaves">
+        <field name="name">Fête du Travail 2026</field>
+        <field name="date_from">2026-05-01 00:00:00</field>
+        <field name="date_to">2026-05-01 23:59:59</field>
+    </record>
+    <record id="ferie_2026_trone" model="resource.calendar.leaves">
+        <field name="name">Fête du Trône 2026</field>
+        <field name="date_from">2026-07-30 00:00:00</field>
+        <field name="date_to">2026-07-30 23:59:59</field>
+    </record>
+    <record id="ferie_2026_oued_eddahab" model="resource.calendar.leaves">
+        <field name="name">Journée Oued Eddahab 2026</field>
+        <field name="date_from">2026-08-14 00:00:00</field>
+        <field name="date_to">2026-08-14 23:59:59</field>
+    </record>
+    <record id="ferie_2026_revolution" model="resource.calendar.leaves">
+        <field name="name">Anniversaire Révolution du Roi et du Peuple 2026</field>
+        <field name="date_from">2026-08-20 00:00:00</field>
+        <field name="date_to">2026-08-20 23:59:59</field>
+    </record>
+    <record id="ferie_2026_jeunesse" model="resource.calendar.leaves">
+        <field name="name">Fête de la Jeunesse 2026</field>
+        <field name="date_from">2026-08-21 00:00:00</field>
+        <field name="date_to">2026-08-21 23:59:59</field>
+    </record>
+    <record id="ferie_2026_marche_verte" model="resource.calendar.leaves">
+        <field name="name">Marche Verte 2026</field>
+        <field name="date_from">2026-11-06 00:00:00</field>
+        <field name="date_to">2026-11-06 23:59:59</field>
+    </record>
+    <record id="ferie_2026_independance" model="resource.calendar.leaves">
+        <field name="name">Fête de l'Indépendance 2026</field>
+        <field name="date_from">2026-11-18 00:00:00</field>
+        <field name="date_to">2026-11-18 23:59:59</field>
+    </record>
+    <!-- Fêtes religieuses 2026 (dates approximatives) -->
+    <record id="ferie_2026_aid_fitr" model="resource.calendar.leaves">
+        <field name="name">Aïd Al Fitr 2026</field>
+        <field name="date_from">2026-03-20 00:00:00</field>
+        <field name="date_to">2026-03-21 23:59:59</field>
+    </record>
+    <record id="ferie_2026_aid_adha" model="resource.calendar.leaves">
+        <field name="name">Aïd Al Adha 2026</field>
+        <field name="date_from">2026-05-27 00:00:00</field>
+        <field name="date_to">2026-05-28 23:59:59</field>
+    </record>
+    <record id="ferie_2026_moharram" model="resource.calendar.leaves">
+        <field name="name">1er Moharram 2026</field>
+        <field name="date_from">2026-06-17 00:00:00</field>
+        <field name="date_to">2026-06-17 23:59:59</field>
+    </record>
+    <record id="ferie_2026_mawlid" model="resource.calendar.leaves">
+        <field name="name">Mawlid Ennabaoui 2026</field>
+        <field name="date_from">2026-08-26 00:00:00</field>
+        <field name="date_to">2026-08-27 23:59:59</field>
+    </record>
+
+</odoo>

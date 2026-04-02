@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!-- Vues Ressource                                                -->
+    <!-- ============================================================ -->
+    <record id="view_btp_ressource_tree" model="ir.ui.view">
+        <field name="name">btp.ressource.tree</field>
+        <field name="model">btp.ressource</field>
+        <field name="arch" type="xml">
+            <tree string="Ressources BTP">
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="qualification"/>
+                <field name="specialite"/>
+                <field name="type_contrat"/>
+                <field name="taux_horaire"/>
+                <field name="numero_cin"/>
+                <field name="numero_cnss"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_btp_ressource_form" model="ir.ui.view">
+        <field name="name">btp.ressource.form</field>
+        <field name="model">btp.ressource</field>
+        <field name="arch" type="xml">
+            <form string="Ressource BTP">
+                <sheet>
+                    <group>
+                        <group string="Identification">
+                            <field name="employee_id"/>
+                            <field name="partner_id" readonly="1"/>
+                            <field name="numero_cin"/>
+                            <field name="numero_cnss"/>
+                        </group>
+                        <group string="Qualification">
+                            <field name="qualification"/>
+                            <field name="specialite"/>
+                            <field name="type_contrat"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Rémunération">
+                            <field name="taux_horaire"/>
+                            <field name="taux_journalier"/>
+                        </group>
+                        <group string="Affectation">
+                            <field name="chantier_ids" widget="many2many_tags"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Pointages">
+                            <field name="pointage_ids">
+                                <tree>
+                                    <field name="date"/>
+                                    <field name="chantier_id"/>
+                                    <field name="tache_id"/>
+                                    <field name="heures_normales"/>
+                                    <field name="heures_sup_25"/>
+                                    <field name="montant_journee"/>
+                                    <field name="valide"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_btp_ressource" model="ir.actions.act_window">
+        <field name="name">Ressources</field>
+        <field name="res_model">btp.ressource</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Vues Pointage                                                 -->
+    <!-- ============================================================ -->
+    <record id="view_btp_pointage_tree" model="ir.ui.view">
+        <field name="name">btp.pointage.tree</field>
+        <field name="model">btp.pointage</field>
+        <field name="arch" type="xml">
+            <tree string="Pointages BTP" editable="bottom" decoration-success="valide" decoration-muted="not valide">
+                <field name="date"/>
+                <field name="ressource_id"/>
+                <field name="chantier_id"/>
+                <field name="tache_id"/>
+                <field name="heure_debut" widget="float_time"/>
+                <field name="heure_fin" widget="float_time"/>
+                <field name="heures_normales"/>
+                <field name="heures_sup_25"/>
+                <field name="heures_sup_50"/>
+                <field name="heures_sup_100"/>
+                <field name="montant_journee"/>
+                <field name="valide"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_btp_pointage_form" model="ir.ui.view">
+        <field name="name">btp.pointage.form</field>
+        <field name="model">btp.pointage</field>
+        <field name="arch" type="xml">
+            <form string="Pointage BTP">
+                <header>
+                    <button name="action_valider" string="Valider" type="object" class="btn-primary" invisible="valide"/>
+                    <button name="action_invalider" string="Invalider" type="object" invisible="not valide"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="date"/>
+                            <field name="ressource_id"/>
+                            <field name="chantier_id"/>
+                            <field name="tache_id"/>
+                        </group>
+                        <group>
+                            <field name="heure_debut" widget="float_time"/>
+                            <field name="heure_fin" widget="float_time"/>
+                            <field name="heures_normales"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Heures supplémentaires">
+                            <field name="heures_sup_25"/>
+                            <field name="heures_sup_50"/>
+                            <field name="heures_sup_100"/>
+                        </group>
+                        <group string="Montant et validation">
+                            <field name="montant_journee"/>
+                            <field name="valide"/>
+                            <field name="valide_par"/>
+                        </group>
+                    </group>
+                    <group string="Géolocalisation">
+                        <field name="latitude"/>
+                        <field name="longitude"/>
+                        <field name="photo_presence" widget="image"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_btp_pointage_calendar" model="ir.ui.view">
+        <field name="name">btp.pointage.calendar</field>
+        <field name="model">btp.pointage</field>
+        <field name="arch" type="xml">
+            <calendar string="Pointages" date_start="date" color="ressource_id" mode="week">
+                <field name="ressource_id"/>
+                <field name="chantier_id"/>
+                <field name="heures_normales"/>
+            </calendar>
+        </field>
+    </record>
+
+    <record id="view_btp_pointage_search" model="ir.ui.view">
+        <field name="name">btp.pointage.search</field>
+        <field name="model">btp.pointage</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="ressource_id"/>
+                <field name="chantier_id"/>
+                <field name="date"/>
+                <filter string="Aujourd'hui" name="today" domain="[('date','=',context_today().strftime('%Y-%m-%d'))]"/>
+                <filter string="Cette semaine" name="this_week" domain="[('date','>=', (context_today() - datetime.timedelta(days=context_today().weekday())).strftime('%Y-%m-%d'))]"/>
+                <filter string="Non validés" name="non_valides" domain="[('valide','=',False)]"/>
+                <group expand="0" string="Grouper par">
+                    <filter string="Ressource" name="group_ressource" context="{'group_by': 'ressource_id'}"/>
+                    <filter string="Chantier" name="group_chantier" context="{'group_by': 'chantier_id'}"/>
+                    <filter string="Date" name="group_date" context="{'group_by': 'date:week'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_btp_pointage" model="ir.actions.act_window">
+        <field name="name">Pointages</field>
+        <field name="res_model">btp.pointage</field>
+        <field name="view_mode">tree,calendar,form</field>
+        <field name="search_view_id" ref="view_btp_pointage_search"/>
+    </record>
+
+</odoo>

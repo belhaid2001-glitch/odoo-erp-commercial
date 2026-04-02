@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!-- Vues Lot                                                      -->
+    <!-- ============================================================ -->
+    <record id="view_btp_lot_tree" model="ir.ui.view">
+        <field name="name">btp.lot.tree</field>
+        <field name="model">btp.lot</field>
+        <field name="arch" type="xml">
+            <tree string="Lots" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="chantier_id"/>
+                <field name="responsable_id"/>
+                <field name="budget_prevu"/>
+                <field name="cout_reel"/>
+                <field name="ecart" decoration-danger="ecart &lt; 0"/>
+                <field name="taux_consommation" widget="progressbar"/>
+                <field name="currency_id" column_invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_btp_lot_form" model="ir.ui.view">
+        <field name="name">btp.lot.form</field>
+        <field name="model">btp.lot</field>
+        <field name="arch" type="xml">
+            <form string="Lot BTP">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="chantier_id"/>
+                            <field name="responsable_id"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group>
+                            <field name="budget_prevu"/>
+                            <field name="cout_reel"/>
+                            <field name="ecart"/>
+                            <field name="taux_consommation" widget="progressbar"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <field name="description" placeholder="Description du lot..."/>
+                    <notebook>
+                        <page string="Tâches">
+                            <field name="tache_ids">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="date_debut"/>
+                                    <field name="date_fin"/>
+                                    <field name="responsable_id"/>
+                                    <field name="avancement" widget="progressbar"/>
+                                    <field name="state" widget="badge"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_btp_lot" model="ir.actions.act_window">
+        <field name="name">Lots</field>
+        <field name="res_model">btp.lot</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Vues Tâche                                                    -->
+    <!-- ============================================================ -->
+    <record id="view_btp_tache_tree" model="ir.ui.view">
+        <field name="name">btp.tache.tree</field>
+        <field name="model">btp.tache</field>
+        <field name="arch" type="xml">
+            <tree string="Tâches BTP" decoration-danger="state == 'bloque'" decoration-success="state == 'termine'">
+                <field name="name"/>
+                <field name="lot_id"/>
+                <field name="chantier_id"/>
+                <field name="date_debut"/>
+                <field name="date_fin"/>
+                <field name="responsable_id"/>
+                <field name="priorite" decoration-danger="priorite == 'critique'" decoration-warning="priorite == 'urgente'"/>
+                <field name="avancement" widget="progressbar"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'planifie'"
+                       decoration-success="state == 'termine'"
+                       decoration-warning="state == 'en_cours'"
+                       decoration-danger="state == 'bloque'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_btp_tache_form" model="ir.ui.view">
+        <field name="name">btp.tache.form</field>
+        <field name="model">btp.tache</field>
+        <field name="arch" type="xml">
+            <form string="Tâche BTP">
+                <header>
+                    <button name="action_demarrer" string="Démarrer" type="object" class="btn-primary" invisible="state != 'planifie'"/>
+                    <button name="action_bloquer" string="Bloquer" type="object" class="btn-warning" invisible="state != 'en_cours'"/>
+                    <button name="action_terminer" string="Terminer" type="object" class="btn-success" invisible="state not in ('en_cours','bloque')"/>
+                    <button name="action_replanifier" string="Replanifier" type="object" invisible="state not in ('bloque','termine')"/>
+                    <field name="state" widget="statusbar" statusbar_visible="planifie,en_cours,termine"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="lot_id"/>
+                            <field name="chantier_id"/>
+                            <field name="parent_id"/>
+                            <field name="responsable_id"/>
+                        </group>
+                        <group>
+                            <field name="date_debut"/>
+                            <field name="date_fin"/>
+                            <field name="duree_prevue"/>
+                            <field name="duree_reelle"/>
+                            <field name="priorite"/>
+                            <field name="avancement" widget="progressbar"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Sous-tâches">
+                            <field name="child_ids">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="responsable_id"/>
+                                    <field name="avancement" widget="progressbar"/>
+                                    <field name="state" widget="badge"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Dépendances">
+                            <field name="dependance_ids">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="state"/>
+                                    <field name="avancement"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_btp_tache_kanban" model="ir.ui.view">
+        <field name="name">btp.tache.kanban</field>
+        <field name="model">btp.tache</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_small_column">
+                <field name="name"/>
+                <field name="lot_id"/>
+                <field name="responsable_id"/>
+                <field name="avancement"/>
+                <field name="state"/>
+                <field name="priorite"/>
+                <field name="color"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                            <div class="oe_kanban_content">
+                                <strong><field name="name"/></strong>
+                                <div><field name="lot_id"/></div>
+                                <div>
+                                    <field name="avancement" widget="progressbar"/>
+                                </div>
+                                <div class="o_kanban_record_bottom">
+                                    <div class="oe_kanban_bottom_right">
+                                        <field name="responsable_id" widget="many2one_avatar_user"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_btp_tache_search" model="ir.ui.view">
+        <field name="name">btp.tache.search</field>
+        <field name="model">btp.tache</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="chantier_id"/>
+                <field name="lot_id"/>
+                <field name="responsable_id"/>
+                <filter string="En cours" name="en_cours" domain="[('state','=','en_cours')]"/>
+                <filter string="Bloquées" name="bloquees" domain="[('state','=','bloque')]"/>
+                <filter string="Critiques" name="critiques" domain="[('priorite','=','critique')]"/>
+                <group expand="0" string="Grouper par">
+                    <filter string="Lot" name="group_lot" context="{'group_by': 'lot_id'}"/>
+                    <filter string="État" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Chantier" name="group_chantier" context="{'group_by': 'chantier_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_btp_tache" model="ir.actions.act_window">
+        <field name="name">Tâches</field>
+        <field name="res_model">btp.tache</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="search_view_id" ref="view_btp_tache_search"/>
+    </record>
+
+</odoo>
