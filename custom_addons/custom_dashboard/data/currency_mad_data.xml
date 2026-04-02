@@ -10,10 +10,10 @@
             <value eval="{'active': True}"/>
         </function>
 
-        <!-- Mettre MAD comme devise de la société principale -->
-        <record id="base.main_company" model="res.company">
-            <field name="currency_id" ref="base.MAD"/>
-        </record>
+        <!--
+            Pour définir MAD comme devise principale :
+            Configuration → Paramètres généraux → Devise → MAD
+        -->
 
         <!-- Désactiver USD comme devise par défaut (optionnel, la garder active pour les taux) -->
 
