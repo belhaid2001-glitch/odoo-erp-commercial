@@ -37,9 +37,15 @@ class MohasibChantier(models.Model):
     ], string='État', default='draft', tracking=True)
 
     # ──────────────────── Client & Localisation ────────────────────
-    partner_id = fields.Many2one(
+    client_id = fields.Many2one(
         'res.partner',
         string='Client (Maître d\'ouvrage)',
+        tracking=True,
+    )
+    responsable_id = fields.Many2one(
+        'res.users',
+        string='Responsable chantier',
+        default=lambda self: self.env.user,
         tracking=True,
     )
     ville = fields.Char(string='Ville')
