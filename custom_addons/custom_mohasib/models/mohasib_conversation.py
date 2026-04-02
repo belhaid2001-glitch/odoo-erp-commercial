@@ -32,10 +32,10 @@ class MohasibConversation(models.Model):
         help='Chantier utilisé par défaut si non précisé dans la phrase.',
     )
 
-    message_ids = fields.One2many(
+    chat_message_ids = fields.One2many(
         'mohasib.message',
         'conversation_id',
-        string='Messages',
+        string='Messages chat',
     )
     transaction_ids = fields.One2many(
         'mohasib.transaction',
@@ -61,10 +61,10 @@ class MohasibConversation(models.Model):
         default=lambda self: self.env.company,
     )
 
-    @api.depends('message_ids', 'transaction_ids', 'transaction_ids.montant')
+    @api.depends('chat_message_ids', 'transaction_ids', 'transaction_ids.montant')
     def _compute_stats(self):
         for rec in self:
-            rec.nb_messages = len(rec.message_ids)
+            rec.nb_messages = len(rec.chat_message_ids)
             rec.nb_transactions = len(rec.transaction_ids)
             rec.montant_total = sum(rec.transaction_ids.mapped('montant'))
 

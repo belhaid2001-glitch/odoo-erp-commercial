@@ -90,14 +90,14 @@ class MohasibSaisieWizard(models.TransientModel):
         compute='_compute_chat_history',
     )
 
-    @api.depends('conversation_id', 'conversation_id.message_ids')
+    @api.depends('conversation_id', 'conversation_id.chat_message_ids')
     def _compute_chat_history(self):
         for rec in self:
             if not rec.conversation_id:
                 rec.chat_history_html = self._get_welcome_html()
                 continue
             html_parts = []
-            for msg in rec.conversation_id.message_ids.sorted('create_date'):
+            for msg in rec.conversation_id.chat_message_ids.sorted('create_date'):
                 if msg.role == 'user':
                     html_parts.append(
                         f'<div class="mohasib-bubble mohasib-user">'

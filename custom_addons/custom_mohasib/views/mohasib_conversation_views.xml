@@ -33,7 +33,7 @@
                     </group>
                     <notebook>
                         <page string="💬 Messages" name="messages">
-                            <field name="message_ids" nolabel="1">
+                            <field name="chat_message_ids" nolabel="1">
                                 <tree create="0" edit="0"
                                       decoration-info="role == 'user'"
                                       decoration-success="role == 'assistant'"
