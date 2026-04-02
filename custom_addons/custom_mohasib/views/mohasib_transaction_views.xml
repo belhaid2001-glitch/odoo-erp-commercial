@@ -17,6 +17,9 @@
                     <button name="action_cancel" string="Annuler" type="object"
                             class="btn-danger"
                             invisible="state in ('cancelled', 'done')"/>
+                    <button name="%(custom_mohasib.action_report_mohasib_transaction)d"
+                            string="📥 Télécharger Pièce" type="action"
+                            class="btn-info"/>
                     <field name="state" widget="statusbar"
                            statusbar_visible="draft,confirmed,done"/>
                 </header>

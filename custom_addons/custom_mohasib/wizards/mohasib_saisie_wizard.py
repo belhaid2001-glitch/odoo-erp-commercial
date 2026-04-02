@@ -83,6 +83,12 @@ class MohasibSaisieWizard(models.TransientModel):
         ('done', 'Terminé'),
     ], default='input')
 
+    last_transaction_id = fields.Many2one(
+        'mohasib.transaction',
+        string='Dernière transaction',
+        readonly=True,
+    )
+
     # ──────────────────── Messages historique ────────────────────
     chat_history_html = fields.Html(
         string='Historique',
@@ -243,8 +249,17 @@ class MohasibSaisieWizard(models.TransientModel):
                 'transaction_id': transaction.id,
             })
 
+        # Ajouter lien de téléchargement dans le message
+        download_link = (
+            f'<br/><br/>'
+            f'<a href="/report/pdf/custom_mohasib.report_mohasib_transaction/{transaction.id}" '
+            f'target="_blank" class="btn btn-sm btn-primary" '
+            f'style="margin-top: 8px;">'
+            f'📥 Télécharger la pièce comptable (PDF)</a>'
+        )
+
         self.write({
-            'response_html': f'<div class="mohasib-success">{status_msg.replace(chr(10), "<br/>")}</div>',
+            'response_html': f'<div class="mohasib-success">{status_msg.replace(chr(10), "<br/>")}{download_link}</div>',
             'state': 'input',
             'user_input': False,
             'type_transaction': False,
@@ -252,9 +267,19 @@ class MohasibSaisieWizard(models.TransientModel):
             'article': '',
             'quantite': 0,
             'prix_unitaire': 0,
+            'last_transaction_id': transaction.id,
         })
 
         return self._reopen()
+
+    def action_download_piece(self):
+        """Télécharger la pièce comptable PDF de la dernière transaction."""
+        self.ensure_one()
+        if not self.last_transaction_id:
+            raise UserError("Aucune transaction à télécharger.")
+        return self.env.ref(
+            'custom_mohasib.action_report_mohasib_transaction'
+        ).report_action(self.last_transaction_id)
 
     def action_cancel_entry(self):
         """Annuler la saisie en cours et revenir à l'entrée."""

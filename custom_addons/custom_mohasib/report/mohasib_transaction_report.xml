@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- ══════════════════ REPORT ACTION ══════════════════ -->
+    <record id="action_report_mohasib_transaction" model="ir.actions.report">
+        <field name="name">Pièce Comptable Mohasib</field>
+        <field name="model">mohasib.transaction</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">custom_mohasib.report_mohasib_transaction</field>
+        <field name="report_file">custom_mohasib.report_mohasib_transaction</field>
+        <field name="print_report_name">'Piece_%s_%s' % (object.name, object.date)</field>
+        <field name="binding_model_id" ref="model_mohasib_transaction"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- ══════════════════ REPORT TEMPLATE ══════════════════ -->
+    <template id="report_mohasib_transaction">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page" style="font-family: 'Segoe UI', Arial, sans-serif;">
+
+                        <!-- ── EN-TÊTE ── -->
+                        <div style="text-align: center; margin-bottom: 25px; border-bottom: 3px solid #875A7B; padding-bottom: 15px;">
+                            <h2 style="color: #875A7B; margin-bottom: 5px;">
+                                🧾 PIÈCE COMPTABLE
+                            </h2>
+                            <h3 style="color: #555; margin-top: 0;">
+                                Mohasib — Expert Comptable IA BTP
+                            </h3>
+                        </div>
+
+                        <!-- ── RÉFÉRENCE & DATE ── -->
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                            <div>
+                                <strong style="font-size: 16px;">Réf :</strong>
+                                <span style="font-size: 16px; color: #875A7B; font-weight: bold;">
+                                    <t t-esc="doc.name"/>
+                                </span>
+                            </div>
+                            <div>
+                                <strong>Date :</strong>
+                                <span t-field="doc.date" t-options='{"format": "dd/MM/yyyy"}'/>
+                            </div>
+                            <div>
+                                <strong>État :</strong>
+                                <span t-if="doc.state == 'draft'">Brouillon</span>
+                                <span t-if="doc.state == 'confirmed'">Confirmé</span>
+                                <span t-if="doc.state == 'done'" style="color: green; font-weight: bold;">Comptabilisé ✅</span>
+                                <span t-if="doc.state == 'cancelled'" style="color: red;">Annulé</span>
+                            </div>
+                        </div>
+
+                        <!-- ── INFORMATIONS PRINCIPALES ── -->
+                        <table class="table table-bordered" style="margin-bottom: 20px;">
+                            <thead>
+                                <tr style="background-color: #875A7B; color: white;">
+                                    <th colspan="4" style="text-align: center; font-size: 14px;">
+                                        📋 INFORMATIONS DE LA TRANSACTION
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="width: 25%; font-weight: bold; background-color: #f5f5f5;">Type</td>
+                                    <td style="width: 25%;">
+                                        <t t-if="doc.type_transaction == 'achat_materiaux'">Achat matériaux</t>
+                                        <t t-if="doc.type_transaction == 'achat_carburant'">Achat carburant</t>
+                                        <t t-if="doc.type_transaction == 'sous_traitance'">Sous-traitance</t>
+                                        <t t-if="doc.type_transaction == 'salaire'">Salaire / Avance</t>
+                                        <t t-if="doc.type_transaction == 'location_engin'">Location engin</t>
+                                        <t t-if="doc.type_transaction == 'encaissement'">Encaissement client</t>
+                                        <t t-if="doc.type_transaction == 'facture_eau'">Facture eau</t>
+                                        <t t-if="doc.type_transaction == 'facture_electricite'">Facture électricité</t>
+                                        <t t-if="doc.type_transaction == 'frais_divers'">Frais divers</t>
+                                    </td>
+                                    <td style="width: 25%; font-weight: bold; background-color: #f5f5f5;">Mode de paiement</td>
+                                    <td style="width: 25%;">
+                                        <t t-if="doc.mode_paiement == 'cash'">Espèces (Caisse)</t>
+                                        <t t-if="doc.mode_paiement == 'banque'">Virement bancaire</t>
+                                        <t t-if="doc.mode_paiement == 'cheque'">Chèque</t>
+                                        <t t-if="doc.mode_paiement == 'credit'">À crédit (fournisseur)</t>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: bold; background-color: #f5f5f5;">Chantier</td>
+                                    <td><t t-esc="doc.chantier_id.name or '—'"/></td>
+                                    <td style="font-weight: bold; background-color: #f5f5f5;">Tiers</td>
+                                    <td><t t-esc="doc.partner_id.name or '—'"/></td>
+                                </tr>
+                                <tr t-if="doc.article">
+                                    <td style="font-weight: bold; background-color: #f5f5f5;">Article</td>
+                                    <td><t t-esc="doc.article"/></td>
+                                    <td style="font-weight: bold; background-color: #f5f5f5;">Quantité × P.U.</td>
+                                    <td>
+                                        <t t-if="doc.quantite and doc.prix_unitaire">
+                                            <t t-esc="'%.0f' % doc.quantite"/> × <t t-esc="'%.2f' % doc.prix_unitaire"/> DH
+                                        </t>
+                                    </td>
+                                </tr>
+                                <tr t-if="doc.description">
+                                    <td style="font-weight: bold; background-color: #f5f5f5;">Description</td>
+                                    <td colspan="3"><t t-esc="doc.description"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- ── DÉTAIL MONTANTS ── -->
+                        <table class="table table-bordered" style="margin-bottom: 20px;">
+                            <thead>
+                                <tr style="background-color: #2c7a2c; color: white;">
+                                    <th colspan="2" style="text-align: center; font-size: 14px;">
+                                        💰 DÉTAIL DES MONTANTS (DH)
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="width: 60%; font-weight: bold;">Montant TTC</td>
+                                    <td style="width: 40%; text-align: right; font-size: 16px; font-weight: bold;">
+                                        <t t-esc="'{:,.2f}'.format(doc.montant)"/> DH
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: bold;">Montant HT</td>
+                                    <td style="text-align: right;">
+                                        <t t-esc="'{:,.2f}'.format(doc.montant_ht)"/> DH
+                                    </td>
+                                </tr>
+                                <tr t-if="doc.montant_tva > 0">
+                                    <td>
+                                        TVA (<t t-esc="'%.0f' % doc.taux_tva"/>%)
+                                    </td>
+                                    <td style="text-align: right;">
+                                        <t t-esc="'{:,.2f}'.format(doc.montant_tva)"/> DH
+                                    </td>
+                                </tr>
+                                <tr t-if="doc.montant_retenue > 0">
+                                    <td>
+                                        Retenue à la source (<t t-esc="'%.0f' % doc.taux_retenue"/>%)
+                                    </td>
+                                    <td style="text-align: right; color: red;">
+                                        - <t t-esc="'{:,.2f}'.format(doc.montant_retenue)"/> DH
+                                    </td>
+                                </tr>
+                                <tr style="background-color: #e8f5e9;">
+                                    <td style="font-weight: bold; font-size: 15px;">Net à payer</td>
+                                    <td style="text-align: right; font-weight: bold; font-size: 16px; color: #2c7a2c;">
+                                        <t t-esc="'{:,.2f}'.format(doc.montant_net)"/> DH
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- ── ÉCRITURE COMPTABLE ── -->
+                        <t t-if="doc.move_id">
+                            <table class="table table-bordered" style="margin-bottom: 20px;">
+                                <thead>
+                                    <tr style="background-color: #1565C0; color: white;">
+                                        <th colspan="4" style="text-align: center; font-size: 14px;">
+                                            📒 ÉCRITURE COMPTABLE — <t t-esc="doc.move_id.name or doc.move_id.ref"/>
+                                        </th>
+                                    </tr>
+                                    <tr style="background-color: #e3f2fd;">
+                                        <th style="width: 15%;">Compte</th>
+                                        <th style="width: 45%;">Libellé</th>
+                                        <th style="width: 20%; text-align: right;">Débit (DH)</th>
+                                        <th style="width: 20%; text-align: right;">Crédit (DH)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="doc.move_id.line_ids" t-as="line">
+                                        <tr>
+                                            <td>
+                                                <t t-esc="line.account_id.code"/>
+                                            </td>
+                                            <td>
+                                                <t t-esc="line.name"/>
+                                                <br/>
+                                                <small style="color: #888;">
+                                                    <t t-esc="line.account_id.name"/>
+                                                </small>
+                                            </td>
+                                            <td style="text-align: right;">
+                                                <t t-if="line.debit > 0">
+                                                    <t t-esc="'{:,.2f}'.format(line.debit)"/>
+                                                </t>
+                                            </td>
+                                            <td style="text-align: right;">
+                                                <t t-if="line.credit > 0">
+                                                    <t t-esc="'{:,.2f}'.format(line.credit)"/>
+                                                </t>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                                <tfoot>
+                                    <tr style="background-color: #e3f2fd; font-weight: bold;">
+                                        <td colspan="2" style="text-align: right;">TOTAUX</td>
+                                        <td style="text-align: right;">
+                                            <t t-esc="'{:,.2f}'.format(sum(doc.move_id.line_ids.mapped('debit')))"/>
+                                        </td>
+                                        <td style="text-align: right;">
+                                            <t t-esc="'{:,.2f}'.format(sum(doc.move_id.line_ids.mapped('credit')))"/>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </t>
+
+                        <!-- ── TEXTE ORIGINAL NLP ── -->
+                        <t t-if="doc.texte_original">
+                            <div style="background-color: #fff3e0; border-left: 4px solid #ff9800; padding: 10px; margin-bottom: 20px;">
+                                <strong>🗣️ Saisie originale du directeur :</strong><br/>
+                                <em>"<t t-esc="doc.texte_original"/>"</em>
+                            </div>
+                        </t>
+
+                        <!-- ── PIED DE PAGE ── -->
+                        <div style="margin-top: 30px; border-top: 2px solid #ddd; padding-top: 15px; text-align: center; color: #888; font-size: 11px;">
+                            <p>
+                                Document généré automatiquement par <strong>Mohasib — Expert Comptable IA BTP</strong><br/>
+                                Plan Comptable Marocain (PCM) — Conformité BTP
+                            </p>
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

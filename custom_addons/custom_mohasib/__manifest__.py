@@ -37,6 +37,7 @@ Module 7 - Gestion documentaire BTP.
         'security/ir.model.access.csv',
         'data/mohasib_pcm_data.xml',
         'data/mohasib_sequence_data.xml',
+        'report/mohasib_transaction_report.xml',
         'views/mohasib_chantier_views.xml',
         'views/mohasib_conversation_views.xml',
         'views/mohasib_transaction_views.xml',

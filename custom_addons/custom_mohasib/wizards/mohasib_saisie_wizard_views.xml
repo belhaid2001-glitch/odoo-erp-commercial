@@ -51,6 +51,7 @@
                     </group>
 
                     <field name="parsed_json" invisible="1"/>
+                    <field name="last_transaction_id" invisible="1"/>
                 </div>
 
                 <footer>
@@ -66,6 +67,11 @@
                     <button name="action_cancel_entry" string="❌ Annuler"
                             type="object" class="btn-danger"
                             invisible="state != 'preview'"/>
+
+                    <!-- Bouton télécharger pièce (après confirmation) -->
+                    <button name="action_download_piece" string="📥 Télécharger Pièce PDF"
+                            type="object" class="btn-info"
+                            invisible="not last_transaction_id"/>
 
                     <!-- Toujours visible -->
                     <button name="action_new_conversation" string="🔄 Nouvelle conversation"
