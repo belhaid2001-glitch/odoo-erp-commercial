@@ -1,6 +1,6 @@
 /** @odoo-module **/
 
-import { Component, useState, onWillStart, onMounted, onWillUnmount, useRef } from "@odoo/owl";
+import { Component, useState, onWillStart, onMounted, onWillUnmount, onPatched, useRef } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { loadJS } from "@web/core/assets";
@@ -14,12 +14,16 @@ export class BtpDashboard extends Component {
         this.state = useState({
             data: null,
             loading: true,
+            activeTab: "overview",  // "overview" or "analysis"
         });
 
+        // Chart refs — Tab 1
         this.statesChartRef = useRef("statesChart");
-        this.avancementChartRef = useRef("avancementChart");
         this.typesChartRef = useRef("typesChart");
+        // Chart refs — Tab 2
+        this.avancementChartRef = useRef("avancementChart");
         this.villesChartRef = useRef("villesChart");
+
         this.charts = [];
 
         onWillStart(async () => {
@@ -28,7 +32,11 @@ export class BtpDashboard extends Component {
         });
 
         onMounted(() => {
-            this.renderAllCharts();
+            this._renderChartsForTab();
+        });
+
+        onPatched(() => {
+            this._renderChartsForTab();
         });
 
         onWillUnmount(() => {
@@ -54,29 +62,28 @@ export class BtpDashboard extends Component {
         this.state.loading = true;
         this.destroyCharts();
         await this.loadData();
-        setTimeout(() => this.renderAllCharts(), 150);
+    }
+
+    // ==================== TABS ====================
+    switchTab(tab) {
+        if (this.state.activeTab === tab) return;
+        this.destroyCharts();
+        this.state.activeTab = tab;
+        // onPatched will fire → renders charts for the new tab
     }
 
     // ==================== FORMATTING ====================
     fmt(value) {
         if (value === undefined || value === null) return "0";
-        if (Math.abs(value) >= 1000000) {
-            return (value / 1000000).toFixed(1) + " M";
-        }
-        if (Math.abs(value) >= 1000) {
-            return (value / 1000).toFixed(0) + " K";
-        }
+        if (Math.abs(value) >= 1000000) return (value / 1000000).toFixed(1) + " M";
+        if (Math.abs(value) >= 1000) return (value / 1000).toFixed(0) + " K";
         return Math.round(value).toLocaleString("fr-FR");
     }
 
     fmtDH(value) {
         if (value === undefined || value === null) return "0 DH";
-        if (Math.abs(value) >= 1000000) {
-            return (value / 1000000).toFixed(2) + " M DH";
-        }
-        if (Math.abs(value) >= 1000) {
-            return (value / 1000).toFixed(0) + " K DH";
-        }
+        if (Math.abs(value) >= 1000000) return (value / 1000000).toFixed(2) + " M DH";
+        if (Math.abs(value) >= 1000) return (value / 1000).toFixed(0) + " K DH";
         return Math.round(value).toLocaleString("fr-FR") + " DH";
     }
 
@@ -116,13 +123,8 @@ export class BtpDashboard extends Component {
         });
     }
 
-    openEngins() {
-        this.action.doAction("custom_btp.action_btp_engin");
-    }
-
-    openSituations() {
-        this.action.doAction("custom_btp.action_btp_situation");
-    }
+    openEngins() { this.action.doAction("custom_btp.action_btp_engin"); }
+    openSituations() { this.action.doAction("custom_btp.action_btp_situation"); }
 
     openApprovisionnements() {
         this.action.doAction({
@@ -134,17 +136,9 @@ export class BtpDashboard extends Component {
         });
     }
 
-    openPointages() {
-        this.action.doAction("custom_btp.action_btp_pointage");
-    }
-
-    openDocuments() {
-        this.action.doAction("custom_btp.action_btp_document");
-    }
-
-    openRessources() {
-        this.action.doAction("custom_btp.action_btp_ressource");
-    }
+    openPointages() { this.action.doAction("custom_btp.action_btp_pointage"); }
+    openDocuments() { this.action.doAction("custom_btp.action_btp_document"); }
+    openRessources() { this.action.doAction("custom_btp.action_btp_ressource"); }
 
     // ==================== CHARTS ====================
     destroyCharts() {
@@ -154,13 +148,18 @@ export class BtpDashboard extends Component {
         this.charts = [];
     }
 
-    renderAllCharts() {
+    _renderChartsForTab() {
         if (!this.state.data || typeof Chart === "undefined") return;
+        // Destroy old charts first
         this.destroyCharts();
-        this._renderStatesChart();
-        this._renderAvancementChart();
-        this._renderTypesChart();
-        this._renderVillesChart();
+
+        if (this.state.activeTab === "overview") {
+            this._renderStatesChart();
+            this._renderTypesChart();
+        } else {
+            this._renderAvancementChart();
+            this._renderVillesChart();
+        }
     }
 
     _renderStatesChart() {
@@ -196,6 +195,33 @@ export class BtpDashboard extends Component {
         this.charts.push(chart);
     }
 
+    _renderTypesChart() {
+        const el = this.typesChartRef.el;
+        if (!el || !this.state.data.types_marche.length) return;
+        const d = this.state.data.types_marche;
+        const colors = ['#4e73df', '#1cc88a', '#f6c23e', '#e74a3b', '#8b5cf6'];
+        const chart = new Chart(el, {
+            type: "pie",
+            data: {
+                labels: d.map(x => x.type),
+                datasets: [{
+                    data: d.map(x => x.count),
+                    backgroundColor: colors.slice(0, d.length),
+                    borderWidth: 2,
+                    borderColor: '#fff',
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: "bottom", labels: { font: { size: 11 }, padding: 12 } },
+                },
+            }
+        });
+        this.charts.push(chart);
+    }
+
     _renderAvancementChart() {
         const el = this.avancementChartRef.el;
         if (!el || !this.state.data.chart_avancements.length) return;
@@ -224,33 +250,6 @@ export class BtpDashboard extends Component {
                 scales: {
                     x: { beginAtZero: true, max: 100, ticks: { callback: v => v + '%' } },
                     y: { ticks: { font: { size: 11 } } },
-                },
-            }
-        });
-        this.charts.push(chart);
-    }
-
-    _renderTypesChart() {
-        const el = this.typesChartRef.el;
-        if (!el || !this.state.data.types_marche.length) return;
-        const d = this.state.data.types_marche;
-        const colors = ['#4e73df', '#1cc88a', '#f6c23e'];
-        const chart = new Chart(el, {
-            type: "pie",
-            data: {
-                labels: d.map(x => x.type),
-                datasets: [{
-                    data: d.map(x => x.count),
-                    backgroundColor: colors.slice(0, d.length),
-                    borderWidth: 2,
-                    borderColor: '#fff',
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { position: "bottom", labels: { font: { size: 11 }, padding: 12 } },
                 },
             }
         });

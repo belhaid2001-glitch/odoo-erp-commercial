@@ -1,5 +1,6 @@
 /* ==========================================
    BTP DASHBOARD — Tableau de bord chantiers
+   Natural document flow — Odoo handles scrolling
    ========================================== */
 
 :root {
@@ -17,28 +18,12 @@
     --btp-radius: 12px;
 }
 
-/* ===== MAIN CONTAINER — FULL HEIGHT SCROLLABLE ===== */
+/* ===== MAIN CONTAINER — natural flow, Odoo scrolls ===== */
 .btp_dashboard_main {
     background: var(--btp-bg);
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    flex-direction: column;
+    min-height: 100vh;
+    padding: 0;
     font-family: 'Segoe UI', Roboto, sans-serif;
-    overflow: hidden;
-}
-
-/* Force Odoo action container to fill available space */
-.o_action_manager .o_action.btp_dashboard_main,
-.o_action_manager > .btp_dashboard_main {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
 }
 
 /* ===== LOADING ===== */
@@ -47,7 +32,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100%;
+    min-height: 60vh;
     color: var(--btp-primary);
     gap: 16px;
 }
@@ -64,7 +49,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-shrink: 0;
+    position: sticky;
+    top: 0;
     z-index: 100;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
@@ -93,17 +79,52 @@
     gap: 8px;
 }
 
-/* ===== SCROLLABLE CONTENT ===== */
-.btp_dash_scroll {
-    flex: 1 1 0;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 20px 24px;
-    scroll-behavior: smooth;
-    min-height: 0;
+/* ===== TAB BAR ===== */
+.btp_tabs_bar {
+    background: #fff;
+    display: flex;
+    gap: 0;
+    padding: 0 24px;
+    border-bottom: 2px solid #e3e6f0;
+    position: sticky;
+    top: 52px;
+    z-index: 99;
+}
+.btp_tab_btn {
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #858796;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.btp_tab_btn:hover {
+    color: var(--btp-primary);
+    background: #f8f9fc;
+}
+.btp_tab_btn.active {
+    color: var(--btp-info);
+    border-bottom-color: var(--btp-info);
+}
+.btp_tab_btn i {
+    font-size: 15px;
 }
 
-/* ===== KPI GRID (row 1 — big cards) ===== */
+/* ===== CONTENT AREA ===== */
+.btp_dash_content {
+    padding: 20px 24px;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+/* ===== KPI GRID (big cards) ===== */
 .btp_kpi_grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -155,7 +176,7 @@
     letter-spacing: 0.3px;
 }
 
-/* KPI color vars */
+/* KPI colors */
 .btp_kpi_total { border-left-color: var(--btp-info); }
 .btp_kpi_total .btp_kpi_icon { background: #2980b915; color: var(--btp-info); }
 .btp_kpi_total .btp_kpi_value { color: var(--btp-info); }
@@ -180,7 +201,7 @@
 .btp_kpi_penalite .btp_kpi_icon { background: #e67e2215; color: var(--btp-orange); }
 .btp_kpi_penalite .btp_kpi_value { color: var(--btp-danger); }
 
-/* ===== KPI GRID ROW 2 — small cards ===== */
+/* ===== KPI GRID (small cards) ===== */
 .btp_kpi_grid_small {
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
     gap: 12px;
@@ -203,20 +224,9 @@
     transform: translateY(-2px);
     box-shadow: var(--btp-shadow-hover);
 }
-.btp_sm_icon {
-    font-size: 22px;
-}
-.btp_sm_value {
-    font-size: 22px;
-    font-weight: 700;
-    line-height: 1;
-}
-.btp_sm_label {
-    font-size: 11px;
-    color: #858796;
-    text-transform: uppercase;
-    letter-spacing: 0.2px;
-}
+.btp_sm_icon { font-size: 22px; }
+.btp_sm_value { font-size: 22px; font-weight: 700; line-height: 1; }
+.btp_sm_label { font-size: 11px; color: #858796; text-transform: uppercase; letter-spacing: 0.2px; }
 
 /* ===== CHARTS ROW ===== */
 .btp_charts_row {
@@ -240,10 +250,7 @@
     padding-bottom: 10px;
     border-bottom: 1px solid #eee;
 }
-.btp_chart_card h3 i {
-    margin-right: 8px;
-    opacity: 0.7;
-}
+.btp_chart_card h3 i { margin-right: 8px; opacity: 0.7; }
 
 .btp_chart_container {
     position: relative;
@@ -252,11 +259,8 @@
 .btp_chart_container.btp_chart_tall {
     height: 320px;
 }
-.btp_chart_wide {
-    /* handled by grid */
-}
 
-/* ===== SECTION CARDS (alerts, top chantiers) ===== */
+/* ===== SECTION CARDS ===== */
 .btp_section_card {
     background: var(--btp-card);
     border-radius: var(--btp-radius);
@@ -272,22 +276,12 @@
     padding-bottom: 10px;
     border-bottom: 1px solid #eee;
 }
-.btp_section_card h3 i {
-    margin-right: 8px;
-}
-.btp_section_alertes {
-    border-left: 4px solid var(--btp-danger);
-}
+.btp_section_card h3 i { margin-right: 8px; }
+.btp_section_alertes { border-left: 4px solid var(--btp-danger); }
 
-.btp_table_wrap {
-    overflow-x: auto;
-}
-
-.btp_table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-}
+/* ===== TABLE ===== */
+.btp_table_wrap { overflow-x: auto; }
+.btp_table { width: 100%; border-collapse: collapse; font-size: 13px; }
 .btp_table thead th {
     background: var(--btp-primary);
     color: white;
@@ -299,34 +293,17 @@
     letter-spacing: 0.3px;
     white-space: nowrap;
 }
-.btp_table thead th:first-child {
-    border-radius: 6px 0 0 0;
-}
-.btp_table thead th:last-child {
-    border-radius: 0 6px 0 0;
-}
-.btp_table tbody tr {
-    border-bottom: 1px solid #f0f0f0;
-    transition: background 0.15s;
-}
-.btp_table tbody tr:hover {
-    background: #f8f9fc;
-}
-.btp_table td {
-    padding: 10px 12px;
-    vertical-align: middle;
-}
+.btp_table thead th:first-child { border-radius: 6px 0 0 0; }
+.btp_table thead th:last-child { border-radius: 0 6px 0 0; }
+.btp_table tbody tr { border-bottom: 1px solid #f0f0f0; transition: background 0.15s; }
+.btp_table tbody tr:hover { background: #f8f9fc; }
+.btp_table td { padding: 10px 12px; vertical-align: middle; }
 
 /* ===== MINI PROGRESS BAR ===== */
 .btp_mini_progress {
-    width: 80px;
-    height: 8px;
-    background: #e9ecef;
-    border-radius: 4px;
-    overflow: hidden;
-    display: inline-block;
-    vertical-align: middle;
-    margin-right: 6px;
+    width: 80px; height: 8px; background: #e9ecef;
+    border-radius: 4px; overflow: hidden;
+    display: inline-block; vertical-align: middle; margin-right: 6px;
 }
 .btp_mini_bar {
     height: 100%;
@@ -347,36 +324,35 @@
     margin-top: 10px;
 }
 
-/* ===== BADGES ===== */
-.btp_table .badge {
-    font-size: 11px;
-    padding: 4px 8px;
+/* ===== BADGES / FW ===== */
+.btp_table .badge { font-size: 11px; padding: 4px 8px; }
+.fw-bold { font-weight: 600 !important; }
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
-.fw-bold {
-    font-weight: 600 !important;
+.btp_kpi_card, .btp_kpi_card_sm, .btp_chart_card, .btp_section_card {
+    animation: fadeInUp 0.4s ease both;
 }
+.btp_kpi_card:nth-child(1) { animation-delay: 0.05s; }
+.btp_kpi_card:nth-child(2) { animation-delay: 0.1s; }
+.btp_kpi_card:nth-child(3) { animation-delay: 0.15s; }
+.btp_kpi_card:nth-child(4) { animation-delay: 0.2s; }
+.btp_kpi_card:nth-child(5) { animation-delay: 0.25s; }
+.btp_kpi_card:nth-child(6) { animation-delay: 0.3s; }
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 1200px) {
-    .btp_charts_row {
-        grid-template-columns: 1fr 1fr;
-    }
+    .btp_charts_row { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 768px) {
-    .btp_kpi_grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    .btp_kpi_grid_small {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    .btp_charts_row {
-        grid-template-columns: 1fr;
-    }
-    .btp_dash_header {
-        flex-direction: column;
-        gap: 8px;
-    }
-    .btp_dash_scroll {
-        padding: 12px;
-    }
+    .btp_kpi_grid { grid-template-columns: repeat(2, 1fr); }
+    .btp_kpi_grid_small { grid-template-columns: repeat(2, 1fr); }
+    .btp_charts_row { grid-template-columns: 1fr; }
+    .btp_dash_header { flex-direction: column; gap: 8px; }
+    .btp_dash_content { padding: 12px; }
+    .btp_tabs_bar { padding: 0 12px; }
+    .btp_tab_btn { padding: 10px 14px; font-size: 13px; }
 }

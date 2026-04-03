@@ -26,13 +26,25 @@
                     </div>
                 </div>
 
-                <!-- ===== SCROLLABLE CONTENT ===== -->
-                <div class="btp_dash_scroll">
+                <!-- ===== TAB BAR ===== -->
+                <div class="btp_tabs_bar">
+                    <button t-attf-class="btp_tab_btn {{ state.activeTab === 'overview' ? 'active' : '' }}"
+                            t-on-click="() => this.switchTab('overview')">
+                        <i class="fa fa-tachometer"/> Vue d'ensemble
+                    </button>
+                    <button t-attf-class="btp_tab_btn {{ state.activeTab === 'analysis' ? 'active' : '' }}"
+                            t-on-click="() => this.switchTab('analysis')">
+                        <i class="fa fa-bar-chart"/> Analyses &amp; Alertes
+                    </button>
+                </div>
 
-                    <!-- ===== KPI CARDS ROW 1 ===== -->
+                <!-- ================================================ -->
+                <!-- TAB 1 : VUE D'ENSEMBLE — KPIs + 2 charts        -->
+                <!-- ================================================ -->
+                <div class="btp_dash_content" t-if="state.activeTab === 'overview'">
+
+                    <!-- KPI CARDS ROW 1 -->
                     <div class="btp_kpi_grid">
-
-                        <!-- Total Chantiers -->
                         <div class="btp_kpi_card btp_kpi_total" t-on-click="openChantiers">
                             <div class="btp_kpi_icon"><i class="fa fa-building"/></div>
                             <div class="btp_kpi_body">
@@ -40,8 +52,6 @@
                                 <span class="btp_kpi_label">Total Chantiers</span>
                             </div>
                         </div>
-
-                        <!-- En cours -->
                         <div class="btp_kpi_card btp_kpi_encours" t-on-click="openChantiersEnCours">
                             <div class="btp_kpi_icon"><i class="fa fa-play-circle"/></div>
                             <div class="btp_kpi_body">
@@ -49,8 +59,6 @@
                                 <span class="btp_kpi_label">En cours</span>
                             </div>
                         </div>
-
-                        <!-- En retard -->
                         <div class="btp_kpi_card btp_kpi_retard" t-on-click="openChantiersRetard">
                             <div class="btp_kpi_icon"><i class="fa fa-exclamation-triangle"/></div>
                             <div class="btp_kpi_body">
@@ -58,8 +66,6 @@
                                 <span class="btp_kpi_label">En retard</span>
                             </div>
                         </div>
-
-                        <!-- Avancement moyen -->
                         <div class="btp_kpi_card btp_kpi_avancement">
                             <div class="btp_kpi_icon"><i class="fa fa-tasks"/></div>
                             <div class="btp_kpi_body">
@@ -67,8 +73,6 @@
                                 <span class="btp_kpi_label">Avancement moyen</span>
                             </div>
                         </div>
-
-                        <!-- Montant contrats -->
                         <div class="btp_kpi_card btp_kpi_montant" t-on-click="openSituations">
                             <div class="btp_kpi_icon"><i class="fa fa-money"/></div>
                             <div class="btp_kpi_body">
@@ -76,8 +80,6 @@
                                 <span class="btp_kpi_label">Montant en cours</span>
                             </div>
                         </div>
-
-                        <!-- Pénalités -->
                         <div class="btp_kpi_card btp_kpi_penalite">
                             <div class="btp_kpi_icon"><i class="fa fa-gavel"/></div>
                             <div class="btp_kpi_body">
@@ -85,27 +87,20 @@
                                 <span class="btp_kpi_label">Pénalités de retard</span>
                             </div>
                         </div>
-
                     </div>
 
-                    <!-- ===== KPI CARDS ROW 2 ===== -->
+                    <!-- KPI CARDS ROW 2 (small) -->
                     <div class="btp_kpi_grid btp_kpi_grid_small">
-
-                        <!-- Pointages du jour -->
                         <div class="btp_kpi_card_sm" t-on-click="openPointages">
                             <i class="fa fa-clock-o btp_sm_icon text-primary"/>
                             <span class="btp_sm_value" t-esc="state.data.kpis.pointages_today"/>
                             <span class="btp_sm_label">Pointages aujourd'hui</span>
                         </div>
-
-                        <!-- Ressources -->
                         <div class="btp_kpi_card_sm" t-on-click="openRessources">
                             <i class="fa fa-users btp_sm_icon text-info"/>
                             <span class="btp_sm_value" t-esc="state.data.kpis.total_ressources"/>
                             <span class="btp_sm_label">Ressources</span>
                         </div>
-
-                        <!-- Engins -->
                         <div class="btp_kpi_card_sm" t-on-click="openEngins">
                             <i class="fa fa-truck btp_sm_icon text-success"/>
                             <span class="btp_sm_value">
@@ -113,87 +108,76 @@
                             </span>
                             <span class="btp_sm_label">Engins en service</span>
                         </div>
-
-                        <!-- Engins en panne -->
                         <div class="btp_kpi_card_sm" t-on-click="openEngins">
                             <i class="fa fa-wrench btp_sm_icon text-danger"/>
                             <span class="btp_sm_value" t-esc="state.data.kpis.engins_panne"/>
                             <span class="btp_sm_label">Engins en panne</span>
                         </div>
-
-                        <!-- Appro en attente -->
                         <div class="btp_kpi_card_sm" t-on-click="openApprovisionnements">
                             <i class="fa fa-cube btp_sm_icon text-warning"/>
                             <span class="btp_sm_value" t-esc="state.data.kpis.appro_attente"/>
                             <span class="btp_sm_label">Appro. en attente</span>
                         </div>
-
-                        <!-- Situations impayées -->
                         <div class="btp_kpi_card_sm" t-on-click="openSituations">
                             <i class="fa fa-file-text btp_sm_icon text-danger"/>
                             <span class="btp_sm_value" t-esc="state.data.kpis.situations_impayees"/>
                             <span class="btp_sm_label">Situations impayées</span>
                         </div>
-
-                        <!-- Documents expirés -->
                         <div class="btp_kpi_card_sm" t-on-click="openDocuments">
                             <i class="fa fa-warning btp_sm_icon text-danger"/>
                             <span class="btp_sm_value" t-esc="state.data.kpis.docs_expires"/>
                             <span class="btp_sm_label">Documents expirés</span>
                         </div>
-
-                        <!-- Documents bientôt expirés -->
                         <div class="btp_kpi_card_sm" t-on-click="openDocuments">
                             <i class="fa fa-calendar-times-o btp_sm_icon text-warning"/>
                             <span class="btp_sm_value" t-esc="state.data.kpis.docs_bientot"/>
                             <span class="btp_sm_label">Docs à renouveler</span>
                         </div>
-
                     </div>
 
-                    <!-- ===== CHARTS ROW ===== -->
+                    <!-- CHARTS: États + Types marché -->
                     <div class="btp_charts_row">
-
-                        <!-- Répartition par état -->
                         <div class="btp_chart_card">
                             <h3><i class="fa fa-pie-chart"/> Répartition par état</h3>
                             <div class="btp_chart_container">
                                 <canvas t-ref="statesChart"/>
                             </div>
                         </div>
-
-                        <!-- Avancement des chantiers -->
-                        <div class="btp_chart_card btp_chart_wide">
-                            <h3><i class="fa fa-bar-chart"/> Avancement des chantiers</h3>
-                            <div class="btp_chart_container btp_chart_tall">
-                                <canvas t-ref="avancementChart"/>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <!-- ===== CHARTS ROW 2 ===== -->
-                    <div class="btp_charts_row">
-
-                        <!-- Types de marché -->
                         <div class="btp_chart_card">
                             <h3><i class="fa fa-briefcase"/> Types de marché</h3>
                             <div class="btp_chart_container">
                                 <canvas t-ref="typesChart"/>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Chantiers par ville -->
-                        <div class="btp_chart_card btp_chart_wide">
+                    <div class="btp_dash_footer">
+                        <span>BTP Chantiers — Vue d'ensemble</span>
+                    </div>
+                </div>
+
+                <!-- ================================================ -->
+                <!-- TAB 2 : ANALYSES &amp; ALERTES                       -->
+                <!-- ================================================ -->
+                <div class="btp_dash_content" t-if="state.activeTab === 'analysis'">
+
+                    <!-- CHARTS: Avancement + Villes -->
+                    <div class="btp_charts_row">
+                        <div class="btp_chart_card">
                             <h3><i class="fa fa-map-marker"/> Chantiers par ville</h3>
                             <div class="btp_chart_container">
                                 <canvas t-ref="villesChart"/>
                             </div>
                         </div>
-
+                        <div class="btp_chart_card">
+                            <h3><i class="fa fa-bar-chart"/> Avancement des chantiers</h3>
+                            <div class="btp_chart_container btp_chart_tall">
+                                <canvas t-ref="avancementChart"/>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- ===== ALERTES RETARD ===== -->
+                    <!-- ALERTES RETARD -->
                     <t t-if="state.data.alertes.length > 0">
                         <div class="btp_section_card btp_section_alertes">
                             <h3><i class="fa fa-exclamation-circle text-danger"/> Alertes — Chantiers en retard</h3>
@@ -240,7 +224,7 @@
                         </div>
                     </t>
 
-                    <!-- ===== TOP CHANTIERS ===== -->
+                    <!-- TOP CHANTIERS -->
                     <t t-if="state.data.top_chantiers.length > 0">
                         <div class="btp_section_card">
                             <h3><i class="fa fa-trophy text-warning"/> Top chantiers par montant</h3>
@@ -286,12 +270,11 @@
                         </div>
                     </t>
 
-                    <!-- ===== FOOTER ===== -->
                     <div class="btp_dash_footer">
-                        <span>BTP Chantiers — Gestion Complète des Chantiers BTP Maroc</span>
+                        <span>BTP Chantiers — Analyses &amp; Alertes</span>
                     </div>
-
                 </div>
+
             </t>
         </div>
     </t>
