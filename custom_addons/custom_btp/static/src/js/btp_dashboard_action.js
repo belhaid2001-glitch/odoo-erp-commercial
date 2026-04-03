@@ -186,9 +186,11 @@ export class BtpDashboard extends Component {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                cutoutPercentage: 65,
-                legend: { position: "bottom", labels: { fontSize: 11, padding: 12 } },
-                tooltips: { callbacks: { label: (t, data) => `${data.labels[t.index]}: ${data.datasets[0].data[t.index]}` } },
+                cutout: '65%',
+                plugins: {
+                    legend: { position: "bottom", labels: { font: { size: 11 }, padding: 12 } },
+                    tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${ctx.parsed}` } },
+                },
             }
         });
         this.charts.push(chart);
@@ -199,7 +201,7 @@ export class BtpDashboard extends Component {
         if (!el || !this.state.data.chart_avancements.length) return;
         const d = this.state.data.chart_avancements;
         const chart = new Chart(el, {
-            type: "horizontalBar",
+            type: "bar",
             data: {
                 labels: d.map(x => x.name),
                 datasets: [{
@@ -208,17 +210,21 @@ export class BtpDashboard extends Component {
                     backgroundColor: d.map(x => x.retard > 0 ? '#dc354580' : '#28a74580'),
                     borderColor: d.map(x => x.retard > 0 ? '#dc3545' : '#28a745'),
                     borderWidth: 1,
+                    borderRadius: 4,
                 }]
             },
             options: {
+                indexAxis: 'y',
                 responsive: true,
                 maintainAspectRatio: false,
-                legend: { display: false },
-                scales: {
-                    xAxes: [{ ticks: { beginAtZero: true, max: 100, callback: v => v + '%' } }],
-                    yAxes: [{ ticks: { fontSize: 11 } }],
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { callbacks: { label: (ctx) => `${ctx.parsed.x.toFixed(1)}%` } },
                 },
-                tooltips: { callbacks: { label: (t) => `${t.xLabel.toFixed(1)}%` } },
+                scales: {
+                    x: { beginAtZero: true, max: 100, ticks: { callback: v => v + '%' } },
+                    y: { ticks: { font: { size: 11 } } },
+                },
             }
         });
         this.charts.push(chart);
@@ -243,7 +249,9 @@ export class BtpDashboard extends Component {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                legend: { position: "bottom", labels: { fontSize: 11, padding: 12 } },
+                plugins: {
+                    legend: { position: "bottom", labels: { font: { size: 11 }, padding: 12 } },
+                },
             }
         });
         this.charts.push(chart);
@@ -269,10 +277,10 @@ export class BtpDashboard extends Component {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                legend: { display: false },
+                plugins: { legend: { display: false } },
                 scales: {
-                    yAxes: [{ ticks: { beginAtZero: true, stepSize: 1 } }],
-                    xAxes: [{ ticks: { fontSize: 11 } }],
+                    y: { beginAtZero: true, ticks: { stepSize: 1 } },
+                    x: { ticks: { font: { size: 11 } } },
                 },
             }
         });

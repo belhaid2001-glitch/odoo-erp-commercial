@@ -20,12 +20,25 @@
 /* ===== MAIN CONTAINER — FULL HEIGHT SCROLLABLE ===== */
 .btp_dashboard_main {
     background: var(--btp-bg);
-    height: 100%;
-    min-height: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     display: flex;
     flex-direction: column;
     font-family: 'Segoe UI', Roboto, sans-serif;
     overflow: hidden;
+}
+
+/* Force Odoo action container to fill available space */
+.o_action_manager .o_action.btp_dashboard_main,
+.o_action_manager > .btp_dashboard_main {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
 }
 
 /* ===== LOADING ===== */
@@ -82,11 +95,12 @@
 
 /* ===== SCROLLABLE CONTENT ===== */
 .btp_dash_scroll {
-    flex: 1;
+    flex: 1 1 0;
     overflow-y: auto;
     overflow-x: hidden;
     padding: 20px 24px;
     scroll-behavior: smooth;
+    min-height: 0;
 }
 
 /* ===== KPI GRID (row 1 — big cards) ===== */
