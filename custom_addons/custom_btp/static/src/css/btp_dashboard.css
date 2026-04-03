@@ -18,10 +18,15 @@
     --btp-radius: 12px;
 }
 
-/* ===== MAIN CONTAINER — natural flow, Odoo scrolls ===== */
+/* ===== MAIN CONTAINER — fills action manager, scrolls internally ===== */
 .btp_dashboard_main {
     background: var(--btp-bg);
-    min-height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow-y: auto;
     padding: 0;
     font-family: 'Segoe UI', Roboto, sans-serif;
 }
