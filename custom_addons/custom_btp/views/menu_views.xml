@@ -17,7 +17,7 @@
     <menuitem id="menu_btp_dashboard"
               name="Tableau de bord"
               parent="menu_btp_root"
-              action="action_btp_dashboard"
+              action="action_btp_dashboard_owl"
               sequence="1"/>
 
     <!-- Chantiers -->

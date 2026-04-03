@@ -4,7 +4,7 @@
     <!-- ============================================================ -->
     <!-- Dashboard BTP — OWL Client Action                             -->
     <!-- ============================================================ -->
-    <record id="action_btp_dashboard" model="ir.actions.client">
+    <record id="action_btp_dashboard_owl" model="ir.actions.client">
         <field name="name">Tableau de bord BTP</field>
         <field name="tag">btp_dashboard_main</field>
     </record>
