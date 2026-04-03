@@ -36,6 +36,20 @@
     </record>
 
     <!-- ============================================================ -->
+    <!-- Accès automatiques                                            -->
+    <!-- ============================================================ -->
+
+    <!-- Tout utilisateur interne obtient au minimum le groupe Compagnon (lecture) -->
+    <record id="base.group_user" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('group_btp_compagnon'))]"/>
+    </record>
+
+    <!-- L'administrateur obtient le groupe Directeur (accès complet) -->
+    <record id="base.user_admin" model="res.users">
+        <field name="groups_id" eval="[(4, ref('group_btp_directeur'))]"/>
+    </record>
+
+    <!-- ============================================================ -->
     <!-- Règles d'enregistrement (Record Rules)                        -->
     <!-- ============================================================ -->
 
