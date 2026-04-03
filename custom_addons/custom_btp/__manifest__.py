@@ -96,6 +96,9 @@ Module complet de gestion de chantiers BTP adapté au contexte marocain :
     'assets': {
         'web.assets_backend': [
             'custom_btp/static/src/css/btp.css',
+            'custom_btp/static/src/css/btp_dashboard.css',
+            'custom_btp/static/src/xml/btp_dashboard_templates.xml',
+            'custom_btp/static/src/js/btp_dashboard_action.js',
         ],
     },
     'images': ['static/description/icon.png'],

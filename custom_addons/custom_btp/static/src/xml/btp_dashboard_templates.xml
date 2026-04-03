@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="custom_btp.BtpDashboard">
+        <div class="btp_dashboard_main">
+
+            <!-- LOADING -->
+            <t t-if="state.loading">
+                <div class="btp_dash_loading">
+                    <i class="fa fa-spinner fa-spin fa-3x"/>
+                    <p>Chargement du tableau de bord BTP...</p>
+                </div>
+            </t>
+
+            <t t-else="">
+                <!-- ===== HEADER ===== -->
+                <div class="btp_dash_header">
+                    <div class="btp_dash_header_left">
+                        <h1><i class="fa fa-hard-hat"/> Tableau de Bord BTP</h1>
+                        <span class="btp_dash_date"><i class="fa fa-calendar"/> <t t-esc="state.data.today"/></span>
+                    </div>
+                    <div class="btp_dash_header_right">
+                        <button class="btn btn-sm btn-outline-light" t-on-click="refresh">
+                            <i class="fa fa-refresh"/> Actualiser
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ===== SCROLLABLE CONTENT ===== -->
+                <div class="btp_dash_scroll">
+
+                    <!-- ===== KPI CARDS ROW 1 ===== -->
+                    <div class="btp_kpi_grid">
+
+                        <!-- Total Chantiers -->
+                        <div class="btp_kpi_card btp_kpi_total" t-on-click="openChantiers">
+                            <div class="btp_kpi_icon"><i class="fa fa-building"/></div>
+                            <div class="btp_kpi_body">
+                                <span class="btp_kpi_value" t-esc="state.data.kpis.total_chantiers"/>
+                                <span class="btp_kpi_label">Total Chantiers</span>
+                            </div>
+                        </div>
+
+                        <!-- En cours -->
+                        <div class="btp_kpi_card btp_kpi_encours" t-on-click="openChantiersEnCours">
+                            <div class="btp_kpi_icon"><i class="fa fa-play-circle"/></div>
+                            <div class="btp_kpi_body">
+                                <span class="btp_kpi_value" t-esc="state.data.kpis.chantiers_en_cours"/>
+                                <span class="btp_kpi_label">En cours</span>
+                            </div>
+                        </div>
+
+                        <!-- En retard -->
+                        <div class="btp_kpi_card btp_kpi_retard" t-on-click="openChantiersRetard">
+                            <div class="btp_kpi_icon"><i class="fa fa-exclamation-triangle"/></div>
+                            <div class="btp_kpi_body">
+                                <span class="btp_kpi_value" t-esc="state.data.kpis.chantiers_retard"/>
+                                <span class="btp_kpi_label">En retard</span>
+                            </div>
+                        </div>
+
+                        <!-- Avancement moyen -->
+                        <div class="btp_kpi_card btp_kpi_avancement">
+                            <div class="btp_kpi_icon"><i class="fa fa-tasks"/></div>
+                            <div class="btp_kpi_body">
+                                <span class="btp_kpi_value"><t t-esc="state.data.kpis.avancement_moyen"/>%</span>
+                                <span class="btp_kpi_label">Avancement moyen</span>
+                            </div>
+                        </div>
+
+                        <!-- Montant contrats -->
+                        <div class="btp_kpi_card btp_kpi_montant" t-on-click="openSituations">
+                            <div class="btp_kpi_icon"><i class="fa fa-money"/></div>
+                            <div class="btp_kpi_body">
+                                <span class="btp_kpi_value" t-esc="fmtDH(state.data.kpis.montant_en_cours)"/>
+                                <span class="btp_kpi_label">Montant en cours</span>
+                            </div>
+                        </div>
+
+                        <!-- Pénalités -->
+                        <div class="btp_kpi_card btp_kpi_penalite">
+                            <div class="btp_kpi_icon"><i class="fa fa-gavel"/></div>
+                            <div class="btp_kpi_body">
+                                <span class="btp_kpi_value" t-esc="fmtDH(state.data.kpis.penalites_total)"/>
+                                <span class="btp_kpi_label">Pénalités de retard</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- ===== KPI CARDS ROW 2 ===== -->
+                    <div class="btp_kpi_grid btp_kpi_grid_small">
+
+                        <!-- Pointages du jour -->
+                        <div class="btp_kpi_card_sm" t-on-click="openPointages">
+                            <i class="fa fa-clock-o btp_sm_icon text-primary"/>
+                            <span class="btp_sm_value" t-esc="state.data.kpis.pointages_today"/>
+                            <span class="btp_sm_label">Pointages aujourd'hui</span>
+                        </div>
+
+                        <!-- Ressources -->
+                        <div class="btp_kpi_card_sm" t-on-click="openRessources">
+                            <i class="fa fa-users btp_sm_icon text-info"/>
+                            <span class="btp_sm_value" t-esc="state.data.kpis.total_ressources"/>
+                            <span class="btp_sm_label">Ressources</span>
+                        </div>
+
+                        <!-- Engins -->
+                        <div class="btp_kpi_card_sm" t-on-click="openEngins">
+                            <i class="fa fa-truck btp_sm_icon text-success"/>
+                            <span class="btp_sm_value">
+                                <t t-esc="state.data.kpis.engins_en_service"/>/<t t-esc="state.data.kpis.engins_total"/>
+                            </span>
+                            <span class="btp_sm_label">Engins en service</span>
+                        </div>
+
+                        <!-- Engins en panne -->
+                        <div class="btp_kpi_card_sm" t-on-click="openEngins">
+                            <i class="fa fa-wrench btp_sm_icon text-danger"/>
+                            <span class="btp_sm_value" t-esc="state.data.kpis.engins_panne"/>
+                            <span class="btp_sm_label">Engins en panne</span>
+                        </div>
+
+                        <!-- Appro en attente -->
+                        <div class="btp_kpi_card_sm" t-on-click="openApprovisionnements">
+                            <i class="fa fa-cube btp_sm_icon text-warning"/>
+                            <span class="btp_sm_value" t-esc="state.data.kpis.appro_attente"/>
+                            <span class="btp_sm_label">Appro. en attente</span>
+                        </div>
+
+                        <!-- Situations impayées -->
+                        <div class="btp_kpi_card_sm" t-on-click="openSituations">
+                            <i class="fa fa-file-text btp_sm_icon text-danger"/>
+                            <span class="btp_sm_value" t-esc="state.data.kpis.situations_impayees"/>
+                            <span class="btp_sm_label">Situations impayées</span>
+                        </div>
+
+                        <!-- Documents expirés -->
+                        <div class="btp_kpi_card_sm" t-on-click="openDocuments">
+                            <i class="fa fa-warning btp_sm_icon text-danger"/>
+                            <span class="btp_sm_value" t-esc="state.data.kpis.docs_expires"/>
+                            <span class="btp_sm_label">Documents expirés</span>
+                        </div>
+
+                        <!-- Documents bientôt expirés -->
+                        <div class="btp_kpi_card_sm" t-on-click="openDocuments">
+                            <i class="fa fa-calendar-times-o btp_sm_icon text-warning"/>
+                            <span class="btp_sm_value" t-esc="state.data.kpis.docs_bientot"/>
+                            <span class="btp_sm_label">Docs à renouveler</span>
+                        </div>
+
+                    </div>
+
+                    <!-- ===== CHARTS ROW ===== -->
+                    <div class="btp_charts_row">
+
+                        <!-- Répartition par état -->
+                        <div class="btp_chart_card">
+                            <h3><i class="fa fa-pie-chart"/> Répartition par état</h3>
+                            <div class="btp_chart_container">
+                                <canvas t-ref="statesChart"/>
+                            </div>
+                        </div>
+
+                        <!-- Avancement des chantiers -->
+                        <div class="btp_chart_card btp_chart_wide">
+                            <h3><i class="fa fa-bar-chart"/> Avancement des chantiers</h3>
+                            <div class="btp_chart_container btp_chart_tall">
+                                <canvas t-ref="avancementChart"/>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- ===== CHARTS ROW 2 ===== -->
+                    <div class="btp_charts_row">
+
+                        <!-- Types de marché -->
+                        <div class="btp_chart_card">
+                            <h3><i class="fa fa-briefcase"/> Types de marché</h3>
+                            <div class="btp_chart_container">
+                                <canvas t-ref="typesChart"/>
+                            </div>
+                        </div>
+
+                        <!-- Chantiers par ville -->
+                        <div class="btp_chart_card btp_chart_wide">
+                            <h3><i class="fa fa-map-marker"/> Chantiers par ville</h3>
+                            <div class="btp_chart_container">
+                                <canvas t-ref="villesChart"/>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- ===== ALERTES RETARD ===== -->
+                    <t t-if="state.data.alertes.length > 0">
+                        <div class="btp_section_card btp_section_alertes">
+                            <h3><i class="fa fa-exclamation-circle text-danger"/> Alertes — Chantiers en retard</h3>
+                            <div class="btp_table_wrap">
+                                <table class="btp_table">
+                                    <thead>
+                                        <tr>
+                                            <th>Référence</th>
+                                            <th>Chantier</th>
+                                            <th>Responsable</th>
+                                            <th>Retard</th>
+                                            <th>Pénalité</th>
+                                            <th>Avancement</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="state.data.alertes" t-as="a" t-key="a.id">
+                                            <tr>
+                                                <td class="fw-bold" t-esc="a.reference"/>
+                                                <td t-esc="a.name"/>
+                                                <td t-esc="a.responsable"/>
+                                                <td>
+                                                    <span class="badge bg-danger"><t t-esc="a.retard_jours"/> jours</span>
+                                                </td>
+                                                <td class="text-danger fw-bold" t-esc="fmtDH(a.penalite)"/>
+                                                <td>
+                                                    <div class="btp_mini_progress">
+                                                        <div class="btp_mini_bar" t-attf-style="width: {{ a.taux_avancement }}%"/>
+                                                    </div>
+                                                    <small><t t-esc="a.taux_avancement"/>%</small>
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-outline-primary"
+                                                            t-on-click="() => this.openChantier(a.id)">
+                                                        <i class="fa fa-eye"/>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </t>
+
+                    <!-- ===== TOP CHANTIERS ===== -->
+                    <t t-if="state.data.top_chantiers.length > 0">
+                        <div class="btp_section_card">
+                            <h3><i class="fa fa-trophy text-warning"/> Top chantiers par montant</h3>
+                            <div class="btp_table_wrap">
+                                <table class="btp_table">
+                                    <thead>
+                                        <tr>
+                                            <th>Réf.</th>
+                                            <th>Chantier</th>
+                                            <th>Ville</th>
+                                            <th>Responsable</th>
+                                            <th>Montant</th>
+                                            <th>Avancement</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="state.data.top_chantiers" t-as="c" t-key="c.id">
+                                            <tr>
+                                                <td class="fw-bold" t-esc="c.reference"/>
+                                                <td t-esc="c.name"/>
+                                                <td t-esc="c.ville"/>
+                                                <td t-esc="c.responsable"/>
+                                                <td class="fw-bold" t-esc="fmtDH(c.montant_total)"/>
+                                                <td>
+                                                    <div class="btp_mini_progress">
+                                                        <div t-attf-class="btp_mini_bar {{ c.retard_jours > 0 ? 'btp_mini_bar_danger' : '' }}"
+                                                             t-attf-style="width: {{ Math.min(c.taux_avancement, 100) }}%"/>
+                                                    </div>
+                                                    <small><t t-esc="c.taux_avancement"/>%</small>
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-outline-primary"
+                                                            t-on-click="() => this.openChantier(c.id)">
+                                                        <i class="fa fa-eye"/>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </t>
+
+                    <!-- ===== FOOTER ===== -->
+                    <div class="btp_dash_footer">
+                        <span>BTP Chantiers — Gestion Complète des Chantiers BTP Maroc</span>
+                    </div>
+
+                </div>
+            </t>
+        </div>
+    </t>
+
+</templates>

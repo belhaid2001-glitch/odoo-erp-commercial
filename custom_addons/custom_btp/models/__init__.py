@@ -14,3 +14,4 @@ from . import btp_document
 from . import btp_sous_traitant
 from . import btp_meteo
 from . import btp_reunion
+from . import btp_dashboard
