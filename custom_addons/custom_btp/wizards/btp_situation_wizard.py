@@ -38,7 +38,7 @@ class BtpSituationWizard(models.TransientModel):
         # Récupérer la dernière situation validée pour les cumuls
         derniere_situation = self.env['btp.situation'].search([
             ('chantier_id', '=', chantier.id),
-            ('state', '=', 'validee'),
+            ('state', '=', 'valide'),
         ], order='numero desc', limit=1)
 
         cumuls = {}

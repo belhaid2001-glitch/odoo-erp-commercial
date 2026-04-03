@@ -83,10 +83,8 @@ class BtpApiController(http.Controller):
                 vals['latitude'] = params['latitude']
             if params.get('longitude'):
                 vals['longitude'] = params['longitude']
-            if params.get('notes'):
-                vals['notes'] = params['notes']
             if params.get('photo_base64'):
-                vals['photo'] = params['photo_base64']
+                vals['photo_presence'] = params['photo_base64']
 
             pointage = request.env['btp.pointage'].sudo().create(vals)
 
@@ -133,8 +131,8 @@ class BtpApiController(http.Controller):
             # Calcul des KPI
             today = fields.Date.today()
             jours_restants = 0
-            if chantier.date_fin_prevue:
-                delta = chantier.date_fin_prevue - today
+            if chantier.date_fin_prev:
+                delta = chantier.date_fin_prev - today
                 jours_restants = max(0, delta.days)
 
             budget_total = sum(chantier.lot_ids.mapped('budget_prevu'))
@@ -155,7 +153,7 @@ class BtpApiController(http.Controller):
 
             # Alertes
             alertes = []
-            engins_panne = chantier.engin_ids.filtered(lambda e: e.state == 'panne')
+            engins_panne = chantier.engin_ids.filtered(lambda e: e.state == 'en_panne')
             if engins_panne:
                 alertes.append({
                     'type': 'danger',
@@ -169,7 +167,7 @@ class BtpApiController(http.Controller):
                     'message': "%d document(s) expirant bientôt" % len(docs_expires),
                 })
 
-            if jours_restants == 0 and chantier.state not in ('reception', 'garantie', 'cloture'):
+            if jours_restants == 0 and chantier.state not in ('reception_prov', 'reception_def', 'cloture'):
                 alertes.append({
                     'type': 'danger',
                     'message': "Délai contractuel dépassé !",
@@ -183,10 +181,10 @@ class BtpApiController(http.Controller):
                     'reference': chantier.reference,
                     'state': chantier.state,
                     'ville': chantier.ville,
-                    'avancement': chantier.avancement_global,
+                    'avancement': chantier.taux_avancement,
                 },
                 'kpi': {
-                    'avancement': chantier.avancement_global,
+                    'avancement': chantier.taux_avancement,
                     'budget_total': budget_total,
                     'cout_total': cout_total,
                     'taux_budget': round(taux_budget, 2),

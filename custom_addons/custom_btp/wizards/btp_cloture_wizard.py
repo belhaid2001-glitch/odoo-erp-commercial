@@ -61,7 +61,6 @@ class BtpClotureWizard(models.TransientModel):
             reception_def = self.env['btp.reception'].search([
                 ('chantier_id', '=', chantier.id),
                 ('type', '=', 'definitive'),
-                ('state', '=', 'valide'),
             ], limit=1)
             wiz.reception_definitive = bool(reception_def)
             if not reception_def:
@@ -84,7 +83,7 @@ class BtpClotureWizard(models.TransientModel):
             total_retenue = sum(
                 self.env['btp.situation'].search([
                     ('chantier_id', '=', chantier.id),
-                    ('state', '=', 'validee'),
+                    ('state', '=', 'valide'),
                 ]).mapped('montant_retenue_garantie')
             )
             wiz.retenue_restituable = total_retenue
@@ -119,7 +118,7 @@ class BtpClotureWizard(models.TransientModel):
         # Clôture
         chantier.write({
             'state': 'cloture',
-            'date_fin_reelle': self.date_cloture,
+            'date_fin_reel': self.date_cloture,
         })
 
         # Log
