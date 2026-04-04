@@ -125,12 +125,18 @@ class MohasibSaisieWizard(models.TransientModel):
         <div class="mohasib-welcome">
             <h3>🤖 Bienvenue, je suis <strong>Mohasib</strong> — محاسب</h3>
             <p>Votre expert-comptable IA spécialisé BTP Maroc.</p>
-            <p>Décrivez vos opérations en français ou darija, je m'occupe de la comptabilité :</p>
-            <ul>
-                <li>💬 "J'ai acheté 200 sacs de ciment à 48 DH pour chantier Hay Riad, payé cash"</li>
-                <li>💬 "Reçu 50 000 DH acompte client, chantier Tanger, par virement"</li>
-                <li>💬 "Payé maallem Ahmed 15 000 DH travaux plomberie"</li>
-                <li>💬 "Location pelleteuse 3 jours × 5 000 DH, chantier Casa"</li>
+            <p>Décrivez vos opérations en français ou darija, ou posez une question fiscale :</p>
+            <ul class="mohasib-examples">
+                <li>📝 "J'ai acheté 200 sacs de ciment à 48 DH pour chantier Hay Riad, payé cash"</li>
+                <li>📝 "Reçu 50 000 DH acompte client, chantier Tanger, par virement"</li>
+                <li>📝 "Payé maallem Ahmed 15 000 DH travaux plomberie"</li>
+                <li>📝 "Location pelleteuse 3 jours × 5 000 DH, chantier Casa"</li>
+            </ul>
+            <ul class="mohasib-examples">
+                <li>💬 "C'est quoi la TVA BTP au Maroc ?"</li>
+                <li>💬 "Comment comptabiliser la retenue de garantie ?"</li>
+                <li>💬 "Quel est le barème de l'IS ?"</li>
+                <li>💬 "Explique les cautions bancaires BTP"</li>
             </ul>
         </div>
         """
@@ -171,7 +177,16 @@ class MohasibSaisieWizard(models.TransientModel):
             'parsed_data': json.dumps(result, ensure_ascii=False, default=str),
         })
 
-        # Remplir les champs éditables
+        # Mode CONSEIL → afficher la réponse, rester en mode saisie
+        if result.get('is_conseil'):
+            self.write({
+                'response_html': self._format_conseil_html(result),
+                'state': 'input',
+                'user_input': False,
+            })
+            return self._reopen()
+
+        # Mode SAISIE → Remplir les champs éditables
         if result.get('success'):
             self.write({
                 'type_transaction': result.get('type_transaction'),
@@ -342,3 +357,19 @@ class MohasibSaisieWizard(models.TransientModel):
             badge = '<span class="badge bg-danger">Confiance faible</span>'
 
         return f'<div class="mohasib-response">{html}<br/>{badge}</div>'
+
+    @api.model
+    def _format_conseil_html(self, result):
+        """Formater un conseil fiscal en HTML stylisé."""
+        msg = result.get('message', '')
+        # Markdown-like → HTML
+        html = msg.replace('\n', '<br/>')
+        # Bold **text** → <strong>text</strong>
+        import re as _re
+        html = _re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', html)
+        return (
+            f'<div class="mohasib-conseil">'
+            f'<div class="mohasib-conseil-header">🏗️ Mohasib — Conseil Expert</div>'
+            f'<div class="mohasib-conseil-body">{html}</div>'
+            f'</div>'
+        )

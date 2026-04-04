@@ -1,29 +1,31 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Mohasib - Expert Comptable IA BTP Maroc',
-    'version': '17.0.1.0.0',
+    'version': '17.0.2.0.0',
     'category': 'Accounting',
-    'summary': 'Agent IA expert-comptable spécialisé BTP Maroc avec saisie en langage naturel',
+    'summary': 'Agent IA expert-comptable BTP Maroc : saisie NLP + conseil fiscal (TVA, IS, IR, PCM)',
     'description': """
 Mohasib - Assistant Comptable IA pour le BTP Marocain
+======================================================
 
 Agent intelligent qui comprend le langage naturel du directeur BTP
 et traduit automatiquement en ecritures comptables PCM.
 
-Module 1 - Saisie guidee en langage naturel: le directeur tape
-une phrase et Mohasib cree l'ecriture comptable correspondante.
+**Mode SAISIE** : le directeur tape une phrase et Mohasib cree
+l'ecriture comptable correspondante (achat materiaux, salaire,
+location engin, encaissement, sous-traitance...).
 
-Module 2 - Suivi par chantier: budget, depenses, encaissements.
+**Mode CONSEIL** : le directeur pose une question fiscale et Mohasib
+repond en expert (TVA BTP, IS, IR, retenues a la source, retenue
+de garantie, cautions bancaires, PCM, penalites...).
 
-Module 3 - Fiscalite marocaine BTP: TVA, IS, retenues a la source.
-
-Module 4 - Paie des ouvriers BTP: SMIG, CNSS, AMO, IR.
-
-Module 5 - Alertes intelligentes.
-
-Module 6 - Rapports et etats financiers.
-
-Module 7 - Gestion documentaire BTP.
+Module 1 - Saisie guidee en langage naturel
+Module 2 - Conseil fiscal/comptable expert BTP
+Module 3 - Suivi par chantier: budget, depenses, encaissements
+Module 4 - Fiscalite marocaine BTP: TVA, IS, retenues a la source
+Module 5 - Paie des ouvriers BTP: SMIG, CNSS, AMO, IR
+Module 6 - Alertes intelligentes
+Module 7 - Rapports et etats financiers
     """,
     'author': 'ERP Commercial',
     'depends': [

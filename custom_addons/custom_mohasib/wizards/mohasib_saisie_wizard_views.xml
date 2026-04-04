@@ -6,7 +6,7 @@
         <field name="name">mohasib.saisie.wizard.form</field>
         <field name="model">mohasib.saisie.wizard</field>
         <field name="arch" type="xml">
-            <form string="🤖 Mohasib — Saisie guidée">
+            <form string="Mohasib — محاسب Expert-Comptable BTP">
                 <div class="mohasib-wizard">
 
                     <!-- Sélection du chantier par défaut -->
@@ -29,9 +29,9 @@
                     </div>
 
                     <!-- Zone de saisie (mode INPUT) -->
-                    <group invisible="state != 'input'" class="mohasib-input-zone">
-                        <field name="user_input" nolabel="1"
-                               placeholder="Ex: J'ai acheté 200 sacs de ciment à 48 DH pour chantier Hay Riad, payé cash..."
+                    <group invisible="state != 'input'" class="mohasib-input-zone" col="1">
+                        <field name="user_input" nolabel="1" widget="text"
+                               placeholder="Tapez votre opération ou question... Ex: C'est quoi la TVA BTP ? / Acheté 200 sacs ciment à 48 DH, chantier Hay Riad"
                                class="mohasib-input"/>
                     </group>
 
