@@ -55,6 +55,27 @@ class ResPartnerAI(models.Model):
         return self._open_ai_wizard('contacts')
 
 
+class BtpChantierAI(models.Model):
+    _inherit = 'btp.chantier'
+
+    def action_open_ai_wizard(self):
+        return self._open_ai_wizard('btp')
+
+
+class BtpSituationAI(models.Model):
+    _inherit = 'btp.situation'
+
+    def action_open_ai_wizard(self):
+        return self._open_ai_wizard('btp')
+
+
+class BtpApprovisionnementAI(models.Model):
+    _inherit = 'btp.approvisionnement'
+
+    def action_open_ai_wizard(self):
+        return self._open_ai_wizard('btp')
+
+
 class BaseModelAI(models.AbstractModel):
     """Inject _open_ai_wizard into base model so all models can use it."""
     _inherit = 'base'
@@ -68,7 +89,7 @@ class BaseModelAI(models.AbstractModel):
         })
         return {
             'type': 'ir.actions.act_window',
-            'name': '🤖 Assistant IA',
+            'name': '🏗️ Mohasib — Expert-Comptable IA',
             'res_model': 'ai.wizard',
             'res_id': wizard.id,
             'view_mode': 'form',

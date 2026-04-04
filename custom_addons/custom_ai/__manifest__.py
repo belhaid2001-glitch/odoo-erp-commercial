@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 {
-    'name': 'Intelligence Artificielle ERP',
-    'version': '17.0.1.0.0',
+    'name': 'Mohasib — Expert-Comptable IA BTP',
+    'version': '17.0.2.0.0',
     'category': 'Extra Tools',
-    'summary': 'Assistant IA intégré à tous les modules - suggestions, analyses et automatisations intelligentes',
+    'summary': 'Mohasib : Expert-comptable IA spécialisé BTP Maroc — PCM, TVA, IS, IR, écritures comptables',
     'description': """
-Intelligence Artificielle ERP
-==============================
-* Assistant IA intégré dans chaque module
-* Suggestions intelligentes (prix, descriptions, actions)
-* Analyse prédictive (paiement, stock, CRM)
-* Génération automatique de texte (évaluations, relances)
+Mohasib — Expert-Comptable IA BTP
+====================================
+* Assistant IA expert-comptable marocain spécialisé BTP
+* Double mode : CONSEIL fiscal et SAISIE COMPTABLE (PCM)
+* Détection d'intention automatique (question → conseil, opération → écriture)
+* Plan Comptable Marocain : TVA 20%, IS, IR, retenues à la source
+* Analyse financière par chantier (marge, retard, pénalités)
 * Fonctionne en mode autonome (règles) ou avec API OpenAI/Ollama
     """,
     'author': 'ERP Commercial',
@@ -23,6 +24,7 @@ Intelligence Artificielle ERP
         'account',
         'hr',
         'crm',
+        'custom_btp',
     ],
     'data': [
         'security/ir.model.access.csv',

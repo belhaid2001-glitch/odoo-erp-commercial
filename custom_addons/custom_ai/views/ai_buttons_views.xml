@@ -114,4 +114,49 @@
         </field>
     </record>
 
+    <!-- ==================== BTP CHANTIER - MOHASIB BUTTON ==================== -->
+    <record id="view_btp_chantier_form_ai" model="ir.ui.view">
+        <field name="name">btp.chantier.form.ai</field>
+        <field name="model">btp.chantier</field>
+        <field name="inherit_id" ref="custom_btp.view_btp_chantier_form"/>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_open_ai_wizard" string="🏗️ Mohasib"
+                        type="object" class="btn-info"
+                        help="Expert-comptable IA : analyse financière, conseil fiscal, écritures PCM"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ==================== BTP SITUATION - MOHASIB BUTTON ==================== -->
+    <record id="view_btp_situation_form_ai" model="ir.ui.view">
+        <field name="name">btp.situation.form.ai</field>
+        <field name="model">btp.situation</field>
+        <field name="inherit_id" ref="custom_btp.view_btp_situation_form"/>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_open_ai_wizard" string="🏗️ Mohasib"
+                        type="object" class="btn-info"
+                        help="Mohasib : comptabilisation de la situation, TVA, retenue de garantie"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ==================== BTP APPROVISIONNEMENT - MOHASIB BUTTON ==================== -->
+    <record id="view_btp_approvisionnement_form_ai" model="ir.ui.view">
+        <field name="name">btp.approvisionnement.form.ai</field>
+        <field name="model">btp.approvisionnement</field>
+        <field name="inherit_id" ref="custom_btp.view_btp_approvisionnement_form"/>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_open_ai_wizard" string="🏗️ Mohasib"
+                        type="object" class="btn-info"
+                        help="Mohasib : comptabilisation achat, TVA récupérable, fournisseur"/>
+            </xpath>
+        </field>
+    </record>
+
 </odoo>

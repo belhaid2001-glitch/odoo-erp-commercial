@@ -92,9 +92,26 @@ class AIMixin(models.AbstractModel):
             return self._ai_builtin_generate(prompt, context_data, 'general')
 
         system_msg = (
-            "Tu es un assistant IA intégré dans un ERP Odoo. "
-            "Réponds en français de manière concise et professionnelle. "
-            "Fournis des suggestions concrètes et actionnables."
+            "Tu es Mohasib, un expert-comptable marocain spécialisé dans le secteur du BTP "
+            "(bâtiment et travaux publics).\n\n"
+            "Tu assistes des directeurs d'entreprises marocaines en :\n"
+            "- comptabilité (PCM marocain)\n"
+            "- fiscalité (TVA 20%, IS, IR, retenues à la source)\n"
+            "- gestion de chantier\n\n"
+            "⚠️ RÈGLES OBLIGATOIRES :\n"
+            "1. Détecte l'intention AVANT de répondre :\n"
+            "   - Question (?, comment, pourquoi, est-ce) → Mode CONSEIL\n"
+            "   - Opération (paiement, facture, achat, salaire, encaissement) → Mode SAISIE COMPTABLE\n"
+            "   - Ambigu → Pose UNE question de clarification\n\n"
+            "2. Mode CONSEIL : répondre avec précision selon la réglementation marocaine, "
+            "expliquer simplement, donner les cas d'application, conclusion claire. "
+            "INTERDICTION de générer des écritures comptables ou d'inventer des montants.\n\n"
+            "3. Mode SAISIE COMPTABLE : générer une écriture comptable selon le PCM marocain "
+            "avec comptes (numéro + intitulé), débit/crédit, libellé. "
+            "INTERDICTION de mélanger avec des explications fiscales.\n\n"
+            "4. Réponds en français, de manière concise et professionnelle.\n"
+            "5. Utilise les comptes du PCM marocain (classe 1 à 8).\n"
+            "6. Pour les montants en devise, utilise MAD (dirham marocain)."
         )
 
         messages = [
@@ -185,13 +202,30 @@ class AIMixin(models.AbstractModel):
         elif module == 'stock' or 'stock' in prompt_lower or 'inventaire' in prompt_lower:
             result = self._gen_stock_analysis(ctx)
 
+        # --- BTP / Mohasib ---
+        elif module == 'btp' or 'chantier' in prompt_lower or 'btp' in prompt_lower:
+            result = self._gen_btp_mohasib(prompt, prompt_lower, ctx)
+
+        # --- Moroccan accounting questions (Mohasib) ---
+        elif any(kw in prompt_lower for kw in [
+            'tva', 'is ', 'ir ', 'impôt', 'impot', 'retenue', 'pcm',
+            'comptab', 'fiscal', 'taxe', 'caution', 'garantie',
+            'décompte', 'decompte', 'situation', 'attachement',
+            'écriture', 'ecriture', 'journal', 'compte',
+        ]):
+            result = self._gen_btp_mohasib(prompt, prompt_lower, ctx)
+
         # --- General ---
         else:
             result = (
-                "🤖 Analyse IA :\n"
+                "🤖 Mohasib — Expert-Comptable BTP :\n\n"
                 f"Module : {module}\n"
-                "L'assistant IA a analysé les données disponibles.\n"
-                "Pour des résultats plus précis, configurez une clé API OpenAI "
+                "Je suis Mohasib, votre expert-comptable spécialisé BTP.\n"
+                "Posez-moi une question sur :\n"
+                "• La comptabilité selon le PCM marocain\n"
+                "• La fiscalité (TVA, IS, IR, retenues à la source)\n"
+                "• La gestion financière de chantier\n\n"
+                "💡 Pour des réponses avancées, configurez une clé API OpenAI "
                 "dans Configuration > IA."
             )
 
@@ -568,6 +602,487 @@ class AIMixin(models.AbstractModel):
                             'text': 'Comparer avec au moins 3 fournisseurs pour les meilleurs tarifs'})
         suggestions.append({'type': 'info', 'icon': 'fa-calendar-check-o',
                             'text': 'Vérifier les délais de livraison du fournisseur'})
+        return suggestions
+
+    # =================================================================
+    #  MOHASIB — Expert-Comptable BTP Maroc (Builtin)
+    # =================================================================
+    @api.model
+    def _gen_btp_mohasib(self, prompt, prompt_lower, ctx):
+        """Mohasib: Expert-comptable marocain spécialisé BTP.
+        Détecte l'intention (CONSEIL vs SAISIE COMPTABLE) et répond."""
+
+        # --- Intent detection ---
+        is_question = any(kw in prompt_lower for kw in [
+            '?', 'comment', 'pourquoi', 'est-ce', 'est ce', 'quand',
+            'quel', 'quelle', 'quels', 'quelles', 'combien',
+            'explique', 'c\'est quoi', 'différence', 'difference',
+            'obligation', 'dois-je', 'faut-il', 'peut-on',
+        ])
+        is_entry = any(kw in prompt_lower for kw in [
+            'paiement', 'facture', 'encaissement', 'achat', 'salaire',
+            'écriture', 'ecriture', 'comptabilise', 'enregistre',
+            'règlement', 'reglement', 'virement', 'chèque', 'cheque',
+            'décompte', 'decompte', 'situation', 'caution',
+            'retenue de garantie', 'avance', 'acompte',
+        ])
+
+        if is_question and not is_entry:
+            return self._mohasib_conseil(prompt_lower, ctx)
+        elif is_entry and not is_question:
+            return self._mohasib_saisie(prompt_lower, ctx)
+        elif is_entry and is_question:
+            # Both detected: question about an operation → CONSEIL
+            return self._mohasib_conseil(prompt_lower, ctx)
+        else:
+            # Ambiguous - try BTP chantier analysis if context available
+            if ctx.get('chantier_name') or ctx.get('name'):
+                return self._mohasib_analyse_chantier(ctx)
+            return (
+                "🏗️ Mohasib — Expert-Comptable BTP\n\n"
+                "Je n'ai pas bien compris votre demande. "
+                "Précisez-moi :\n\n"
+                "📌 S'agit-il d'une **question** sur la réglementation ?\n"
+                "   → Je vous donnerai un CONSEIL clair.\n\n"
+                "📌 Ou d'une **opération** à comptabiliser ?\n"
+                "   → Je produirai l'ÉCRITURE COMPTABLE selon le PCM.\n\n"
+                "Exemples :\n"
+                "• « Comment fonctionne la retenue de garantie BTP ? »\n"
+                "• « Comptabilise le paiement de la situation n°3 du chantier X, "
+                "montant 500 000 MAD HT, TVA 20% »"
+            )
+
+    @api.model
+    def _mohasib_conseil(self, prompt_lower, ctx):
+        """Mode CONSEIL: répondre selon la réglementation marocaine."""
+        result = "🏗️ Mohasib — Mode CONSEIL\n\n"
+
+        # --- TVA BTP ---
+        if 'tva' in prompt_lower:
+            result += (
+                "📋 TVA dans le secteur BTP au Maroc\n\n"
+                "• Taux normal : 20% (travaux de construction)\n"
+                "• Taux réduit 14% : travaux immobiliers pour logement social\n"
+                "• Taux réduit 10% : certaines opérations de promotion immobilière\n"
+                "• Exonération : exportation de services BTP\n\n"
+                "📌 Cas d'application BTP :\n"
+                "• Les décomptes provisoires et définitifs sont soumis à la TVA\n"
+                "• La retenue de garantie (10%) est soumise à la TVA\n"
+                "• Les avances sur marchés sont soumises à la TVA\n"
+                "• Le maître d'ouvrage public verse la TVA à l'État "
+                "(mécanisme d'autoliquidation pour les marchés publics)\n\n"
+                "⚠️ Fait générateur : encaissement (régime de droit commun) "
+                "ou débit (sur option)\n\n"
+                "✅ Conclusion : Appliquez 20% sur vos décomptes sauf cas spécifiques. "
+                "Vérifiez le cahier des charges pour le régime applicable."
+            )
+
+        # --- IS ---
+        elif any(kw in prompt_lower for kw in ['is ', 'impôt sur les sociétés', 'impot sur les societes']):
+            result += (
+                "📋 Impôt sur les Sociétés (IS) — Entreprise BTP\n\n"
+                "Barème progressif (Loi de Finances) :\n"
+                "• Bénéfice ≤ 300 000 MAD → 10%\n"
+                "• 300 001 à 1 000 000 MAD → 20%\n"
+                "• 1 000 001 à 100 000 000 MAD → 31%\n"
+                "• > 100 000 000 MAD → 35%\n\n"
+                "📌 Particularités BTP :\n"
+                "• Cotisation minimale : 0,50% du CA (min 3 000 MAD)\n"
+                "• Provisions pour risques de chantier : déductibles si justifiées\n"
+                "• Provisions pour garantie décennale : déductibles\n"
+                "• Les pénalités de retard subies ne sont PAS déductibles fiscalement\n\n"
+                "✅ Conclusion : Planifiez vos acomptes IS trimestriellement "
+                "et provisionnez vos risques chantier."
+            )
+
+        # --- IR / Salaires ---
+        elif any(kw in prompt_lower for kw in ['ir ', 'salaire', 'paie', 'revenu']):
+            result += (
+                "📋 IR sur salaires — Personnel BTP au Maroc\n\n"
+                "Barème annuel IR :\n"
+                "• 0 à 30 000 MAD → Exonéré\n"
+                "• 30 001 à 50 000 → 10%\n"
+                "• 50 001 à 60 000 → 20%\n"
+                "• 60 001 à 80 000 → 30%\n"
+                "• 80 001 à 180 000 → 34%\n"
+                "• > 180 000 → 38%\n\n"
+                "📌 Spécificités BTP :\n"
+                "• Indemnités de déplacement chantier : exonérées (justifiées)\n"
+                "• Prime de panier : exonérée jusqu'à 20 MAD/jour\n"
+                "• Indemnité d'outillage : exonérée si justifiée\n"
+                "• Heures supplémentaires : majoration 25% (jour), 50% (nuit/weekend)\n"
+                "• CNSS employeur : 26,60% (dont AMO)\n"
+                "• CNSS salarié : 6,74%\n\n"
+                "✅ Conclusion : Gérez séparément les indemnités exonérées "
+                "pour optimiser la charge fiscale."
+            )
+
+        # --- Retenue à la source ---
+        elif any(kw in prompt_lower for kw in ['retenue à la source', 'retenue a la source', 'ras']):
+            result += (
+                "📋 Retenue à la Source (RAS) — BTP Maroc\n\n"
+                "• Taux standard : 10% sur les honoraires et prestations\n"
+                "• Marchés publics : RAS de 10% sur rémunération des non-résidents\n"
+                "• Revenus fonciers : 15%\n\n"
+                "📌 Application BTP :\n"
+                "• Sous-traitance : vérifiez si le sous-traitant est assujetti\n"
+                "• Location d'engins : RAS si le loueur est personne physique\n"
+                "• Bureau d'études : RAS de 10%\n\n"
+                "✅ Conclusion : Pratiquez la RAS et déclarez trimestriellement. "
+                "Conservez les attestations."
+            )
+
+        # --- Retenue de garantie ---
+        elif any(kw in prompt_lower for kw in ['retenue de garantie', 'garantie']):
+            result += (
+                "📋 Retenue de Garantie — Marchés BTP\n\n"
+                "• Taux : généralement 10% du montant de chaque décompte\n"
+                "• But : garantir la bonne exécution et la levée des réserves\n"
+                "• Durée : retenue jusqu'à la réception définitive (1 an après réception provisoire)\n"
+                "• Substitution : peut être remplacée par une caution bancaire\n\n"
+                "📌 Comptabilisation (PCM) :\n"
+                "• Lors de la facturation : enregistrer en 3424 « Clients, retenues de garantie »\n"
+                "• Lors de la libération : solder le 3424 par la trésorerie (5141)\n\n"
+                "⚠️ La retenue de garantie est soumise à la TVA au moment de la facturation, "
+                "pas au moment de la libération.\n\n"
+                "✅ Conclusion : Suivez chaque retenue par chantier et "
+                "planifiez la caution bancaire si besoin de trésorerie."
+            )
+
+        # --- Caution ---
+        elif 'caution' in prompt_lower:
+            result += (
+                "📋 Cautions Bancaires BTP — Maroc\n\n"
+                "Types de cautions :\n"
+                "• Caution provisoire : 1,5% du montant estimé du marché\n"
+                "• Caution définitive : 3% du montant du marché\n"
+                "• Caution de retenue de garantie : 10% (substitution)\n"
+                "• Caution d'avance : 100% du montant de l'avance\n\n"
+                "📌 Comptabilisation (PCM) :\n"
+                "• Compte 5141 - Banque (débit des frais de dossier)\n"
+                "• Compte 6147 - Services bancaires (commissions)\n"
+                "• Hors bilan : engagement donné (classe 0)\n\n"
+                "✅ Conclusion : Provisionnez les commissions bancaires "
+                "et suivez les dates d'échéance des cautions."
+            )
+
+        # --- PCM general ---
+        elif 'pcm' in prompt_lower or 'plan comptable' in prompt_lower:
+            result += (
+                "📋 Plan Comptable Marocain (PCM) — Comptes BTP courants\n\n"
+                "Classe 1 — Financement permanent :\n"
+                "• 1111 : Capital social\n"
+                "• 1481 : Emprunts\n"
+                "• 1511 : Provisions pour litiges chantier\n\n"
+                "Classe 2 — Actif immobilisé :\n"
+                "• 2332 : Matériel et outillage BTP\n"
+                "• 2340 : Matériel de transport\n"
+                "• 2380 : Installations de chantier\n\n"
+                "Classe 3 — Actif circulant :\n"
+                "• 3121 : Matières premières (ciment, acier...)\n"
+                "• 3421 : Clients\n"
+                "• 3424 : Clients, retenues de garantie\n"
+                "• 3425 : Clients, décomptes à établir\n"
+                "• 34551 : État TVA récupérable\n\n"
+                "Classe 4 — Passif circulant :\n"
+                "• 4411 : Fournisseurs\n"
+                "• 4437 : RAS à reverser\n"
+                "• 4455 : État TVA facturée\n"
+                "• 4457 : État IS\n\n"
+                "Classe 5 — Trésorerie :\n"
+                "• 5141 : Banque\n"
+                "• 5161 : Caisse\n\n"
+                "Classe 6 — Charges :\n"
+                "• 6121 : Achats matières premières\n"
+                "• 6125 : Achats de sous-traitance\n"
+                "• 6131 : Location matériel\n"
+                "• 6142 : Transport\n"
+                "• 6171 : Salaires personnel chantier\n\n"
+                "Classe 7 — Produits :\n"
+                "• 7111 : Travaux facturés\n"
+                "• 7118 : Travaux en cours (production stockée)\n\n"
+                "✅ Conclusion : Utilisez des sous-comptes analytiques par chantier."
+            )
+
+        # --- Décompte / Situation ---
+        elif any(kw in prompt_lower for kw in ['décompte', 'decompte', 'situation']):
+            result += (
+                "📋 Décomptes et Situations — Gestion BTP\n\n"
+                "Un décompte (ou situation) est le document de facturation progressive "
+                "d'un marché BTP.\n\n"
+                "📌 Types :\n"
+                "• Décompte provisoire : facturation mensuelle des travaux réalisés\n"
+                "• Décompte définitif : solde final après réception\n"
+                "• Décompte général et définitif (DGD) : arrêt des comptes\n\n"
+                "📌 Éléments d'un décompte :\n"
+                "• Montant brut HT des travaux\n"
+                "• - Retenue de garantie (10%)\n"
+                "• - Avance remboursée (prorata)\n"
+                "• + TVA (20%)\n"
+                "• - Retenue à la source (si applicable)\n"
+                "• = Net à payer\n\n"
+                "✅ Conclusion : Chaque situation doit être rattachée au chantier "
+                "et validée par le maître d'œuvre."
+            )
+
+        # --- Generic BTP question ---
+        else:
+            chantier = ctx.get('chantier_name', ctx.get('name', ''))
+            if chantier:
+                result += self._mohasib_analyse_chantier(ctx)
+            else:
+                result += (
+                    "Je suis Mohasib, votre expert-comptable BTP.\n\n"
+                    "Posez-moi une question précise sur :\n"
+                    "• TVA BTP (taux, fait générateur, autoliquidation)\n"
+                    "• IS (barème, cotisation minimale, provisions)\n"
+                    "• IR / Salaires (barème, indemnités exonérées, CNSS)\n"
+                    "• Retenues à la source\n"
+                    "• Retenue de garantie (comptabilisation, libération)\n"
+                    "• Cautions bancaires BTP\n"
+                    "• Plan Comptable Marocain (comptes BTP)\n"
+                    "• Décomptes et situations\n\n"
+                    "Ou décrivez une opération à comptabiliser."
+                )
+        return result
+
+    @api.model
+    def _mohasib_saisie(self, prompt_lower, ctx):
+        """Mode SAISIE COMPTABLE: générer des écritures PCM."""
+        result = "🏗️ Mohasib — Mode SAISIE COMPTABLE (PCM)\n\n"
+
+        amount = ctx.get('amount_total', ctx.get('montant', 0))
+        partner = ctx.get('partner_name', ctx.get('client', 'Client'))
+
+        # --- Paiement situation / décompte ---
+        if any(kw in prompt_lower for kw in ['décompte', 'decompte', 'situation']):
+            ht = amount if amount else 100000
+            tva = ht * 0.20
+            rg = ht * 0.10  # retenue de garantie
+            net = ht + tva - rg
+            result += (
+                f"📄 Écriture : Facturation situation de travaux\n"
+                f"   Montant HT : {ht:,.2f} MAD\n\n"
+                f"┌────────────┬──────────────────────────────┬──────────────┬──────────────┐\n"
+                f"│ Compte     │ Intitulé                     │ Débit (MAD)  │ Crédit (MAD) │\n"
+                f"├────────────┼──────────────────────────────┼──────────────┼──────────────┤\n"
+                f"│ 3421       │ Clients                      │ {net:>12,.2f} │              │\n"
+                f"│ 3424       │ Clients, retenue de garantie │ {rg:>12,.2f} │              │\n"
+                f"│ 7111       │ Travaux facturés             │              │ {ht:>12,.2f} │\n"
+                f"│ 4455       │ État, TVA facturée           │              │ {tva:>12,.2f} │\n"
+                f"└────────────┴──────────────────────────────┴──────────────┴──────────────┘\n\n"
+                f"Libellé : Situation de travaux — {partner}"
+            )
+
+        # --- Encaissement ---
+        elif any(kw in prompt_lower for kw in ['encaissement', 'reçu', 'versement']):
+            montant = amount if amount else 50000
+            result += (
+                f"📄 Écriture : Encaissement client\n"
+                f"   Montant : {montant:,.2f} MAD\n\n"
+                f"┌────────────┬──────────────────────────────┬──────────────┬──────────────┐\n"
+                f"│ Compte     │ Intitulé                     │ Débit (MAD)  │ Crédit (MAD) │\n"
+                f"├────────────┼──────────────────────────────┼──────────────┼──────────────┤\n"
+                f"│ 5141       │ Banque                       │ {montant:>12,.2f} │              │\n"
+                f"│ 3421       │ Clients                      │              │ {montant:>12,.2f} │\n"
+                f"└────────────┴──────────────────────────────┴──────────────┴──────────────┘\n\n"
+                f"Libellé : Encaissement — {partner}"
+            )
+
+        # --- Achat matériaux ---
+        elif any(kw in prompt_lower for kw in ['achat', 'fournisseur', 'matéri', 'materi']):
+            ht = amount if amount else 50000
+            tva = ht * 0.20
+            ttc = ht + tva
+            result += (
+                f"📄 Écriture : Achat matériaux/fournitures chantier\n"
+                f"   Montant HT : {ht:,.2f} MAD\n\n"
+                f"┌────────────┬──────────────────────────────┬──────────────┬──────────────┐\n"
+                f"│ Compte     │ Intitulé                     │ Débit (MAD)  │ Crédit (MAD) │\n"
+                f"├────────────┼──────────────────────────────┼──────────────┼──────────────┤\n"
+                f"│ 6121       │ Achats matières premières     │ {ht:>12,.2f} │              │\n"
+                f"│ 34551      │ État, TVA récupérable         │ {tva:>12,.2f} │              │\n"
+                f"│ 4411       │ Fournisseurs                 │              │ {ttc:>12,.2f} │\n"
+                f"└────────────┴──────────────────────────────┴──────────────┴──────────────┘\n\n"
+                f"Libellé : Achat matériaux — {partner}"
+            )
+
+        # --- Salaire ---
+        elif any(kw in prompt_lower for kw in ['salaire', 'paie', 'rémunération', 'remuneration']):
+            brut = amount if amount else 8000
+            cnss_sal = brut * 0.0674
+            ir_approx = max(0, (brut - cnss_sal - 2500) * 0.10)  # simplified
+            net = brut - cnss_sal - ir_approx
+            cnss_pat = brut * 0.2660
+            result += (
+                f"📄 Écriture : Paie mensuelle personnel chantier\n"
+                f"   Salaire brut : {brut:,.2f} MAD\n\n"
+                f"┌────────────┬──────────────────────────────┬──────────────┬──────────────┐\n"
+                f"│ Compte     │ Intitulé                     │ Débit (MAD)  │ Crédit (MAD) │\n"
+                f"├────────────┼──────────────────────────────┼──────────────┼──────────────┤\n"
+                f"│ 6171       │ Salaires personnel chantier  │ {brut:>12,.2f} │              │\n"
+                f"│ 6174       │ Charges sociales (patronales)│ {cnss_pat:>12,.2f} │              │\n"
+                f"│ 4441       │ CNSS salarié                 │              │ {cnss_sal:>12,.2f} │\n"
+                f"│ 4453       │ État, IR à payer             │              │ {ir_approx:>12,.2f} │\n"
+                f"│ 4441       │ CNSS patronale               │              │ {cnss_pat:>12,.2f} │\n"
+                f"│ 4432       │ Personnel, rémunération due  │              │ {net:>12,.2f} │\n"
+                f"└────────────┴──────────────────────────────┴──────────────┴──────────────┘\n\n"
+                f"Libellé : Bulletin de paie — Personnel chantier"
+            )
+
+        # --- Règlement fournisseur ---
+        elif any(kw in prompt_lower for kw in ['règlement', 'reglement', 'paiement', 'virement', 'chèque', 'cheque']):
+            montant = amount if amount else 50000
+            result += (
+                f"📄 Écriture : Règlement fournisseur\n"
+                f"   Montant : {montant:,.2f} MAD\n\n"
+                f"┌────────────┬──────────────────────────────┬──────────────┬──────────────┐\n"
+                f"│ Compte     │ Intitulé                     │ Débit (MAD)  │ Crédit (MAD) │\n"
+                f"├────────────┼──────────────────────────────┼──────────────┼──────────────┤\n"
+                f"│ 4411       │ Fournisseurs                 │ {montant:>12,.2f} │              │\n"
+                f"│ 5141       │ Banque                       │              │ {montant:>12,.2f} │\n"
+                f"└────────────┴──────────────────────────────┴──────────────┴──────────────┘\n\n"
+                f"Libellé : Règlement fournisseur — {partner}"
+            )
+
+        # --- Caution bancaire ---
+        elif 'caution' in prompt_lower:
+            montant = amount if amount else 30000
+            commission = montant * 0.02
+            result += (
+                f"📄 Écriture : Caution bancaire chantier\n"
+                f"   Montant de la caution : {montant:,.2f} MAD\n\n"
+                f"┌────────────┬──────────────────────────────┬──────────────┬──────────────┐\n"
+                f"│ Compte     │ Intitulé                     │ Débit (MAD)  │ Crédit (MAD) │\n"
+                f"├────────────┼──────────────────────────────┼──────────────┼──────────────┤\n"
+                f"│ 6147       │ Services bancaires           │ {commission:>12,.2f} │              │\n"
+                f"│ 5141       │ Banque                       │              │ {commission:>12,.2f} │\n"
+                f"└────────────┴──────────────────────────────┴──────────────┴──────────────┘\n\n"
+                f"Engagement hors bilan : Caution de {montant:,.2f} MAD\n"
+                f"Libellé : Commission caution bancaire"
+            )
+
+        # --- Retenue de garantie libération ---
+        elif 'retenue de garantie' in prompt_lower or 'libération' in prompt_lower:
+            montant = amount if amount else 100000
+            result += (
+                f"📄 Écriture : Libération retenue de garantie\n"
+                f"   Montant : {montant:,.2f} MAD\n\n"
+                f"┌────────────┬──────────────────────────────┬──────────────┬──────────────┐\n"
+                f"│ Compte     │ Intitulé                     │ Débit (MAD)  │ Crédit (MAD) │\n"
+                f"├────────────┼──────────────────────────────┼──────────────┼──────────────┤\n"
+                f"│ 5141       │ Banque                       │ {montant:>12,.2f} │              │\n"
+                f"│ 3424       │ Clients, retenue de garantie │              │ {montant:>12,.2f} │\n"
+                f"└────────────┴──────────────────────────────┴──────────────┴──────────────┘\n\n"
+                f"Libellé : Libération retenue de garantie — {partner}"
+            )
+
+        # --- Avance chantier ---
+        elif any(kw in prompt_lower for kw in ['avance', 'acompte']):
+            montant = amount if amount else 200000
+            result += (
+                f"📄 Écriture : Avance sur marché\n"
+                f"   Montant : {montant:,.2f} MAD\n\n"
+                f"┌────────────┬──────────────────────────────┬──────────────┬──────────────┐\n"
+                f"│ Compte     │ Intitulé                     │ Débit (MAD)  │ Crédit (MAD) │\n"
+                f"├────────────┼──────────────────────────────┼──────────────┼──────────────┤\n"
+                f"│ 5141       │ Banque                       │ {montant:>12,.2f} │              │\n"
+                f"│ 4421       │ Avances reçues clients       │              │ {montant:>12,.2f} │\n"
+                f"└────────────┴──────────────────────────────┴──────────────┴──────────────┘\n\n"
+                f"Libellé : Avance sur marché — {partner}"
+            )
+
+        # --- Generic entry ---
+        else:
+            result += (
+                "Précisez le type d'opération à comptabiliser :\n"
+                "• Facturation de situation/décompte\n"
+                "• Encaissement client\n"
+                "• Achat matériaux\n"
+                "• Salaire personnel chantier\n"
+                "• Règlement fournisseur\n"
+                "• Caution bancaire\n"
+                "• Libération retenue de garantie\n"
+                "• Avance sur marché\n\n"
+                "Indiquez aussi le montant et le nom du tiers."
+            )
+        return result
+
+    @api.model
+    def _mohasib_analyse_chantier(self, ctx):
+        """Analyse financière d'un chantier BTP."""
+        name = ctx.get('chantier_name', ctx.get('name', 'Chantier'))
+        montant = ctx.get('montant_total', ctx.get('amount_total', 0))
+        avancement = ctx.get('taux_avancement', 0)
+        retard = ctx.get('retard_jours', 0)
+        penalite = ctx.get('penalite_retard', 0)
+        state = ctx.get('state', '')
+
+        result = f"🏗️ Mohasib — Analyse Financière Chantier\n\n"
+        result += f"📋 Chantier : {name}\n"
+        if montant:
+            result += f"• Montant du marché : {montant:,.2f} MAD\n"
+        result += f"• Avancement : {avancement}%\n"
+        result += f"• État : {state}\n\n"
+
+        if retard > 0:
+            result += f"⚠️ ALERTE : Retard de {retard} jours\n"
+            if penalite:
+                result += f"• Pénalité estimée : {penalite:,.2f} MAD\n"
+            taux_penalite = montant * 0.001 if montant else 0
+            result += f"• Pénalité journalière (1‰) : {taux_penalite:,.2f} MAD/jour\n"
+            result += (
+                "\n📌 Recommandations :\n"
+                "• Provisionner les pénalités (PCM 6195)\n"
+                "• Documenter les causes du retard (ordres de service)\n"
+                "• Vérifier les clauses contractuelles de prolongation\n"
+            )
+
+        if montant and avancement:
+            facture_prevu = montant * avancement / 100
+            result += f"\n💰 Montant à facturer (théorique) : {facture_prevu:,.2f} MAD HT\n"
+            result += f"• TVA 20% : {facture_prevu * 0.20:,.2f} MAD\n"
+            result += f"• Retenue garantie 10% : {facture_prevu * 0.10:,.2f} MAD\n"
+            net = facture_prevu * 1.20 - facture_prevu * 0.10
+            result += f"• Net à percevoir : {net:,.2f} MAD\n"
+
+        result += (
+            "\n✅ Conseil Mohasib : Tenez une comptabilité analytique "
+            "par chantier pour un suivi précis des marges."
+        )
+        return result
+
+    @api.model
+    def _suggest_btp(self, data):
+        """Suggestions BTP."""
+        suggestions = []
+        retard = data.get('retard_jours', 0)
+        avancement = data.get('taux_avancement', 0)
+        montant = data.get('montant_total', 0)
+
+        if retard > 0:
+            suggestions.append({
+                'type': 'danger', 'icon': 'fa-exclamation-triangle',
+                'text': f'Chantier en retard de {retard} jours — Provisionner les pénalités'
+            })
+        if avancement > 80 and retard == 0:
+            suggestions.append({
+                'type': 'success', 'icon': 'fa-check-circle',
+                'text': 'Chantier bientôt terminé — Préparer le décompte définitif'
+            })
+        if montant > 1000000:
+            suggestions.append({
+                'type': 'info', 'icon': 'fa-university',
+                'text': 'Marché important — Vérifier les cautions bancaires en cours'
+            })
+        suggestions.append({
+            'type': 'info', 'icon': 'fa-calculator',
+            'text': 'Vérifier la marge réelle vs marge prévisionnelle du chantier'
+        })
+        suggestions.append({
+            'type': 'info', 'icon': 'fa-file-text',
+            'text': 'Émettre les situations de travaux mensuelles à jour'
+        })
         return suggestions
 
     # =================================================================

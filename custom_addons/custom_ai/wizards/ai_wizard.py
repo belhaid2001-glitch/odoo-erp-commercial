@@ -20,6 +20,9 @@ class AIWizard(models.TransientModel):
         ('generate_email', '📧 Générer un email'),
         ('evaluate', '📋 Synthèse d\'évaluation'),
         ('predict', '🔮 Prédiction'),
+        ('btp_conseil', '🏗️ Mohasib — Conseil fiscal/comptable'),
+        ('btp_saisie', '📒 Mohasib — Écriture comptable PCM'),
+        ('btp_analyse', '📊 Mohasib — Analyse financière chantier'),
         ('custom', '✏️ Requête personnalisée'),
     ], string='Action IA', required=True, default='analyze')
 
@@ -33,6 +36,8 @@ class AIWizard(models.TransientModel):
     @api.onchange('action_type')
     def _onchange_action_type(self):
         if self.action_type == 'custom':
+            self.custom_prompt = ''
+        elif self.action_type in ('btp_conseil', 'btp_saisie'):
             self.custom_prompt = ''
 
     def action_generate(self):
@@ -52,10 +57,17 @@ class AIWizard(models.TransientModel):
             'generate_email': f"Génère un email de relance professionnel",
             'evaluate': f"Génère une synthèse d'évaluation",
             'predict': f"Fais une prédiction basée sur les données disponibles",
+            'btp_conseil': self.custom_prompt or "Comment fonctionne la TVA BTP au Maroc ?",
+            'btp_saisie': self.custom_prompt or "Comptabilise la situation de travaux",
+            'btp_analyse': f"Analyse financière complète du chantier {ctx.get('name', '')}",
             'custom': self.custom_prompt or "Analyse cette situation",
         }
         prompt = prompts.get(self.action_type, self.custom_prompt)
-        module = self.module_name or 'general'
+        # Force module to 'btp' for Mohasib action types
+        if self.action_type in ('btp_conseil', 'btp_saisie', 'btp_analyse'):
+            module = 'btp'
+        else:
+            module = self.module_name or 'general'
 
         # Call AI
         result = mixin.ai_generate(prompt, ctx, module)
@@ -159,6 +171,49 @@ class AIWizard(models.TransientModel):
                     'state': record.state or '',
                 })
 
+            # BTP Chantier fields
+            elif self.res_model == 'btp.chantier':
+                ctx.update({
+                    'chantier_name': record.name or '',
+                    'reference': record.reference or '',
+                    'montant_total': record.montant_total or 0,
+                    'montant_contrat': record.montant_contrat or 0,
+                    'montant_avenant': record.montant_avenant or 0,
+                    'taux_avancement': record.taux_avancement or 0,
+                    'retard_jours': record.retard_jours or 0,
+                    'penalite_retard': record.penalite_retard or 0,
+                    'state': record.state or '',
+                    'type_marche': record.type_marche or '',
+                    'taux_retenue_garantie': record.taux_retenue_garantie or '',
+                    'montant_retenue': record.montant_retenue or 0,
+                    'caution_provisoire': record.caution_provisoire or 0,
+                    'caution_definitive': record.caution_definitive or 0,
+                    'partner_name': record.maitre_ouvrage_id.name if record.maitre_ouvrage_id else '',
+                    'client': record.maitre_ouvrage_id.name if record.maitre_ouvrage_id else '',
+                    'ville': record.ville or '',
+                    'situation_count': record.situation_count or 0,
+                })
+
+            # BTP Situation fields
+            elif self.res_model == 'btp.situation':
+                ctx.update({
+                    'amount_total': getattr(record, 'montant_ht', 0) or 0,
+                    'montant': getattr(record, 'montant_ht', 0) or 0,
+                    'state': record.state if hasattr(record, 'state') else '',
+                    'partner_name': record.chantier_id.maitre_ouvrage_id.name if hasattr(record, 'chantier_id') and record.chantier_id and record.chantier_id.maitre_ouvrage_id else '',
+                    'chantier_name': record.chantier_id.name if hasattr(record, 'chantier_id') and record.chantier_id else '',
+                })
+
+            # BTP Approvisionnement fields
+            elif self.res_model == 'btp.approvisionnement':
+                ctx.update({
+                    'amount_total': getattr(record, 'cout_total', 0) or 0,
+                    'montant': getattr(record, 'cout_total', 0) or 0,
+                    'state': record.state if hasattr(record, 'state') else '',
+                    'partner_name': record.fournisseur_id.name if hasattr(record, 'fournisseur_id') and record.fournisseur_id else '',
+                    'chantier_name': record.chantier_id.name if hasattr(record, 'chantier_id') and record.chantier_id else '',
+                })
+
         except Exception:
             pass
         return ctx
@@ -188,8 +243,17 @@ class AIWizard(models.TransientModel):
                 html_lines.append(
                     f'<div style="padding:8px 12px;background:#fffbeb;border-left:4px solid #f6c23e;'
                     f'margin:4px 0;border-radius:4px;">{stripped}</div>')
-            elif any(stripped.startswith(e) for e in ['📊', '📈', '🎯', '📋', '💰', '📧', '📦', '💳']):
+            elif any(stripped.startswith(e) for e in ['📊', '📈', '🎯', '📋', '💰', '📧', '📦', '💳', '📄', '📌']):
                 html_lines.append(f'<h4 style="margin:12px 0 6px;color:#2c3e50;">{stripped}</h4>')
+            elif stripped.startswith('🏗️'):
+                html_lines.append(
+                    f'<div style="padding:10px 14px;background:linear-gradient(135deg,#1e3a5f,#2c5f8a);'
+                    f'color:white;border-radius:6px;margin:8px 0;font-weight:bold;font-size:14px;">'
+                    f'{stripped}</div>')
+            elif stripped.startswith('┌') or stripped.startswith('├') or stripped.startswith('└') or stripped.startswith('│'):
+                html_lines.append(f'<pre style="margin:0;padding:0 4px;font-size:11px;'
+                                  f'line-height:1.6;background:#f8f9fc;font-family:Consolas,monospace;">'
+                                  f'{stripped}</pre>')
             else:
                 html_lines.append(f'<p style="margin:2px 0;">{stripped}</p>')
 

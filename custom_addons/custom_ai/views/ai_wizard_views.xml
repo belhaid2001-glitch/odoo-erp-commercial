@@ -6,13 +6,13 @@
         <field name="name">ai.wizard.form</field>
         <field name="model">ai.wizard</field>
         <field name="arch" type="xml">
-            <form string="🤖 Assistant IA">
+            <form string="🏗️ Mohasib — Expert-Comptable IA">
                 <group>
                     <group string="🎯 Action">
                         <field name="action_type" widget="radio"/>
                         <field name="custom_prompt" widget="text"
                                placeholder="Décrivez votre demande ici..."
-                               invisible="action_type != 'custom'"/>
+                               invisible="action_type not in ('custom', 'btp_conseil', 'btp_saisie')"/>
                     </group>
                     <group string="📄 Contexte">
                         <field name="res_model" readonly="1"/>
@@ -38,7 +38,7 @@
 
     <!-- ==================== AI WIZARD ACTION ==================== -->
     <record id="action_ai_wizard" model="ir.actions.act_window">
-        <field name="name">🤖 Assistant IA</field>
+        <field name="name">🏗️ Mohasib — Expert-Comptable IA</field>
         <field name="res_model">ai.wizard</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
