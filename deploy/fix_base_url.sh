@@ -5,12 +5,17 @@
 DOMAIN="erp-btp-maroc.swedencentral.cloudapp.azure.com"
 HTTPS_URL="https://${DOMAIN}"
 
-# Update web.base.url in Odoo database
-docker exec odoo_erp_db psql -U odoo -d odoo_erp_commercial -c \
-  "UPDATE ir_config_parameter SET value = '${HTTPS_URL}' WHERE key = 'web.base.url';"
+# Write SQL to temp file to avoid quoting issues
+cat > /tmp/fix_base_url.sql << 'EOSQL'
+UPDATE ir_config_parameter SET value = 'https://erp-btp-maroc.swedencentral.cloudapp.azure.com' WHERE key = 'web.base.url';
+INSERT INTO ir_config_parameter (key, value, create_uid, create_date, write_uid, write_date)
+  VALUES ('web.base.url.freeze', 'True', 1, now(), 1, now())
+  ON CONFLICT (key) DO UPDATE SET value = 'True', write_date = now();
+EOSQL
 
-docker exec odoo_erp_db psql -U odoo -d odoo_erp_commercial -c \
-  "UPDATE ir_config_parameter SET value = 'True' WHERE key = 'web.base.url.freeze';"
+# Copy SQL file into DB container and execute
+docker cp /tmp/fix_base_url.sql odoo_erp_db:/tmp/fix_base_url.sql
+docker exec odoo_erp_db psql -U odoo -d odoo_erp_commercial -f /tmp/fix_base_url.sql
 
 # Verify
 echo "=== web.base.url ==="
